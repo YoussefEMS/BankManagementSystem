@@ -1,0 +1,249 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="Page-1" id="eP4ZaFKHJBDGHpRafYCc">
+    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cust_header" value="CUSTOMER" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="40" y="40" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cust_body" value="CustomerID | NationalID | Name | Address | Tier|&amp;nbsp;Email|&amp;nbsp;ph.no." style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cust_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="45" y="85" as="sourcePoint" />
+            <mxPoint x="110" y="85" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="emp_header" value="EMPLOYEE" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="500" y="40" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="emp_body" value="EmployeeID | FullName | Role | BranchID |&amp;nbsp;Email" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="500" y="60" width="300" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="emp_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="505" y="85" as="sourcePoint" />
+            <mxPoint x="575" y="85" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="acc_header" value="ACCOUNT" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="40" y="160" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="acc_body" value="&lt;font style=&quot;font-size: 11px;&quot;&gt;AccountNumber | Balance | Type | Status | CustomerID|&amp;nbsp;dateOpened| Currency&lt;/font&gt;" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="40" y="180" width="400" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="acc_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="45" y="205" as="sourcePoint" />
+            <mxPoint x="135" y="205" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lapp_header" value="LOAN_APPLICATION" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="500" y="160" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lapp_body" value="AppID | Amount | Status | CustomerID | CreditOfficerID |&amp;nbsp;RequestDate |&amp;nbsp;Type |&amp;nbsp;Notes" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="500" y="180" width="460" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lapp_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="505" y="205" as="sourcePoint" />
+            <mxPoint x="545" y="205" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="trans_header" value="TRANSACTION" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="50" y="280" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="mBAtlNrlO_axgA0Hd55K-747" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="trans_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="80" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="trans_body" value="TransID | Type | Amount | Date | Note | AccountNumber | PerformedBy" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="50" y="300" width="480" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="trans_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="55" y="325" as="sourcePoint" />
+            <mxPoint x="105" y="325" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="loan_header" value="LOAN" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="600" y="280" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="loan_body" value="&lt;font style=&quot;font-size: 11px;&quot;&gt;LoanID | Rate | StartDate | Duration | AppID |&amp;nbsp;CustomerId&amp;nbsp;&lt;/font&gt;|&amp;nbsp;InstallmentAmount | Status |&amp;nbsp;Amount&amp;nbsp;" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="600" y="300" width="510" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="loan_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="605" y="325" as="sourcePoint" />
+            <mxPoint x="650" y="325" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="trf_header" value="TRANSFER (Weak Entity)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="40" y="400" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="mBAtlNrlO_axgA0Hd55K-758" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.087;exitY=0.047;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="trf_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="80" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="trf_body" value="TransID | Time | FromAcc | ToAcc | Amount" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="40" y="420" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="trf_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="45" y="445" as="sourcePoint" />
+            <mxPoint x="140" y="445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="stmt_header" value="STATEMENT" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="450" y="400" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="stmt_body" value="StatementID | PeriodStart | PeriodEnd | AccountNumber |&amp;nbsp;GeneratedDate" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="450" y="420" width="460" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="stmt_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="455" y="445" as="sourcePoint" />
+            <mxPoint x="530" y="445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="od_header" value="OVERDRAFT_EVENT" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="40" y="500" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="od_body" value="OverdraftID | Amount | Time | AlertSent | AccountNumber" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="40" y="520" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="od_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="45" y="545" as="sourcePoint" />
+            <mxPoint x="115" y="545" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="int_header" value="INTEREST_POSTING" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="450" y="500" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="int_body" value="PostingID | Amount | Time | Rate | AccountNumber" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="450" y="520" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="int_pk" value="" style="endArrow=none;html=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="455" y="545" as="sourcePoint" />
+            <mxPoint x="515" y="545" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr_acc_cust" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.15;entryY=1;entryDx=0;entryDy=0;" parent="1" source="acc_body" target="cust_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="140" />
+              <mxPoint x="93" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr_la_cust" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.3;entryY=1;entryDx=0;entryDy=0;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="685" y="120" />
+              <mxPoint x="80" y="120" />
+            </Array>
+            <mxPoint x="685" y="180" as="sourcePoint" />
+            <mxPoint x="80" y="90" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr_la_emp" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.1;entryY=1;entryDx=0;entryDy=0;" parent="1" source="lapp_body" target="emp_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="150" />
+              <mxPoint x="530" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr_tx_acc" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="trans_body" target="emp_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="280" />
+              <mxPoint x="460" y="280" />
+              <mxPoint x="460" y="110" />
+              <mxPoint x="510" y="110" />
+            </Array>
+            <mxPoint x="510" y="90" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mBAtlNrlO_axgA0Hd55K-748" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.167;entryY=0.917;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.8;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="stmt_body" target="acc_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="360" />
+              <mxPoint x="560" y="360" />
+              <mxPoint x="560" y="240" />
+              <mxPoint x="107" y="240" />
+            </Array>
+            <mxPoint x="770" y="360" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mBAtlNrlO_axgA0Hd55K-750" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.05;entryY=0.994;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" parent="1" source="od_body" target="acc_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="302" y="480" />
+              <mxPoint x="10" y="480" />
+              <mxPoint x="10" y="240" />
+              <mxPoint x="60" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mBAtlNrlO_axgA0Hd55K-751" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.022;entryY=1.044;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="int_body" target="acc_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="712" y="570" />
+              <mxPoint x="30" y="570" />
+              <mxPoint x="30" y="230" />
+              <mxPoint x="49" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mBAtlNrlO_axgA0Hd55K-752" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.055;entryY=1.146;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="loan_body" target="lapp_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="810" y="300" />
+              <mxPoint x="810" y="255" />
+              <mxPoint x="522" y="255" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mBAtlNrlO_axgA0Hd55K-754" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.067;entryY=0.957;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="trf_header" target="acc_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="175" y="390" />
+              <mxPoint x="20" y="390" />
+              <mxPoint x="20" y="250" />
+              <mxPoint x="67" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mBAtlNrlO_axgA0Hd55K-755" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.083;entryY=1.013;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="trf_body" target="acc_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="215" y="380" />
+              <mxPoint x="40" y="380" />
+              <mxPoint x="40" y="260" />
+              <mxPoint x="73" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mBAtlNrlO_axgA0Hd55K-759" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.18;entryY=1.009;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="cust_body" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="855" y="300" />
+              <mxPoint x="855" y="270" />
+              <mxPoint x="480" y="270" />
+              <mxPoint x="480" y="130" />
+              <mxPoint x="103" y="130" />
+            </Array>
+            <mxPoint x="860" y="300" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
