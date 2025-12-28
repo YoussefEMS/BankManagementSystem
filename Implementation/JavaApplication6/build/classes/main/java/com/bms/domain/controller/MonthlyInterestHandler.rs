@@ -1,2 +1,1 @@
 com.bms.domain.controller.MonthlyInterestHandler
-Controller.MonthlyInterestHandler

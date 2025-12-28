@@ -1,2 +1,1 @@
-Boundary.ApplyForLoanForm
 com.bms.presentation.ApplyForLoanForm

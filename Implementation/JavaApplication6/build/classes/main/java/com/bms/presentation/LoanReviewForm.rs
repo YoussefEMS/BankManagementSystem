@@ -1,2 +1,1 @@
-Boundary.LoanReviewForm
 com.bms.presentation.LoanReviewForm

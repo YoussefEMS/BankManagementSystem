@@ -1,2 +1,1 @@
 com.bms.domain.controller.LoanStatusController
-Controller.LoanStatusController

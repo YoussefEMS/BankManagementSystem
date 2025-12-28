@@ -1,2 +1,1 @@
-Boundary.UpdateAccountStatusForm
 com.bms.presentation.UpdateAccountStatusForm

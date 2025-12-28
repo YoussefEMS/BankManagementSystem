@@ -1,2 +1,1 @@
 com.bms.presentation.LoanStatusView
-Boundary.LoanStatusView

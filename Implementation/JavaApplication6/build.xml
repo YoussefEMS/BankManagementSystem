@@ -10,6 +10,13 @@
 <project name="JavaApplication6" default="default" basedir=".">
     <description>Builds, tests, and runs the project JavaApplication6.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <!-- Copy resources from Maven-style folder into the Ant output -->
+    <target name="-post-compile">
+        <copy todir="${build.classes.dir}">
+            <fileset dir="src/main/resources"/>
+        </copy>
+    </target>
     <!--
 
     There exist several targets which are by default empty and which can be 

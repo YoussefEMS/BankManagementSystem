@@ -1,2 +1,1 @@
-DAO.InterestPostingDAO
 com.bms.persistence.InterestPostingDAO
