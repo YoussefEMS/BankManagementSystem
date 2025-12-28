@@ -1,0 +1,2 @@
+com.bms.domain.controller.CustomerProfileController
+Controller.CustomerProfileController
