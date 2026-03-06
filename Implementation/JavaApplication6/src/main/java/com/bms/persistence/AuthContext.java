@@ -1,21 +1,22 @@
 package com.bms.persistence;
 
+import com.bms.domain.entity.Customer;
+
 /**
  * AuthContext - Singleton to manage the currently logged-in customer session
  * Provides session state throughout the application
  */
 public class AuthContext {
-
     private static volatile AuthContext instance;
-
-    private String currentUser;
-    private boolean isAuthenticated;
+    private Customer loggedInCustomer;
 
     private AuthContext() {
-        this.currentUser = null;
-        this.isAuthenticated = false;
+        // Private constructor for singleton
     }
 
+    /**
+     * Get the singleton instance
+     */
     public static AuthContext getInstance() {
         if (instance == null) {
             synchronized (AuthContext.class) {
@@ -27,31 +28,43 @@ public class AuthContext {
         return instance;
     }
 
-    public synchronized void login(String username) {
-        if (!isAuthenticated) {
-            this.currentUser = username;
-            this.isAuthenticated = true;
-            System.out.println("User '" + username + "' logged in successfully.");
-        } else {
-            System.out.println("Login failed: An active session already exists for '" + this.currentUser + "'.");
+    /**
+     * Centralized login operation.
+     * Returns false when a session is already active or input is invalid.
+     */
+    public synchronized boolean login(Customer customer) {
+        if (customer == null || loggedInCustomer != null) {
+            return false;
         }
+        this.loggedInCustomer = customer;
+        return true;
     }
 
+    /**
+     * Get the logged-in customer
+     */
+    public synchronized Customer getLoggedInCustomer() {
+        return loggedInCustomer;
+    }
+
+    /**
+     * Get the logged-in customer ID
+     */
+    public synchronized int getLoggedInCustomerId() {
+        return loggedInCustomer != null ? loggedInCustomer.getCustomerId() : -1;
+    }
+
+    /**
+     * Check if a customer is logged in
+     */
+    public synchronized boolean isLoggedIn() {
+        return loggedInCustomer != null;
+    }
+
+    /**
+     * Clear the session (logout)
+     */
     public synchronized void logout() {
-        if (isAuthenticated) {
-            System.out.println("User '" + this.currentUser + "' logged out.");
-            this.currentUser = null;
-            this.isAuthenticated = false;
-        } else {
-            System.out.println("Logout failed: No active session found.");
-        }
-    }
-
-    public String getCurrentUser() {
-        return currentUser;
-    }
-
-    public boolean isAuthenticated() {
-        return isAuthenticated;
+        this.loggedInCustomer = null;
     }
 }

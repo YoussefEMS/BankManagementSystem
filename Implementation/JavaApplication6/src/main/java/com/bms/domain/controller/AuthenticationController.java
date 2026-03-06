@@ -36,10 +36,10 @@ public class AuthenticationController {
         }
         
         Customer customer = customerDAO.authenticate(email.trim(), password);
-        if (customer != null) {
-            authContext.setLoggedInCustomer(customer);
+        if (customer != null && authContext.login(customer)) {
+            return customer;
         }
-        return customer;
+        return null;
     }
 
     /**
