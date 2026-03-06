@@ -1,3 +1,14 @@
+error id: file:///C:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/TransactionDAO.java:_empty_/DataSourceFactory#
+file:///C:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/TransactionDAO.java
+empty definition using pc, found symbol in pc: _empty_/DataSourceFactory#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 621
+uri: file:///C:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/TransactionDAO.java
+text:
+```scala
 package com.bms.persistence;
 
 import java.sql.Connection;
@@ -21,7 +32,7 @@ public class TransactionDAO {
     private final DataSource dataSource;
 
     public TransactionDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = @@DataSourceFactory.getInstance().getDataSource();
     }
 
     /**
@@ -113,3 +124,10 @@ public class TransactionDAO {
         return transaction;
     }
 }
+
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/DataSourceFactory#

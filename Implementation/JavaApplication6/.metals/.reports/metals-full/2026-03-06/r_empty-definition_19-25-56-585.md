@@ -1,3 +1,14 @@
+error id: file:///C:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/CustomerDAO.java:_empty_/DataSourceFactoryDataSourceFactory#
+file:///C:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/CustomerDAO.java
+empty definition using pc, found symbol in pc: _empty_/DataSourceFactoryDataSourceFactory#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 558
+uri: file:///C:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/CustomerDAO.java
+text:
+```scala
 package com.bms.persistence;
 
 import java.sql.Connection;
@@ -21,7 +32,7 @@ public class CustomerDAO {
      * Constructor initializes DataSource
      */
     public CustomerDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = @@DataSourceFactoryDataSourceFactory.getInstance().getDataSource();
     }
 
     /**
@@ -162,3 +173,9 @@ public class CustomerDAO {
         return customer;
     }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/DataSourceFactoryDataSourceFactory#

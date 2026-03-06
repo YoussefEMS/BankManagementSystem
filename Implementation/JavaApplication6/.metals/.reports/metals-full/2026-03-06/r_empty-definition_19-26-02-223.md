@@ -1,3 +1,14 @@
+error id: file:///C:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/AccountDAO.java:_empty_/DataSourceFactory#
+file:///C:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/AccountDAO.java
+empty definition using pc, found symbol in pc: _empty_/DataSourceFactory#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 598
+uri: file:///C:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/AccountDAO.java
+text:
+```scala
 package com.bms.persistence;
 
 import java.math.BigDecimal;
@@ -21,7 +32,7 @@ public class AccountDAO {
     private final DataSource dataSource;
 
     public AccountDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = @@DataSourceFactory.getDataSource();
     }
 
     /**
@@ -118,3 +129,10 @@ public class AccountDAO {
         }
     }
 }
+
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/DataSourceFactory#
