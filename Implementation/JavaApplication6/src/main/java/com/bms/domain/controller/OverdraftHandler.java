@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.bms.domain.entity.OverdraftEvent;
+import com.bms.persistence.DAOFactory;
 import com.bms.persistence.OverdraftEventDAO;
+import com.bms.persistence.SqlServerDAOFactory;
 
 /**
  * OverdraftHandler - UC-13: Overdraft Detection & Alerts
@@ -14,7 +16,11 @@ public class OverdraftHandler {
     private final OverdraftEventDAO overdraftEventDAO;
 
     public OverdraftHandler() {
-        this.overdraftEventDAO = new OverdraftEventDAO();
+        this(SqlServerDAOFactory.getInstance());
+    }
+
+    public OverdraftHandler(DAOFactory factory) {
+        this.overdraftEventDAO = factory.createOverdraftEventDAO();
     }
 
     /**

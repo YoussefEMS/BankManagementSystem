@@ -9,7 +9,9 @@ import com.bms.domain.entity.InterestPosting;
 import com.bms.domain.entity.Transaction;
 import com.bms.domain.entity.TransactionFactory;
 import com.bms.persistence.AccountDAO;
+import com.bms.persistence.DAOFactory;
 import com.bms.persistence.InterestPostingDAO;
+import com.bms.persistence.SqlServerDAOFactory;
 import com.bms.persistence.TransactionDAO;
 
 /**
@@ -22,9 +24,13 @@ public class MonthlyInterestHandler {
     private final InterestPostingDAO interestPostingDAO;
 
     public MonthlyInterestHandler() {
-        this.accountDAO = new AccountDAO();
-        this.transactionDAO = new TransactionDAO();
-        this.interestPostingDAO = new InterestPostingDAO();
+        this(SqlServerDAOFactory.getInstance());
+    }
+
+    public MonthlyInterestHandler(DAOFactory factory) {
+        this.accountDAO = factory.createAccountDAO();
+        this.transactionDAO = factory.createTransactionDAO();
+        this.interestPostingDAO = factory.createInterestPostingDAO();
     }
 
     /**

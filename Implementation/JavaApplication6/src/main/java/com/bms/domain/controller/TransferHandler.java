@@ -10,6 +10,8 @@ import com.bms.domain.entity.TransactionFactory;
 import com.bms.domain.entity.Transfer;
 import com.bms.persistence.AccountDAO;
 import com.bms.persistence.AuthContext;
+import com.bms.persistence.DAOFactory;
+import com.bms.persistence.SqlServerDAOFactory;
 import com.bms.persistence.TransactionDAO;
 import com.bms.persistence.TransferDAO;
 
@@ -23,9 +25,13 @@ public class TransferHandler {
     private final TransferDAO transferDAO;
 
     public TransferHandler() {
-        this.accountDAO = new AccountDAO();
-        this.transactionDAO = new TransactionDAO();
-        this.transferDAO = new TransferDAO();
+        this(SqlServerDAOFactory.getInstance());
+    }
+
+    public TransferHandler(DAOFactory factory) {
+        this.accountDAO = factory.createAccountDAO();
+        this.transactionDAO = factory.createTransactionDAO();
+        this.transferDAO = factory.createTransferDAO();
     }
 
     /**

@@ -1,7 +1,9 @@
 package com.bms.domain.controller;
 
 import com.bms.domain.entity.Loan;
+import com.bms.persistence.DAOFactory;
 import com.bms.persistence.LoanDAO;
+import com.bms.persistence.SqlServerDAOFactory;
 
 /**
  * LoanApplicationHandler - UC-09: Apply for Loan
@@ -11,7 +13,11 @@ public class LoanApplicationHandler {
     private final LoanDAO loanDAO;
 
     public LoanApplicationHandler() {
-        this.loanDAO = new LoanDAO();
+        this(SqlServerDAOFactory.getInstance());
+    }
+
+    public LoanApplicationHandler(DAOFactory factory) {
+        this.loanDAO = factory.createLoanDAO();
     }
 
     /**

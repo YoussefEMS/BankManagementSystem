@@ -7,11 +7,13 @@ import com.bms.presentation.AdminDashboard;
 import com.bms.presentation.ApplyForLoanForm;
 import com.bms.presentation.CreateCustomerProfileForm;
 import com.bms.presentation.DepositCashForm;
+import com.bms.presentation.JavaFXScreenFactory;
 import com.bms.presentation.LoanReviewForm;
 import com.bms.presentation.LoanStatusView;
 import com.bms.presentation.LoginScreen;
 import com.bms.presentation.MonthlyInterestJob;
 import com.bms.presentation.OverdraftAlertView;
+import com.bms.presentation.ScreenFactory;
 import com.bms.presentation.TransactionHistoryScreen;
 import com.bms.presentation.TransferFundsForm;
 import com.bms.presentation.UpdateAccountStatusForm;
@@ -32,6 +34,7 @@ import javafx.stage.Stage;
  */
 public class BankManagementSystemApp extends Application {
     private BorderPane root;
+    private final ScreenFactory screenFactory;
     private LoginScreen loginScreen;
     private AccountSelectionScreen accountSelectionScreen;
     private AccountBalanceScreen accountBalanceScreen;
@@ -39,17 +42,21 @@ public class BankManagementSystemApp extends Application {
     private AdminDashboard adminDashboard;
     private Stage primaryStage;
 
+    public BankManagementSystemApp() {
+        this.screenFactory = new JavaFXScreenFactory();
+    }
+
     @Override
     public void start(Stage primaryStage) {
         try {
             this.primaryStage = primaryStage;
 
-            // Initialize core screens
-            loginScreen = new LoginScreen();
-            accountSelectionScreen = new AccountSelectionScreen();
-            accountBalanceScreen = new AccountBalanceScreen();
-            transactionHistoryScreen = new TransactionHistoryScreen();
-            adminDashboard = new AdminDashboard();
+            // Initialize core screens using Abstract Factory
+            loginScreen = screenFactory.createLoginScreen();
+            accountSelectionScreen = screenFactory.createAccountSelectionScreen();
+            accountBalanceScreen = screenFactory.createAccountBalanceScreen();
+            transactionHistoryScreen = screenFactory.createTransactionHistoryScreen();
+            adminDashboard = screenFactory.createAdminDashboard();
 
             // Setup navigation callbacks
             setupNavigationCallbacks();
@@ -98,43 +105,43 @@ public class BankManagementSystemApp extends Application {
 
         // --- Admin Dashboard callbacks ---
         adminDashboard.setOnCreateCustomer(() -> {
-            CreateCustomerProfileForm form = new CreateCustomerProfileForm();
+            CreateCustomerProfileForm form = screenFactory.createCustomerProfileForm();
             form.setOnBack(this::showAdminDashboard);
             root.setCenter(form.getRoot());
         });
 
         adminDashboard.setOnDeposit(() -> {
-            DepositCashForm form = new DepositCashForm();
+            DepositCashForm form = screenFactory.createDepositForm();
             form.setOnBack(this::showAdminDashboard);
             root.setCenter(form.getRoot());
         });
 
         adminDashboard.setOnWithdraw(() -> {
-            WithdrawCashForm form = new WithdrawCashForm();
+            WithdrawCashForm form = screenFactory.createWithdrawForm();
             form.setOnBack(this::showAdminDashboard);
             root.setCenter(form.getRoot());
         });
 
         adminDashboard.setOnUpdateAccountStatus(() -> {
-            UpdateAccountStatusForm form = new UpdateAccountStatusForm();
+            UpdateAccountStatusForm form = screenFactory.createAccountStatusForm();
             form.setOnBack(this::showAdminDashboard);
             root.setCenter(form.getRoot());
         });
 
         adminDashboard.setOnReviewLoans(() -> {
-            LoanReviewForm form = new LoanReviewForm();
+            LoanReviewForm form = screenFactory.createLoanReviewForm();
             form.setOnBack(this::showAdminDashboard);
             root.setCenter(form.getRoot());
         });
 
         adminDashboard.setOnPostInterest(() -> {
-            MonthlyInterestJob form = new MonthlyInterestJob();
+            MonthlyInterestJob form = screenFactory.createInterestJobScreen();
             form.setOnBack(this::showAdminDashboard);
             root.setCenter(form.getRoot());
         });
 
         adminDashboard.setOnViewOverdrafts(() -> {
-            OverdraftAlertView form = new OverdraftAlertView();
+            OverdraftAlertView form = screenFactory.createOverdraftAlertView();
             form.setOnBack(this::showAdminDashboard);
             root.setCenter(form.getRoot());
         });
@@ -204,11 +211,11 @@ public class BankManagementSystemApp extends Application {
      * Reset all screens to clean state
      */
     private void resetAll() {
-        loginScreen = new LoginScreen();
-        accountSelectionScreen = new AccountSelectionScreen();
-        accountBalanceScreen = new AccountBalanceScreen();
-        transactionHistoryScreen = new TransactionHistoryScreen();
-        adminDashboard = new AdminDashboard();
+        loginScreen = screenFactory.createLoginScreen();
+        accountSelectionScreen = screenFactory.createAccountSelectionScreen();
+        accountBalanceScreen = screenFactory.createAccountBalanceScreen();
+        transactionHistoryScreen = screenFactory.createTransactionHistoryScreen();
+        adminDashboard = screenFactory.createAdminDashboard();
         setupNavigationCallbacks();
     }
 
@@ -237,21 +244,21 @@ public class BankManagementSystemApp extends Application {
 
         MenuItem transferItem = new MenuItem("Transfer Funds");
         transferItem.setOnAction(event -> {
-            TransferFundsForm form = new TransferFundsForm();
+            TransferFundsForm form = screenFactory.createTransferForm();
             form.setOnBack(this::showAccountSelectionScreen);
             root.setCenter(form.getRoot());
         });
 
         MenuItem loanStatusItem = new MenuItem("My Loans");
         loanStatusItem.setOnAction(event -> {
-            LoanStatusView view = new LoanStatusView();
+            LoanStatusView view = screenFactory.createLoanStatusView();
             view.setOnBack(this::showAccountSelectionScreen);
             root.setCenter(view.getRoot());
         });
 
         MenuItem applyLoanItem = new MenuItem("Apply for Loan");
         applyLoanItem.setOnAction(event -> {
-            ApplyForLoanForm form = new ApplyForLoanForm();
+            ApplyForLoanForm form = screenFactory.createLoanApplicationForm();
             form.setOnBack(this::showAccountSelectionScreen);
             root.setCenter(form.getRoot());
         });

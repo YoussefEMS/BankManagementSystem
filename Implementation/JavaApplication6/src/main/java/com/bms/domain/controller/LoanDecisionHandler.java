@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.bms.domain.entity.Loan;
+import com.bms.persistence.DAOFactory;
 import com.bms.persistence.LoanDAO;
+import com.bms.persistence.SqlServerDAOFactory;
 
 /**
  * LoanDecisionHandler - UC-10: Approve / Reject Loans
@@ -14,7 +16,11 @@ public class LoanDecisionHandler {
     private final LoanDAO loanDAO;
 
     public LoanDecisionHandler() {
-        this.loanDAO = new LoanDAO();
+        this(SqlServerDAOFactory.getInstance());
+    }
+
+    public LoanDecisionHandler(DAOFactory factory) {
+        this.loanDAO = factory.createLoanDAO();
     }
 
     /**

@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.bms.domain.entity.Transaction;
+import com.bms.persistence.DAOFactory;
+import com.bms.persistence.SqlServerDAOFactory;
 import com.bms.persistence.TransactionDAO;
 
 /**
@@ -18,21 +20,26 @@ public class TransactionHistoryController {
     private final TransactionDAO transactionDAO;
 
     public TransactionHistoryController() {
-        this.transactionDAO = new TransactionDAO();
+        this(SqlServerDAOFactory.getInstance());
+    }
+
+    public TransactionHistoryController(DAOFactory factory) {
+        this.transactionDAO = factory.createTransactionDAO();
     }
 
     /**
      * View transaction history for an account with optional filters
-     * @param accountNo the account number to search for
-     * @param startDate optional start date (inclusive, time set to 00:00:00)
-     * @param endDate optional end date (inclusive, time set to 23:59:59)
+     * 
+     * @param accountNo  the account number to search for
+     * @param startDate  optional start date (inclusive, time set to 00:00:00)
+     * @param endDate    optional end date (inclusive, time set to 23:59:59)
      * @param typeFilter optional type filter ("All" or specific type)
      * @return List of transactions, empty list if no results (no error thrown)
      */
     public List<Transaction> viewTransactionHistory(String accountNo,
-                                                    LocalDate startDate,
-                                                    LocalDate endDate,
-                                                    String typeFilter) {
+            LocalDate startDate,
+            LocalDate endDate,
+            String typeFilter) {
         // Input validation: allow free-text but trim whitespace
         if (accountNo == null || accountNo.trim().isEmpty()) {
             return List.of(); // Return empty list for invalid input
@@ -58,11 +65,10 @@ public class TransactionHistoryController {
 
         // Call DAO to retrieve transactions
         List<Transaction> transactions = transactionDAO.findByAccountNo(
-            accountNo.trim(),
-            startDateTime,
-            endDateTime,
-            normalizedFilter
-        );
+                accountNo.trim(),
+                startDateTime,
+                endDateTime,
+                normalizedFilter);
 
         // Return list (empty or populated, no error handling)
         return transactions;
@@ -70,34 +76,37 @@ public class TransactionHistoryController {
 
     /**
      * Get transaction history for presentation layer as string arrays
-     * @param accountNo the account number to search for
-     * @param startDate optional start date
-     * @param endDate optional end date
+     * 
+     * @param accountNo  the account number to search for
+     * @param startDate  optional start date
+     * @param endDate    optional end date
      * @param typeFilter optional type filter
-     * @return 2D array where each row is [timestamp, type, amount, note, balanceAfter]
+     * @return 2D array where each row is [timestamp, type, amount, note,
+     *         balanceAfter]
      *         Returns empty array if no transactions
      */
     public String[][] getTransactionHistoryAsStrings(String accountNo,
-                                                     LocalDate startDate,
-                                                     LocalDate endDate,
-                                                     String typeFilter) {
+            LocalDate startDate,
+            LocalDate endDate,
+            String typeFilter) {
         List<Transaction> transactions = viewTransactionHistory(accountNo, startDate, endDate, typeFilter);
         String[][] transactionsData = new String[transactions.size()][5];
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        
+
         for (int i = 0; i < transactions.size(); i++) {
             Transaction transaction = transactions.get(i);
-            transactionsData[i][0] = transaction.getTimestamp() != null ?
-                transaction.getTimestamp().format(formatter) : "";
+            transactionsData[i][0] = transaction.getTimestamp() != null ? transaction.getTimestamp().format(formatter)
+                    : "";
             transactionsData[i][1] = transaction.getType() != null ? transaction.getType() : "";
-            transactionsData[i][2] = transaction.getAmount() != null ?
-                String.format("%.2f", transaction.getAmount()) : "";
+            transactionsData[i][2] = transaction.getAmount() != null ? String.format("%.2f", transaction.getAmount())
+                    : "";
             transactionsData[i][3] = transaction.getNote() != null ? transaction.getNote() : "";
-            transactionsData[i][4] = transaction.getBalanceAfter() != null ?
-                String.format("%.2f", transaction.getBalanceAfter()) : "";
+            transactionsData[i][4] = transaction.getBalanceAfter() != null
+                    ? String.format("%.2f", transaction.getBalanceAfter())
+                    : "";
         }
-        
+
         return transactionsData;
     }
 }

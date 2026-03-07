@@ -2,6 +2,8 @@ package com.bms.domain.controller;
 
 import com.bms.domain.entity.Account;
 import com.bms.persistence.AccountDAO;
+import com.bms.persistence.DAOFactory;
+import com.bms.persistence.SqlServerDAOFactory;
 
 /**
  * AccountStatusHandler - UC-08: Update Account Status
@@ -11,7 +13,11 @@ public class AccountStatusHandler {
     private final AccountDAO accountDAO;
 
     public AccountStatusHandler() {
-        this.accountDAO = new AccountDAO();
+        this(SqlServerDAOFactory.getInstance());
+    }
+
+    public AccountStatusHandler(DAOFactory factory) {
+        this.accountDAO = factory.createAccountDAO();
     }
 
     /**

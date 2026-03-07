@@ -8,6 +8,8 @@ import com.bms.domain.entity.Transaction;
 import com.bms.domain.entity.TransactionFactory;
 import com.bms.persistence.AccountDAO;
 import com.bms.persistence.AuthContext;
+import com.bms.persistence.DAOFactory;
+import com.bms.persistence.SqlServerDAOFactory;
 import com.bms.persistence.TransactionDAO;
 
 /**
@@ -20,9 +22,13 @@ public class WithdrawCashController {
     private final OverdraftHandler overdraftHandler;
 
     public WithdrawCashController() {
-        this.accountDAO = new AccountDAO();
-        this.transactionDAO = new TransactionDAO();
-        this.overdraftHandler = new OverdraftHandler();
+        this(SqlServerDAOFactory.getInstance());
+    }
+
+    public WithdrawCashController(DAOFactory factory) {
+        this.accountDAO = factory.createAccountDAO();
+        this.transactionDAO = factory.createTransactionDAO();
+        this.overdraftHandler = new OverdraftHandler(factory);
     }
 
     /**

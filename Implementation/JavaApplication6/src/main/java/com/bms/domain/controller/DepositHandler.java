@@ -7,6 +7,8 @@ import com.bms.domain.entity.Transaction;
 import com.bms.domain.entity.TransactionFactory;
 import com.bms.persistence.AccountDAO;
 import com.bms.persistence.AuthContext;
+import com.bms.persistence.DAOFactory;
+import com.bms.persistence.SqlServerDAOFactory;
 import com.bms.persistence.TransactionDAO;
 
 /**
@@ -18,8 +20,12 @@ public class DepositHandler {
     private final TransactionDAO transactionDAO;
 
     public DepositHandler() {
-        this.accountDAO = new AccountDAO();
-        this.transactionDAO = new TransactionDAO();
+        this(SqlServerDAOFactory.getInstance());
+    }
+
+    public DepositHandler(DAOFactory factory) {
+        this.accountDAO = factory.createAccountDAO();
+        this.transactionDAO = factory.createTransactionDAO();
     }
 
     /**
