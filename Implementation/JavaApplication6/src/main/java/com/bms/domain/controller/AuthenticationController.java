@@ -9,7 +9,8 @@ import com.bms.persistence.AuthContext;
 import com.bms.persistence.CustomerDAO;
 
 /**
- * AuthenticationController - Domain logic for authentication and session management
+ * AuthenticationController - Domain logic for authentication and session
+ * management
  * Manages customer login, account access, and session state
  * Acts as intermediary between presentation and data layers
  */
@@ -26,7 +27,8 @@ public class AuthenticationController {
 
     /**
      * Authenticate a customer with email and password
-     * @param email customer's email
+     * 
+     * @param email    customer's email
      * @param password customer's password
      * @return Customer object if authentication succeeds, null otherwise
      */
@@ -34,7 +36,7 @@ public class AuthenticationController {
         if (email == null || email.trim().isEmpty() || password == null || password.isEmpty()) {
             return null;
         }
-        
+
         Customer customer = customerDAO.authenticate(email.trim(), password);
         if (customer != null && authContext.login(customer)) {
             return customer;
@@ -44,7 +46,8 @@ public class AuthenticationController {
 
     /**
      * Authenticate a customer for presentation layer
-     * @param email customer's email
+     * 
+     * @param email    customer's email
      * @param password customer's password
      * @return true if authentication succeeds, false otherwise
      */
@@ -54,6 +57,7 @@ public class AuthenticationController {
 
     /**
      * Get the currently logged-in customer ID
+     * 
      * @return customer ID if logged in, -1 otherwise
      */
     public int getLoggedInCustomerId() {
@@ -62,6 +66,7 @@ public class AuthenticationController {
 
     /**
      * Get the currently logged-in customer
+     * 
      * @return Customer object if logged in, null otherwise
      */
     public Customer getLoggedInCustomer() {
@@ -70,6 +75,7 @@ public class AuthenticationController {
 
     /**
      * Get all accounts for the logged-in customer
+     * 
      * @return List of accounts for the customer, empty list if not logged in
      */
     public List<Account> getLoggedInCustomerAccounts() {
@@ -83,17 +89,19 @@ public class AuthenticationController {
     /**
      * Get account numbers as strings for the logged-in customer
      * Useful for populating dropdown menus
+     * 
      * @return Array of account numbers, empty array if not logged in
      */
     public String[] getLoggedInCustomerAccountNumbers() {
         List<Account> accounts = getLoggedInCustomerAccounts();
         return accounts.stream()
-            .map(Account::getAccountNumber)
-            .toArray(String[]::new);
+                .map(Account::getAccountNumber)
+                .toArray(String[]::new);
     }
 
     /**
      * Get logged-in customer's full name for display
+     * 
      * @return customer's full name if logged in, "Customer" otherwise
      */
     public String getLoggedInCustomerName() {
@@ -103,13 +111,15 @@ public class AuthenticationController {
 
     /**
      * Get account details as strings for presentation layer
-     * @return 2D array where each row is [accountNumber, accountType, balance, currency, status]
+     * 
+     * @return 2D array where each row is [accountNumber, accountType, balance,
+     *         currency, status]
      *         Returns empty array if not logged in
      */
     public String[][] getLoggedInCustomerAccountsAsStrings() {
         List<Account> accounts = getLoggedInCustomerAccounts();
         String[][] accountsData = new String[accounts.size()][5];
-        
+
         for (int i = 0; i < accounts.size(); i++) {
             Account account = accounts.get(i);
             accountsData[i][0] = account.getAccountNumber();
@@ -118,12 +128,13 @@ public class AuthenticationController {
             accountsData[i][3] = account.getCurrency();
             accountsData[i][4] = account.getStatus();
         }
-        
+
         return accountsData;
     }
 
     /**
      * Get the account number of the selected account by index
+     * 
      * @param accountIndex the index in the accounts list
      * @return account number if valid index, null otherwise
      */
@@ -144,9 +155,28 @@ public class AuthenticationController {
 
     /**
      * Check if a customer is logged in
+     * 
      * @return true if customer is logged in, false otherwise
      */
     public boolean isLoggedIn() {
         return authContext.isLoggedIn();
+    }
+
+    /**
+     * Check if the logged-in user has the ADMIN role
+     * 
+     * @return true if user is an admin/teller, false otherwise
+     */
+    public boolean isAdmin() {
+        return authContext.isAdmin();
+    }
+
+    /**
+     * Get the role of the logged-in user
+     * 
+     * @return "CUSTOMER" or "ADMIN", null if not logged in
+     */
+    public String getUserRole() {
+        return authContext.getRole();
     }
 }

@@ -1,72 +1,105 @@
 package com.bms.presentation;
 
+import com.bms.domain.controller.AuthenticationController;
+import com.bms.domain.controller.TransferHandler;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
 /**
- * 
+ * TransferFundsForm - UC-07: Transfer funds between accounts
  */
 public class TransferFundsForm {
+    private final VBox root;
+    private final TransferHandler controller;
+    private final AuthenticationController authController;
 
-    /**
-     * Default constructor
-     */
+    private TextField sourceField;
+    private TextField destinationField;
+    private TextField amountField;
+    private Label statusLabel;
+
+    private Runnable onBack;
+
     public TransferFundsForm() {
+        this.controller = new TransferHandler();
+        this.authController = new AuthenticationController();
+        this.root = createLayout();
     }
 
-    /**
-     * 
-     */
-    private String sourceAccountNo;
+    private VBox createLayout() {
+        VBox layout = new VBox(12);
+        layout.setPadding(new Insets(30));
+        layout.setAlignment(Pos.TOP_CENTER);
+        layout.setMaxWidth(500);
 
-    /**
-     * 
-     */
-    private String destinationAccountNo;
+        Label title = new Label("Transfer Funds");
+        title.setFont(Font.font("System", FontWeight.BOLD, 20));
 
-    /**
-     * 
-     */
-    private double amount;
+        sourceField = new TextField();
+        sourceField.setPromptText("Source Account Number");
 
-    /**
-     * 
-     */
-    private double displaySourceBalance;
+        destinationField = new TextField();
+        destinationField.setPromptText("Destination Account Number");
 
-    /**
-     * 
-     */
-    private double displayDestinationBalance;
+        amountField = new TextField();
+        amountField.setPromptText("Amount (USD)");
 
-    /**
-     * 
-     */
-    private String displayReferenceCode;
+        Button submitBtn = new Button("Transfer");
+        submitBtn.setPrefWidth(200);
+        submitBtn.setStyle("-fx-font-size: 14px; -fx-background-color: #1976d2; -fx-text-fill: white;");
+        submitBtn.setOnAction(e -> handleSubmit());
 
+        Button backBtn = new Button("Back");
+        backBtn.setOnAction(e -> {
+            if (onBack != null)
+                onBack.run();
+        });
 
-    /**
-     * @param sourceAccountNo 
-     * @param destinationAccountNo 
-     * @param amount 
-     * @return
-     */
-    public void enterTransfer(String sourceAccountNo, String destinationAccountNo, double amount) {
-        // TODO implement here
+        statusLabel = new Label();
+        statusLabel.setWrapText(true);
+
+        layout.getChildren().addAll(title, sourceField, destinationField,
+                amountField, submitBtn, statusLabel, backBtn);
+        return layout;
     }
 
-    /**
-     * @return
-     */
-    public void submitTransfer() {
-        // TODO implement here
+    private void handleSubmit() {
+        try {
+            double amount = Double.parseDouble(amountField.getText().trim());
+            int customerId = authController.getLoggedInCustomerId();
+
+            String refCode = controller.transferFunds(
+                    customerId,
+                    sourceField.getText().trim(),
+                    destinationField.getText().trim(),
+                    amount);
+
+            if (refCode != null) {
+                statusLabel.setStyle("-fx-text-fill: green;");
+                statusLabel.setText("Transfer successful! Reference: " + refCode);
+                amountField.clear();
+            } else {
+                statusLabel.setStyle("-fx-text-fill: red;");
+                statusLabel.setText("Transfer failed. Check accounts, balances, and amount.");
+            }
+        } catch (NumberFormatException ex) {
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Error: Please enter a valid number for amount.");
+        }
     }
 
-    /**
-     * @param referenceCode 
-     * @param newSrcBalance 
-     * @param newDstBalance 
-     * @return
-     */
-    public void displayTransferResult(String referenceCode, double newSrcBalance, double newDstBalance) {
-        // TODO implement here
+    public VBox getRoot() {
+        return root;
     }
 
+    public void setOnBack(Runnable callback) {
+        this.onBack = callback;
+    }
 }

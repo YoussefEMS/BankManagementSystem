@@ -62,6 +62,24 @@ public class AuthContext {
     }
 
     /**
+     * Check if the logged-in user has the ADMIN role
+     * 
+     * @return true if user is logged in and has ADMIN role
+     */
+    public synchronized boolean isAdmin() {
+        return loggedInCustomer != null && "ADMIN".equals(loggedInCustomer.getRole());
+    }
+
+    /**
+     * Get the role of the logged-in user
+     * 
+     * @return role string if logged in, null otherwise
+     */
+    public synchronized String getRole() {
+        return loggedInCustomer != null ? loggedInCustomer.getRole() : null;
+    }
+
+    /**
      * Clear the session (logout)
      */
     public synchronized void logout() {

@@ -1,65 +1,70 @@
 package com.bms.domain.controller;
 
 import com.bms.domain.entity.Customer;
+import com.bms.persistence.CustomerDAO;
 
 /**
- * 
+ * CustomerProfileController - UC-03: Create Customer Profile
+ * Validates input, checks uniqueness, persists new customer
  */
 public class CustomerProfileController {
+    private final CustomerDAO customerDAO;
 
-    /**
-     * Default constructor
-     */
     public CustomerProfileController() {
-    }
-
-
-
-
-    /**
-     * @param fullName 
-     * @param email 
-     * @param mobilePhone 
-     * @param address 
-     * @param nationalID 
-     * @return
-     */
-    public int createCustomerProfile(String fullName, String email, String mobilePhone, String address, String nationalID) {
-        // TODO implement here
-        return 0;
+        this.customerDAO = new CustomerDAO();
     }
 
     /**
-     * @param fullName 
-     * @param emailAddress 
-     * @param mobilePhone 
-     * @return
+     * Create a new customer profile
+     * 
+     * @return the generated customer ID, or -1 if validation fails
      */
+    public int createCustomerProfile(String fullName, String email, String mobilePhone,
+            String address, String nationalID) {
+        // Validate required fields
+        if (!validateInput(fullName, email, mobilePhone)) {
+            return -1;
+        }
+
+        // Check email uniqueness
+        if (!isEmailUnique(email)) {
+            return -2; // -2 indicates duplicate email
+        }
+
+        // Build and persist customer
+        Customer customer = buildCustomer(fullName, email, mobilePhone, address, nationalID);
+        return customerDAO.insert(customer);
+    }
+
     private boolean validateInput(String fullName, String emailAddress, String mobilePhone) {
-        // TODO implement here
-        return false;
+        if (fullName == null || fullName.trim().isEmpty())
+            return false;
+        if (emailAddress == null || emailAddress.trim().isEmpty())
+            return false;
+        if (mobilePhone == null || mobilePhone.trim().isEmpty())
+            return false;
+        // Basic email format check
+        if (!emailAddress.contains("@"))
+            return false;
+        return true;
     }
 
-    /**
-     * @param emailAddress 
-     * @return
-     */
     private boolean isEmailUnique(String emailAddress) {
-        // TODO implement here
-        return false;
+        return !customerDAO.existsByEmail(emailAddress);
     }
 
-    /**
-     * @param fullName 
-     * @param email 
-     * @param mobilePhone 
-     * @param address 
-     * @param nationalID 
-     * @return
-     */
-    private Customer buildCustomer(String fullName, String email, String mobilePhone, String address, String nationalID) {
-        // TODO implement here
-        return null;
+    private Customer buildCustomer(String fullName, String email, String mobilePhone,
+            String address, String nationalID) {
+        Customer customer = new Customer();
+        customer.setFullName(fullName.trim());
+        customer.setEmail(email.trim());
+        customer.setPhoneNumber(mobilePhone.trim());
+        customer.setAddress(address != null ? address.trim() : "");
+        customer.setNationalID(nationalID != null ? nationalID.trim() : "");
+        customer.setPassword("changeme"); // Default password for admin-created customers
+        customer.setRole("CUSTOMER");
+        customer.setTier("SILVER"); // Default tier
+        customer.setStatus("ACTIVE");
+        return customer;
     }
-
 }

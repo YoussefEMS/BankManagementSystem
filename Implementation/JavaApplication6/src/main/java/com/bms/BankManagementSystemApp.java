@@ -3,8 +3,19 @@ package com.bms;
 import com.bms.persistence.AuthContext;
 import com.bms.presentation.AccountBalanceScreen;
 import com.bms.presentation.AccountSelectionScreen;
+import com.bms.presentation.AdminDashboard;
+import com.bms.presentation.ApplyForLoanForm;
+import com.bms.presentation.CreateCustomerProfileForm;
+import com.bms.presentation.DepositCashForm;
+import com.bms.presentation.LoanReviewForm;
+import com.bms.presentation.LoanStatusView;
 import com.bms.presentation.LoginScreen;
+import com.bms.presentation.MonthlyInterestJob;
+import com.bms.presentation.OverdraftAlertView;
 import com.bms.presentation.TransactionHistoryScreen;
+import com.bms.presentation.TransferFundsForm;
+import com.bms.presentation.UpdateAccountStatusForm;
+import com.bms.presentation.WithdrawCashForm;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -25,6 +36,7 @@ public class BankManagementSystemApp extends Application {
     private AccountSelectionScreen accountSelectionScreen;
     private AccountBalanceScreen accountBalanceScreen;
     private TransactionHistoryScreen transactionHistoryScreen;
+    private AdminDashboard adminDashboard;
     private Stage primaryStage;
 
     @Override
@@ -32,11 +44,12 @@ public class BankManagementSystemApp extends Application {
         try {
             this.primaryStage = primaryStage;
 
-            // Initialize screens
+            // Initialize core screens
             loginScreen = new LoginScreen();
             accountSelectionScreen = new AccountSelectionScreen();
             accountBalanceScreen = new AccountBalanceScreen();
             transactionHistoryScreen = new TransactionHistoryScreen();
+            adminDashboard = new AdminDashboard();
 
             // Setup navigation callbacks
             setupNavigationCallbacks();
@@ -68,14 +81,75 @@ public class BankManagementSystemApp extends Application {
      * Setup navigation callbacks between screens
      */
     private void setupNavigationCallbacks() {
-        // Login success -> go to account selection
-        loginScreen.setOnLoginSuccess(this::showAccountSelectionScreen);
+        // Login success -> role-based routing
+        loginScreen.setOnLoginSuccess(() -> {
+            if (AuthContext.getInstance().isAdmin()) {
+                showAdminDashboard();
+            } else {
+                showAccountSelectionScreen();
+            }
+        });
 
         // Account selection -> go to account balance
         accountSelectionScreen.setOnAccountSelected(this::showAccountBalanceScreen);
 
         // Logout from any screen -> back to login
         accountSelectionScreen.setOnLogout(this::showLoginScreen);
+
+        // --- Admin Dashboard callbacks ---
+        adminDashboard.setOnCreateCustomer(() -> {
+            CreateCustomerProfileForm form = new CreateCustomerProfileForm();
+            form.setOnBack(this::showAdminDashboard);
+            root.setCenter(form.getRoot());
+        });
+
+        adminDashboard.setOnDeposit(() -> {
+            DepositCashForm form = new DepositCashForm();
+            form.setOnBack(this::showAdminDashboard);
+            root.setCenter(form.getRoot());
+        });
+
+        adminDashboard.setOnWithdraw(() -> {
+            WithdrawCashForm form = new WithdrawCashForm();
+            form.setOnBack(this::showAdminDashboard);
+            root.setCenter(form.getRoot());
+        });
+
+        adminDashboard.setOnUpdateAccountStatus(() -> {
+            UpdateAccountStatusForm form = new UpdateAccountStatusForm();
+            form.setOnBack(this::showAdminDashboard);
+            root.setCenter(form.getRoot());
+        });
+
+        adminDashboard.setOnReviewLoans(() -> {
+            LoanReviewForm form = new LoanReviewForm();
+            form.setOnBack(this::showAdminDashboard);
+            root.setCenter(form.getRoot());
+        });
+
+        adminDashboard.setOnPostInterest(() -> {
+            MonthlyInterestJob form = new MonthlyInterestJob();
+            form.setOnBack(this::showAdminDashboard);
+            root.setCenter(form.getRoot());
+        });
+
+        adminDashboard.setOnViewOverdrafts(() -> {
+            OverdraftAlertView form = new OverdraftAlertView();
+            form.setOnBack(this::showAdminDashboard);
+            root.setCenter(form.getRoot());
+        });
+
+        adminDashboard.setOnViewBalance(() -> {
+            accountBalanceScreen.refreshAccounts();
+            root.setCenter(accountBalanceScreen.getRoot());
+            root.setTop(createMenuBar());
+        });
+
+        adminDashboard.setOnViewTransactionHistory(() -> {
+            transactionHistoryScreen.refreshAccounts();
+            root.setCenter(transactionHistoryScreen.getRoot());
+            root.setTop(createMenuBar());
+        });
     }
 
     /**
@@ -88,7 +162,16 @@ public class BankManagementSystemApp extends Application {
     }
 
     /**
-     * Show account selection screen
+     * Show admin dashboard
+     */
+    private void showAdminDashboard() {
+        adminDashboard.refresh();
+        root.setCenter(adminDashboard.getRoot());
+        root.setTop(createAdminMenuBar());
+    }
+
+    /**
+     * Show account selection screen (customer flow)
      */
     private void showAccountSelectionScreen() {
         accountSelectionScreen.refreshAccounts();
@@ -102,7 +185,6 @@ public class BankManagementSystemApp extends Application {
      */
     private void showAccountBalanceScreen() {
         accountBalanceScreen.refreshAccounts();
-        // Create menu bar
         MenuBar menuBar = createMenuBar();
         root.setTop(menuBar);
         root.setCenter(accountBalanceScreen.getRoot());
@@ -126,11 +208,12 @@ public class BankManagementSystemApp extends Application {
         accountSelectionScreen = new AccountSelectionScreen();
         accountBalanceScreen = new AccountBalanceScreen();
         transactionHistoryScreen = new TransactionHistoryScreen();
+        adminDashboard = new AdminDashboard();
         setupNavigationCallbacks();
     }
 
     /**
-     * Create menu bar with navigation options
+     * Create menu bar for customer screens
      */
     private MenuBar createMenuBar() {
         MenuBar menuBar = new MenuBar();
@@ -152,16 +235,28 @@ public class BankManagementSystemApp extends Application {
         // Account menu
         Menu accountMenu = new Menu("Account");
 
-        MenuItem depositItem = new MenuItem("Deposit");
-        depositItem.setOnAction(event -> showAlert("Deposit", "Deposit feature"));
+        MenuItem transferItem = new MenuItem("Transfer Funds");
+        transferItem.setOnAction(event -> {
+            TransferFundsForm form = new TransferFundsForm();
+            form.setOnBack(this::showAccountSelectionScreen);
+            root.setCenter(form.getRoot());
+        });
 
-        MenuItem withdrawItem = new MenuItem("Withdraw");
-        withdrawItem.setOnAction(event -> showAlert("Withdraw", "Withdraw feature"));
+        MenuItem loanStatusItem = new MenuItem("My Loans");
+        loanStatusItem.setOnAction(event -> {
+            LoanStatusView view = new LoanStatusView();
+            view.setOnBack(this::showAccountSelectionScreen);
+            root.setCenter(view.getRoot());
+        });
 
-        MenuItem transferItem = new MenuItem("Transfer");
-        transferItem.setOnAction(event -> showAlert("Transfer", "Transfer feature"));
+        MenuItem applyLoanItem = new MenuItem("Apply for Loan");
+        applyLoanItem.setOnAction(event -> {
+            ApplyForLoanForm form = new ApplyForLoanForm();
+            form.setOnBack(this::showAccountSelectionScreen);
+            root.setCenter(form.getRoot());
+        });
 
-        accountMenu.getItems().addAll(depositItem, withdrawItem, transferItem);
+        accountMenu.getItems().addAll(transferItem, loanStatusItem, applyLoanItem);
 
         // User menu
         Menu userMenu = new Menu("User");
@@ -180,13 +275,32 @@ public class BankManagementSystemApp extends Application {
     }
 
     /**
-     * Show alert dialog
+     * Create menu bar for admin screens
      */
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
+    private MenuBar createAdminMenuBar() {
+        MenuBar menuBar = new MenuBar();
+
+        Menu navMenu = new Menu("Navigation");
+
+        MenuItem dashboardItem = new MenuItem("Dashboard");
+        dashboardItem.setOnAction(event -> showAdminDashboard());
+
+        navMenu.getItems().add(dashboardItem);
+
+        // User menu
+        Menu userMenu = new Menu("User");
+
+        MenuItem logoutItem = new MenuItem("Logout");
+        logoutItem.setOnAction(event -> {
+            AuthContext.getInstance().logout();
+            resetAll();
+            showLoginScreen();
+        });
+
+        userMenu.getItems().add(logoutItem);
+
+        menuBar.getMenus().addAll(navMenu, userMenu);
+        return menuBar;
     }
 
     /**

@@ -1,71 +1,116 @@
 package com.bms.presentation;
 
-import java.util.Set;
+import com.bms.domain.controller.LoanApplicationHandler;
+import com.bms.persistence.AuthContext;
 
-import com.bms.domain.entity.Loan;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 /**
- * 
+ * ApplyForLoanForm - UC-09: Customer loan application
  */
 public class ApplyForLoanForm {
+    private final VBox root;
+    private final LoanApplicationHandler controller;
 
-    /**
-     * Default constructor
-     */
+    private TextField amountField;
+    private ComboBox<String> loanTypeCombo;
+    private TextField durationField;
+    private TextField purposeField;
+    private Label statusLabel;
+
+    private Runnable onBack;
+
     public ApplyForLoanForm() {
+        this.controller = new LoanApplicationHandler();
+        this.root = createLayout();
     }
 
-    /**
-     * 
-     */
-    private double loanAmount;
+    private VBox createLayout() {
+        VBox layout = new VBox(12);
+        layout.setPadding(new Insets(30));
+        layout.setAlignment(Pos.TOP_CENTER);
+        layout.setMaxWidth(500);
 
-    /**
-     * 
-     */
-    private String loanType;
+        Label title = new Label("Apply for a Loan");
+        title.setFont(Font.font("System", FontWeight.BOLD, 20));
 
-    /**
-     * 
-     */
-    private int durationMonths;
+        amountField = new TextField();
+        amountField.setPromptText("Loan Amount (USD)");
 
-    /**
-     * 
-     */
-    private String purpose;
+        loanTypeCombo = new ComboBox<>();
+        loanTypeCombo.getItems().addAll("PERSONAL", "HOME", "AUTO");
+        loanTypeCombo.setPromptText("Loan Type");
 
-    /**
-     * 
-     */
-    private String statusMessage;
+        durationField = new TextField();
+        durationField.setPromptText("Duration (months)");
 
+        purposeField = new TextField();
+        purposeField.setPromptText("Purpose");
 
-    /**
-     * @param amount 
-     * @param loanType 
-     * @param durationMonths 
-     * @param purpose 
-     * @return
-     */
-    public void enterLoanData(double amount, String loanType, int durationMonths, String purpose) {
+        Button submitBtn = new Button("Submit Application");
+        submitBtn.setPrefWidth(200);
+        submitBtn.setStyle("-fx-font-size: 14px; -fx-background-color: #1976d2; -fx-text-fill: white;");
+        submitBtn.setOnAction(e -> handleSubmit());
 
+        Button backBtn = new Button("Back");
+        backBtn.setOnAction(e -> {
+            if (onBack != null)
+                onBack.run();
+        });
+
+        statusLabel = new Label();
+        statusLabel.setWrapText(true);
+
+        layout.getChildren().addAll(title, amountField, loanTypeCombo,
+                durationField, purposeField, submitBtn, statusLabel, backBtn);
+        return layout;
     }
 
-    /**
-     * @return
-     */
-    public void submitApplication() {
-        // TODO implement here
+    private void handleSubmit() {
+        try {
+            double amount = Double.parseDouble(amountField.getText().trim());
+            int duration = Integer.parseInt(durationField.getText().trim());
+            String loanType = loanTypeCombo.getValue();
+            String purpose = purposeField.getText().trim();
+
+            if (loanType == null) {
+                statusLabel.setStyle("-fx-text-fill: red;");
+                statusLabel.setText("Please select a loan type.");
+                return;
+            }
+
+            int customerId = AuthContext.getInstance().getLoggedInCustomerId();
+            int loanId = controller.applyForLoan(customerId, amount, loanType, duration, purpose);
+
+            if (loanId > 0) {
+                statusLabel.setStyle("-fx-text-fill: green;");
+                statusLabel.setText("Loan application submitted! Loan ID: " + loanId + " (Status: PENDING)");
+                amountField.clear();
+                durationField.clear();
+                purposeField.clear();
+            } else {
+                statusLabel.setStyle("-fx-text-fill: red;");
+                statusLabel.setText("Error: Please check all fields.");
+            }
+        } catch (NumberFormatException ex) {
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Error: Amount and duration must be valid numbers.");
+        }
     }
 
-    /**
-     * @param loanId 
-     * @param loans 
-     * @return
-     */
-    public void displayConfirmation(int loanId, Set<Loan> loans) {
-        // TODO implement here
+    public VBox getRoot() {
+        return root;
     }
 
+    public void setOnBack(Runnable callback) {
+        this.onBack = callback;
+    }
 }

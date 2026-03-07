@@ -1,100 +1,78 @@
 package com.bms.domain.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
- * 
+ * OverdraftEvent Entity - represents an overdraft event on an account
+ * Domain layer entity - no dependencies on DAO or data layer
  */
 public class OverdraftEvent {
+    private int overdraftId;
+    private String accountNumber;
+    private int transactionId;
+    private double amount;
+    private LocalDateTime timestamp;
+    private boolean alertSent;
 
-    /**
-     * Default constructor
-     */
     public OverdraftEvent() {
     }
 
-    /**
-     * 
-     */
-    private int overdraftID;
-
-    /**
-     * 
-     */
-    private String accountNumber;
-
-    /**
-     * 
-     */
-    private Date timestamp;
-
-    /**
-     * 
-     */
-    private double amount;
-
-    /**
-     * 
-     */
-    private boolean alertSent;
-
-    /**
-     * 
-     */
-    private int transactionID;
-
-
-
-    /**
-     * @param accountNumber 
-     * @param transactionID 
-     * @param timestamp 
-     * @param amount 
-     * @param alertSent 
-     * @return
-     */
-    public void create(String accountNumber, int transactionID, Date timestamp, double amount, boolean alertSent) {
-        // TODO implement here
+    // Getters and Setters
+    public int getOverdraftId() {
+        return overdraftId;
     }
 
-    /**
-     * @return
-     */
-    public int getOverDraftID() {
-        // TODO implement here
-        return 0;
+    public void setOverdraftId(int overdraftId) {
+        this.overdraftId = overdraftId;
     }
 
-    /**
-     * @return
-     */
     public String getAccountNumber() {
-        // TODO implement here
-        return null;
+        return accountNumber;
     }
 
-    /**
-     * @return
-     */
-    public Date getTimeStamp() {
-        // TODO implement here
-        return null;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
-    /**
-     * @return
-     */
+    public int getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
+    }
+
     public double getAmount() {
-        // TODO implement here
-        return 0;
+        return amount;
     }
 
-    /**
-     * @return
-     */
-    public int getTransactionID() {
-        // TODO implement here
-        return 0;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public boolean isAlertSent() {
+        return alertSent;
+    }
+
+    public void setAlertSent(boolean alertSent) {
+        this.alertSent = alertSent;
+    }
+
+    @Override
+    public String toString() {
+        return "OverdraftEvent{" +
+                "overdraftId=" + overdraftId +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", amount=" + amount +
+                ", alertSent=" + alertSent +
+                '}';
+    }
 }

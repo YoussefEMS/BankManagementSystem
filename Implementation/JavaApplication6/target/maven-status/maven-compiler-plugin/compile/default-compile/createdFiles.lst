@@ -24,6 +24,7 @@ com\bms\domain\controller\AuthenticationController.class
 com\bms\persistence\TransferDAO.class
 com\bms\domain\controller\DepositHandler.class
 com\bms\presentation\TransactionHistoryScreen.class
+com\bms\presentation\AdminDashboard.class
 com\bms\presentation\OverdraftAlertView.class
 com\bms\presentation\LoginScreen.class
 com\bms\domain\controller\OverdraftHandler.class

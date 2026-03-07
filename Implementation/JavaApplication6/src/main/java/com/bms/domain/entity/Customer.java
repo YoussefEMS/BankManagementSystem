@@ -13,6 +13,7 @@ public class Customer {
     private String email;
     private String password;
     private String customerTier;
+    private String role;
     private String status;
 
     /**
@@ -24,8 +25,9 @@ public class Customer {
     /**
      * Constructor with all fields
      */
-    public Customer(int customerID, String fullName, String nationalID, String email, 
-                   String password, String address, String phoneNumber, String customerTier, String status) {
+    public Customer(int customerID, String fullName, String nationalID, String email,
+            String password, String address, String phoneNumber, String customerTier,
+            String role, String status) {
         this.customerID = customerID;
         this.fullName = fullName;
         this.nationalID = nationalID;
@@ -34,6 +36,7 @@ public class Customer {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.customerTier = customerTier;
+        this.role = role != null ? role : "CUSTOMER";
         this.status = status;
     }
 
@@ -102,6 +105,14 @@ public class Customer {
         this.customerTier = tier;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -117,6 +128,7 @@ public class Customer {
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
                 ", tier='" + customerTier + '\'' +
+                ", role='" + role + '\'' +
                 ", status='" + status + '\'' +
                 '}';
     }

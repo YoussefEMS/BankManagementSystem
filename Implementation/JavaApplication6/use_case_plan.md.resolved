@@ -1,0 +1,331 @@
+# Bank Management System — Use Case Implementation Plan
+
+## Current Status Summary
+
+| Status | Count | Use Cases |
+|--------|-------|-----------|
+| ✅ Fully Implemented | 3 | UC-01 Login, UC-02 View Balance, UC-04 View Transaction History |
+| 🔴 Stub Only (TODO) | 10 | UC-03, UC-05 – UC-13 (see below) |
+
+---
+
+## ✅ Implemented Use Cases
+
+### UC-01: Customer Login / Authentication
+| Layer | Class | Status |
+|-------|-------|--------|
+| Presentation | [LoginScreen.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/LoginScreen.java), [AccountSelectionScreen.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/AccountSelectionScreen.java) | ✅ |
+| Controller | [AuthenticationController.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AuthenticationController.java) | ✅ |
+| Persistence | [CustomerDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/CustomerDAO.java), [AuthContext.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/AuthContext.java) | ✅ |
+| DB Table | [Customer](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Customer.java#7-124) | ✅ |
+
+### UC-02: View Account Balance
+| Layer | Class | Status |
+|-------|-------|--------|
+| Presentation | [AccountBalanceScreen.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/AccountBalanceScreen.java) | ✅ |
+| Controller | [AccountBalanceController.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AccountBalanceController.java) | ✅ |
+| Persistence | [AccountDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/AccountDAO.java) | ✅ |
+| DB Table | [Account](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Account.java#10-101) | ✅ |
+
+### UC-04: View Transaction History
+| Layer | Class | Status |
+|-------|-------|--------|
+| Presentation | [TransactionHistoryScreen.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/TransactionHistoryScreen.java) | ✅ |
+| Controller | [TransactionHistoryController.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransactionHistoryController.java) | ✅ |
+| Persistence | [TransactionDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/TransactionDAO.java) | ✅ |
+| DB Table | `Transactions` | ✅ |
+
+---
+
+## 🔴 Unimplemented Use Cases
+
+> [!IMPORTANT]
+> All classes below exist as **stubs** — the class files are present with the correct method signatures, but every method body contains `// TODO implement here` and returns a placeholder value (`null`, `0`, or `false`).
+
+---
+
+### UC-03: Create Customer Profile
+
+**Goal:** Allow new customers to register in the system.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Presentation | [CreateCustomerProfileForm.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/CreateCustomerProfileForm.java) | 3 TODOs — build UI form, handle submit, display result |
+| Controller | [CustomerProfileController.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/CustomerProfileController.java) | [createCustomerProfile()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/CustomerProfileController.java#19-31), [validateInput()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/CustomerProfileController.java#32-42), [isEmailUnique()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/CustomerProfileController.java#43-51), [buildCustomer()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/CustomerProfileController.java#52-64) |
+| Persistence | [CustomerDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/CustomerDAO.java) | Needs `insert(Customer)` method |
+| DB Table | [Customer](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Customer.java#7-124) | ✅ Already exists |
+
+**Work required:**
+- Implement input validation (name, email format, phone)
+- Check email uniqueness via `CustomerDAO`
+- Build [Customer](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Customer.java#7-124) entity and persist via `CustomerDAO.insert()`
+- Build JavaFX form with fields: full name, email, mobile phone, address, national ID
+- Wire form submission to controller
+
+---
+
+### UC-05: Deposit Cash
+
+**Goal:** Allow a customer to deposit money into an account.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Presentation | [DepositCashForm.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/DepositCashForm.java) | 4 TODOs — build UI, handle submit, display confirmation, reset |
+| Controller | [DepositHandler.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/DepositHandler.java) | [postDeposit()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/DepositHandler.java#22-32), [validateAmount()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransferHandler.java#35-43), [getAccount()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/DepositHandler.java#42-50), [recordDepositTx()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/DepositHandler.java#51-62) |
+| Persistence | [AccountDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/AccountDAO.java) | Needs `updateBalance()` method |
+| Persistence | [TransactionDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/TransactionDAO.java) | Needs `insert(Transaction)` method |
+| DB Table | [Account](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Account.java#10-101), `Transactions` | ✅ Already exist |
+
+**Work required:**
+- Validate amount > 0
+- Look up and verify the account exists and is ACTIVE
+- Update account balance (`balance += amount`)
+- Record a [Deposit](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/DepositHandler.java#22-32) transaction with `balance_after`
+- Build JavaFX form: account selector (dropdown), amount field, description, submit button
+
+---
+
+### UC-06: Withdraw Cash
+
+**Goal:** Allow a customer to withdraw money from an account.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Presentation | [WithdrawCashForm.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/WithdrawCashForm.java) | 5 TODOs — build UI, handle submit, validations, display result, reset |
+| Controller | [WithdrawCashController.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/WithdrawCashController.java) | [withdrawCash()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/WithdrawCashController.java#20-30), [validateAccountExistsAndActive()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/WithdrawCashController.java#31-39), [validateAmount()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransferHandler.java#35-43), [authorizeWithdraw()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/WithdrawCashController.java#49-56), [checkSufficientFunds()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/WithdrawCashController.java#57-66), [recordWithdrawalTx()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/WithdrawCashController.java#67-78) |
+| Persistence | [AccountDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/AccountDAO.java) | Needs `updateBalance()` |
+| Persistence | [TransactionDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/TransactionDAO.java) | Needs `insert(Transaction)` |
+| DB Table | [Account](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Account.java#10-101), `Transactions` | ✅ Already exist |
+
+**Work required:**
+- Validate amount > 0 and account exists / is ACTIVE
+- Check sufficient funds (`balance >= amount`)
+- Authorize the withdrawal (verify the logged-in customer owns the account)
+- Deduct balance (`balance -= amount`)
+- Record a [Withdrawal](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/WithdrawCashController.java#67-78) transaction with `balance_after`
+- Trigger overdraft check if balance drops below 0 (calls [OverdraftHandler](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/OverdraftHandler.java#8-42))
+- Build JavaFX form: account selector, amount, description, submit
+
+---
+
+### UC-07: Transfer Funds
+
+**Goal:** Transfer money between two accounts.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Entity | [Transfer.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Transfer.java) | [createTransfer()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Transfer.java#52-63), all getters return `null`/`0` |
+| Presentation | [TransferFundsForm.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/TransferFundsForm.java) | 3 TODOs — build UI, handle submit, display result |
+| Controller | [TransferHandler.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransferHandler.java) | [transferFunds()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransferHandler.java#23-34), [validateAmount()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransferHandler.java#35-43), [generateReferenceCode()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransferHandler.java#44-51) |
+| Persistence | [TransferDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/TransferDAO.java) | 1 TODO — `insert(Transfer)` |
+| DB Table | **[Transfer](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Transfer.java#8-113) — MISSING** | 🔴 Needs to be created |
+
+**Work required:**
+- **Create [Transfer](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Transfer.java#8-113) DB table** in [schema.sql](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/resources/db/schema.sql)
+- Implement [Transfer](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Transfer.java#8-113) entity getters/setters and [createTransfer()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Transfer.java#52-63)
+- Validate amount > 0, source ≠ destination, sufficient funds
+- Debit source account, credit destination account
+- Record two [Transaction](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Transaction.java#10-124) rows (TransferDebit + TransferCredit) and one [Transfer](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Transfer.java#8-113) row
+- Generate a unique reference code
+- Build JavaFX form: source account dropdown, destination account text field, amount, submit
+
+---
+
+### UC-08: Update Account Status (Admin)
+
+**Goal:** Allow an admin to activate, freeze, or close an account.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Presentation | [UpdateAccountStatusForm.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/UpdateAccountStatusForm.java) | 4 TODOs — build UI, handle submit, validation, display result |
+| Controller | [AccountStatusHandler.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AccountStatusHandler.java) | [updateAccountStatus()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AccountStatusHandler.java#18-27), [validateNewStatus()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AccountStatusHandler.java#28-36) |
+| Persistence | [AccountDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/AccountDAO.java) | Needs [updateStatus()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java#60-67) method |
+| DB Table | [Account](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Account.java#10-101) | ✅ Already exists |
+
+**Work required:**
+- Validate new status is one of: ACTIVE, FROZEN, CLOSED
+- Verify admin authorization
+- Update account status in DB
+- Build JavaFX form: account number input, status dropdown, submit
+
+---
+
+### UC-09: Apply for Loan
+
+**Goal:** Allow a customer to submit a loan application.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Entity | [Loan.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java) | All getters return `null`/`0`, [updateStatus()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java#60-67) is empty |
+| Presentation | [ApplyForLoanForm.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/ApplyForLoanForm.java) | 2 TODOs — build UI form, handle submit |
+| Controller | [LoanApplicationHandler.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanApplicationHandler.java) | [applyForLoan()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanApplicationHandler.java#22-34), [validateInputs()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanApplicationHandler.java#35-46), [now()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanApplicationHandler.java#47-54) |
+| Persistence | [LoanDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/LoanDAO.java) | 6 TODOs — all CRUD operations |
+| DB Table | **[Loan](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java#8-69) — MISSING** | 🔴 Needs to be created |
+
+**Work required:**
+- **Create [Loan](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java#8-69) DB table** in [schema.sql](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/resources/db/schema.sql) (columns: id, customer_id, amount, loan_type, duration_months, purpose, status, submission_date, decision_date)
+- Implement [Loan](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java#8-69) entity fully (getters, setters, [updateStatus()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java#60-67))
+- Validate inputs (amount > 0, valid loan type, duration > 0, purpose not empty)
+- Persist loan with status `PENDING`
+- Build JavaFX form: amount, loan type dropdown, duration, purpose text area, submit
+
+---
+
+### UC-10: Review / Decide on Loan (Admin)
+
+**Goal:** Allow an admin to approve or reject pending loan applications.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Presentation | [LoanReviewForm.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/LoanReviewForm.java) | 6 TODOs — load pending loans, display details, handle decision, notification |
+| Controller | [LoanDecisionHandler.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanDecisionHandler.java) | [getPendingLoans()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanDecisionHandler.java#22-29), [getLoanDetails()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanDecisionHandler.java#30-38), [decideLoan()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanDecisionHandler.java#39-47), [now()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanApplicationHandler.java#47-54) |
+| Persistence | [LoanDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/LoanDAO.java) | Shared with UC-09 |
+| DB Table | **[Loan](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java#8-69) — MISSING** | 🔴 (same as UC-09) |
+
+**Work required:**
+- Fetch all loans with status `PENDING`
+- Display loan details for review
+- Allow admin to Approve / Reject with decision timestamp
+- Update loan status in DB
+- Build JavaFX UI: pending loans table, detail panel, approve/reject buttons
+
+---
+
+### UC-11: View Loan Status
+
+**Goal:** Allow a customer to view the status of their loans.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Presentation | [LoanStatusView.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/LoanStatusView.java) | 4 TODOs — build UI, load loans, filter, display |
+| Controller | [LoanStatusController.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanStatusController.java) | [getLoansForCustomer()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanStatusController.java#17-26), [determineUserRole()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanStatusController.java#27-34) |
+| Persistence | [LoanDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/LoanDAO.java) | Shared with UC-09/UC-10 |
+| DB Table | **[Loan](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java#8-69) — MISSING** | 🔴 (same as UC-09) |
+
+**Work required:**
+- Fetch loans for a given customer ID with optional status filter
+- Display loans in a table (ID, amount, type, status, submission date)
+- Build JavaFX UI: filter dropdown (All / Pending / Approved / Rejected), loan table
+
+---
+
+### UC-12: Post Monthly Interest (Automated/Admin)
+
+**Goal:** Calculate and post monthly interest to eligible (savings) accounts.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Entity | [InterestPosting.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/InterestPosting.java) | [createSuccess()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/InterestPosting.java#41-51) empty |
+| Presentation | [MonthlyInterestJob.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/MonthlyInterestJob.java) | 1 TODO — trigger interest posting |
+| Controller | [MonthlyInterestHandler.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/MonthlyInterestHandler.java) | [postMonthlyInterest()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/MonthlyInterestHandler.java#26-34), [now()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanApplicationHandler.java#47-54), [getMonthlyRate()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/MonthlyInterestHandler.java#43-51) |
+| Persistence | [InterestPostingDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/InterestPostingDAO.java) | 1 TODO — `insert(InterestPosting)` |
+| DB Table | **[InterestPosting](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/InterestPosting.java#8-53) — MISSING** | 🔴 Needs to be created |
+
+**Work required:**
+- **Create [InterestPosting](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/InterestPosting.java#8-53) DB table** (posting_id, account_number, amount, timestamp, rate_used)
+- Iterate over all ACTIVE savings accounts
+- Calculate interest: `balance * monthlyRate`
+- Credit interest to account balance
+- Record an [InterestPosting](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/InterestPosting.java#8-53) transaction + insert into [InterestPosting](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/InterestPosting.java#8-53) table
+- Build or configure a trigger/button in UI to run the job
+
+---
+
+### UC-13: Overdraft Detection & Alert
+
+**Goal:** Detect when a withdrawal causes an overdraft and create an alert.
+
+| Layer | Class | Stub Methods |
+|-------|-------|-------------|
+| Entity | [OverdraftEvent.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/OverdraftEvent.java) | [create()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/OverdraftEvent.java#48-59) and all getters return `null`/`0` |
+| Presentation | [OverdraftAlertView.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/OverdraftAlertView.java) | 1 TODO — display alerts |
+| Controller | [OverdraftHandler.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/OverdraftHandler.java) | [checkOverdraft()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/OverdraftHandler.java#30-40) |
+| Persistence | [OverdraftEventDAO.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/OverdraftEventDAO.java) | 1 TODO — `insert(OverdraftEvent)` |
+| DB Table | **[OverdraftEvent](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/OverdraftEvent.java#8-101) — MISSING** | 🔴 Needs to be created |
+
+**Work required:**
+- **Create [OverdraftEvent](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/OverdraftEvent.java#8-101) DB table** (overdraft_id, account_number, transaction_id, timestamp, amount, alert_sent)
+- After any withdrawal/transfer, check if new balance < 0
+- If overdraft detected: create [OverdraftEvent](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/OverdraftEvent.java#8-101), mark `alert_sent`
+- Build JavaFX view to display overdraft alerts for the logged-in customer
+
+---
+
+## DB Schema Changes Required
+
+The current [schema.sql](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/resources/db/schema.sql) only has 3 tables. The following **4 new tables** are needed:
+
+```sql
+-- Transfer Table
+CREATE TABLE [Transfer] (
+    transfer_id   INT IDENTITY(1,1) PRIMARY KEY,
+    from_account  NVARCHAR(50) NOT NULL REFERENCES [Account](account_number),
+    to_account    NVARCHAR(50) NOT NULL REFERENCES [Account](account_number),
+    amount        DECIMAL(18,2) NOT NULL,
+    timestamp     DATETIME2 DEFAULT SYSDATETIME(),
+    reference_code NVARCHAR(100) UNIQUE,
+    status        NVARCHAR(50) DEFAULT 'COMPLETED'
+);
+
+-- Loan Table
+CREATE TABLE [Loan] (
+    loan_id        INT IDENTITY(1,1) PRIMARY KEY,
+    customer_id    INT NOT NULL REFERENCES [Customer](customer_id),
+    amount         DECIMAL(18,2) NOT NULL,
+    loan_type      NVARCHAR(50),
+    duration_months INT,
+    purpose        NVARCHAR(500),
+    status         NVARCHAR(50) DEFAULT 'PENDING',
+    submission_date DATETIME2 DEFAULT SYSDATETIME(),
+    decision_date  DATETIME2
+);
+
+-- InterestPosting Table
+CREATE TABLE [InterestPosting] (
+    posting_id     INT IDENTITY(1,1) PRIMARY KEY,
+    account_number NVARCHAR(50) NOT NULL REFERENCES [Account](account_number),
+    amount         DECIMAL(18,2) NOT NULL,
+    timestamp      DATETIME2 DEFAULT SYSDATETIME(),
+    rate_used      DECIMAL(8,6) NOT NULL
+);
+
+-- OverdraftEvent Table
+CREATE TABLE [OverdraftEvent] (
+    overdraft_id   INT IDENTITY(1,1) PRIMARY KEY,
+    account_number NVARCHAR(50) NOT NULL REFERENCES [Account](account_number),
+    transaction_id INT REFERENCES [Transactions](transaction_id),
+    timestamp      DATETIME2 DEFAULT SYSDATETIME(),
+    amount         DECIMAL(18,2) NOT NULL,
+    alert_sent     BIT DEFAULT 0
+);
+```
+
+---
+
+## Recommended Implementation Order
+
+> [!TIP]
+> Implement in this order to minimize dependency blockers (each use case builds on the previous ones).
+
+| Priority | Use Case | Rationale |
+|----------|----------|-----------|
+| 1 | **UC-03** Create Customer Profile | No new tables needed; unlocks self-registration |
+| 2 | **UC-05** Deposit Cash | Core banking operation; needs `AccountDAO.updateBalance()` + `TransactionDAO.insert()` which are reused by all later UCs |
+| 3 | **UC-06** Withdraw Cash | Reuses deposit infrastructure; adds fund-check logic |
+| 4 | **UC-13** Overdraft Alert | Natural extension of withdrawal; adds the [OverdraftEvent](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/OverdraftEvent.java#8-101) table |
+| 5 | **UC-07** Transfer Funds | Combines deposit + withdrawal + adds [Transfer](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Transfer.java#8-113) table |
+| 6 | **UC-08** Update Account Status | Simple admin feature; no new tables |
+| 7 | **UC-09** Apply for Loan | Adds [Loan](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/Loan.java#8-69) table; independent of transfer/deposit |
+| 8 | **UC-10** Review Loan | Extends UC-09; admin operation |
+| 9 | **UC-11** View Loan Status | Read-only; depends on UC-09 data |
+| 10 | **UC-12** Monthly Interest | Batch operation; adds [InterestPosting](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/entity/InterestPosting.java#8-53) table; can be done last |
+
+---
+
+## App Navigation Integration
+
+The main app ([BankManagementSystemApp.java](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/BankManagementSystemApp.java)) currently only navigates to 4 screens and shows placeholder alerts for Deposit/Withdraw/Transfer. Each new use case needs:
+
+1. A `show<ScreenName>()` method added to [BankManagementSystemApp](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/BankManagementSystemApp.java#22-213)
+2. A menu item wired to that method in [createMenuBar()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/BankManagementSystemApp.java#132-181)
+3. The screen initialized in [start()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/BankManagementSystemApp.java#30-66) and reset in [resetAll()](file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/BankManagementSystemApp.java#121-131)

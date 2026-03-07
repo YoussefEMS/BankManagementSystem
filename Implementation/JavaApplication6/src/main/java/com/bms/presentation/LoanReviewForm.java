@@ -1,85 +1,144 @@
 package com.bms.presentation;
 
-import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
+import com.bms.domain.controller.LoanDecisionHandler;
 import com.bms.domain.entity.Loan;
 
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
 /**
- * 
+ * LoanReviewForm - UC-10: Admin reviews pending loans
  */
 public class LoanReviewForm {
+    private final VBox root;
+    private final LoanDecisionHandler controller;
 
-    /**
-     * Default constructor
-     */
+    private TableView<Loan> loanTable;
+    private Label statusLabel;
+
+    private Runnable onBack;
+
     public LoanReviewForm() {
+        this.controller = new LoanDecisionHandler();
+        this.root = createLayout();
     }
 
-    /**
-     * 
-     */
-    private int selectedLoanId;
+    @SuppressWarnings("unchecked")
+    private VBox createLayout() {
+        VBox layout = new VBox(12);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.TOP_CENTER);
 
-    /**
-     * 
-     */
-    private Set<Loan> pendingLoans;
+        Label title = new Label("Loan Review — Pending Applications");
+        title.setFont(Font.font("System", FontWeight.BOLD, 20));
 
-    /**
-     * 
-     */
-    private Loan loanDetails;
+        // Table
+        loanTable = new TableView<>();
+        loanTable.setPrefHeight(300);
 
+        TableColumn<Loan, Number> idCol = new TableColumn<>("ID");
+        idCol.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getLoanId()));
+        idCol.setPrefWidth(50);
 
-    /**
-     * @return
-     */
-    public void openPendingLoans() {
-        // TODO implement here
+        TableColumn<Loan, Number> custCol = new TableColumn<>("Customer");
+        custCol.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getCustomerId()));
+        custCol.setPrefWidth(80);
+
+        TableColumn<Loan, Number> amtCol = new TableColumn<>("Amount");
+        amtCol.setCellValueFactory(data -> new SimpleDoubleProperty(data.getValue().getAmount()));
+        amtCol.setPrefWidth(100);
+
+        TableColumn<Loan, String> typeCol = new TableColumn<>("Type");
+        typeCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getLoanType()));
+        typeCol.setPrefWidth(80);
+
+        TableColumn<Loan, Number> durCol = new TableColumn<>("Months");
+        durCol.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getDurationMonths()));
+        durCol.setPrefWidth(70);
+
+        TableColumn<Loan, String> statusCol = new TableColumn<>("Status");
+        statusCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStatus()));
+        statusCol.setPrefWidth(80);
+
+        loanTable.getColumns().addAll(idCol, custCol, amtCol, typeCol, durCol, statusCol);
+
+        // Buttons
+        Button refreshBtn = new Button("Refresh");
+        refreshBtn.setOnAction(e -> loadPendingLoans());
+
+        Button approveBtn = new Button("Approve");
+        approveBtn.setStyle("-fx-background-color: #388e3c; -fx-text-fill: white;");
+        approveBtn.setOnAction(e -> handleDecision("APPROVED"));
+
+        Button rejectBtn = new Button("Reject");
+        rejectBtn.setStyle("-fx-background-color: #d32f2f; -fx-text-fill: white;");
+        rejectBtn.setOnAction(e -> handleDecision("REJECTED"));
+
+        HBox buttonRow = new HBox(10, refreshBtn, approveBtn, rejectBtn);
+        buttonRow.setAlignment(Pos.CENTER);
+
+        Button backBtn = new Button("Back");
+        backBtn.setOnAction(e -> {
+            if (onBack != null)
+                onBack.run();
+        });
+
+        statusLabel = new Label();
+        statusLabel.setWrapText(true);
+
+        layout.getChildren().addAll(title, loanTable, buttonRow, statusLabel, backBtn);
+
+        // Load data on init
+        loadPendingLoans();
+
+        return layout;
     }
 
-    /**
-     * @param loanId 
-     * @return
-     */
-    public void selectLoan(int loanId) {
-        // TODO implement here
+    private void loadPendingLoans() {
+        List<Loan> pending = controller.getPendingLoans();
+        loanTable.getItems().clear();
+        loanTable.getItems().addAll(pending);
+        statusLabel.setText("Loaded " + pending.size() + " pending loan(s).");
+        statusLabel.setStyle("-fx-text-fill: #333;");
     }
 
-    /**
-     * @param loanId 
-     * @param decision 
-     * @return
-     */
-    public void submitDecision(int loanId, String decision) {
-        // TODO implement here
+    private void handleDecision(String decision) {
+        Loan selected = loanTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Please select a loan from the table.");
+            return;
+        }
+
+        boolean success = controller.decideLoan(selected.getLoanId(), decision);
+        if (success) {
+            statusLabel.setStyle("-fx-text-fill: green;");
+            statusLabel.setText("Loan #" + selected.getLoanId() + " " + decision);
+            loadPendingLoans();
+        } else {
+            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setText("Failed to update loan.");
+        }
     }
 
-    /**
-     * @param loans 
-     * @return
-     */
-    public void displayLoanList(Set<Loan> loans) {
-        // TODO implement here
+    public VBox getRoot() {
+        return root;
     }
 
-    /**
-     * @param loan 
-     * @return
-     */
-    public void displayLoanDetails(Loan loan) {
-        // TODO implement here
+    public void setOnBack(Runnable callback) {
+        this.onBack = callback;
     }
-
-    /**
-     * @param loanId 
-     * @param newStatus 
-     * @param decisionDate 
-     * @return
-     */
-    public void displayDecisionSuccess(int loanId, String newStatus, Date decisionDate) {
-        // TODO implement here
-    }
-
 }

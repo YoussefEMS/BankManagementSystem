@@ -28,6 +28,7 @@ C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaAp
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\domain\controller\DepositHandler.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\persistence\LoanDAO.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\domain\controller\TransactionHistoryController.java
+C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\domain\entity\TransactionFactory.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\presentation\AccountSelectionScreen.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\domain\entity\Transaction.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\domain\entity\Customer.java
@@ -39,6 +40,7 @@ C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaAp
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\domain\controller\AuthenticationController.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\domain\controller\WithdrawCashController.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\persistence\AccountDAO.java
+C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\presentation\AdminDashboard.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\presentation\TransactionHistoryScreen.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\presentation\CreateCustomerProfileForm.java
 C:\Users\Youssef\Documents\Uni\Software\Semester 1\Project\Implementation\JavaApplication6\src\main\java\com\bms\domain\controller\LoanApplicationHandler.java

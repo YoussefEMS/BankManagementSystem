@@ -26,19 +26,20 @@ public class AccountDAO {
 
     /**
      * Find all accounts for a customer
+     * 
      * @param customerId the customer ID
      * @return List of Account objects for the customer
      */
     public List<Account> findByCustomerId(int customerId) {
         List<Account> accounts = new ArrayList<>();
         String sql = "SELECT account_number, customer_id, account_type, balance, currency, status, date_opened " +
-                     "FROM [Account] WHERE customer_id = ? ORDER BY date_opened DESC";
-        
+                "FROM [Account] WHERE customer_id = ? ORDER BY date_opened DESC";
+
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, customerId);
-            
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     accounts.add(mapResultSetToAccount(rs));
@@ -48,24 +49,25 @@ public class AccountDAO {
             System.err.println("Error finding accounts for customer: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return accounts;
     }
 
     /**
      * Find an account by account number
+     * 
      * @param accountNumber the account number to search for
      * @return Account if found, null otherwise
      */
     public Account findByAccountNo(String accountNumber) {
         String sql = "SELECT account_number, customer_id, account_type, balance, currency, status, date_opened " +
-                     "FROM [Account] WHERE account_number = ?";
-        
+                "FROM [Account] WHERE account_number = ?";
+
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, accountNumber);
-            
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToAccount(rs);
@@ -75,7 +77,7 @@ public class AccountDAO {
             System.err.println("Error finding account: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return null; // Not found
     }
 
@@ -90,31 +92,77 @@ public class AccountDAO {
         account.setBalance(rs.getBigDecimal("balance"));
         account.setCurrency(rs.getString("currency"));
         account.setStatus(rs.getString("status"));
-        
+
         Timestamp dateOpened = rs.getTimestamp("date_opened");
         if (dateOpened != null) {
             account.setDateOpened(dateOpened.toLocalDateTime());
         }
-        
+
         return account;
     }
 
     /**
-     * Update account balance (optional, not required for UC-02 and UC-04)
+     * Update account balance
      */
     public void updateBalance(String accountNumber, BigDecimal newBalance) {
         String sql = "UPDATE [Account] SET balance = ? WHERE account_number = ?";
-        
+
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setBigDecimal(1, newBalance);
             stmt.setString(2, accountNumber);
             stmt.executeUpdate();
-            
+
         } catch (SQLException e) {
             System.err.println("Error updating account balance: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Update account status (ACTIVE, FROZEN, CLOSED)
+     */
+    public boolean updateStatus(String accountNumber, String newStatus) {
+        String sql = "UPDATE [Account] SET status = ? WHERE account_number = ?";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, newStatus);
+            stmt.setString(2, accountNumber);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error updating account status: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Find all accounts by account type (e.g. "Savings" for interest posting)
+     */
+    public List<Account> findAllByAccountType(String accountType) {
+        List<Account> accounts = new ArrayList<>();
+        String sql = "SELECT account_number, customer_id, account_type, balance, currency, status, date_opened " +
+                "FROM [Account] WHERE account_type = ? AND status = 'ACTIVE'";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, accountType);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    accounts.add(mapResultSetToAccount(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding accounts by type: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return accounts;
     }
 }

@@ -1,63 +1,73 @@
 package com.bms.domain.controller;
 
+import java.math.BigDecimal;
+
 import com.bms.domain.entity.Account;
 import com.bms.domain.entity.Transaction;
+import com.bms.domain.entity.TransactionFactory;
+import com.bms.persistence.AccountDAO;
+import com.bms.persistence.AuthContext;
+import com.bms.persistence.TransactionDAO;
 
 /**
- * 
+ * DepositHandler - UC-05: Process Deposit
+ * Validates amount, looks up account, updates balance, records transaction
  */
 public class DepositHandler {
+    private final AccountDAO accountDAO;
+    private final TransactionDAO transactionDAO;
 
-    /**
-     * Default constructor
-     */
     public DepositHandler() {
+        this.accountDAO = new AccountDAO();
+        this.transactionDAO = new TransactionDAO();
     }
 
-
-
-
-
-
     /**
-     * @param accountNo 
-     * @param amount 
-     * @param description 
-     * @return
+     * Post a deposit to an account
+     * 
+     * @return the transaction ID (> 0 on success), 0 or negative on failure
      */
     public int postDeposit(String accountNo, double amount, String description) {
-        // TODO implement here
-        return 0;
+        // Validate amount
+        if (!validateAmount(amount)) {
+            return -1;
+        }
+
+        // Look up account
+        Account account = getAccount(accountNo);
+        if (account == null) {
+            return -2;
+        }
+
+        if (!"ACTIVE".equals(account.getStatus())) {
+            return -3; // Account not active
+        }
+
+        // Compute new balance
+        BigDecimal depositAmount = BigDecimal.valueOf(amount);
+        BigDecimal newBalance = account.getBalance().add(depositAmount);
+
+        // Update balance in DB
+        accountDAO.updateBalance(accountNo, newBalance);
+
+        // Record the transaction using Factory Method
+        String performedBy = AuthContext.getInstance().isLoggedIn()
+                ? AuthContext.getInstance().getLoggedInCustomer().getFullName()
+                : "System";
+
+        Transaction tx = TransactionFactory.createDeposit(
+                accountNo, depositAmount, newBalance, performedBy, description);
+
+        return transactionDAO.insert(tx);
     }
 
-    /**
-     * @param amount 
-     * @return
-     */
     private boolean validateAmount(double amount) {
-        // TODO implement here
-        return false;
+        return amount > 0;
     }
 
-    /**
-     * @param accountNo 
-     * @return
-     */
     private Account getAccount(String accountNo) {
-        // TODO implement here
-        return null;
+        if (accountNo == null || accountNo.trim().isEmpty())
+            return null;
+        return accountDAO.findByAccountNo(accountNo.trim());
     }
-
-    /**
-     * @param accountNo 
-     * @param amount 
-     * @param description 
-     * @param balanceAfter 
-     * @return
-     */
-    private Transaction recordDepositTx(String accountNo, double amount, String description, double balanceAfter) {
-        // TODO implement here
-        return null;
-    }
-
 }

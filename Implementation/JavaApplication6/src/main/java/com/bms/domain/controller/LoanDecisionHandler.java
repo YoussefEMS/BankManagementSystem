@@ -1,56 +1,56 @@
 package com.bms.domain.controller;
 
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import com.bms.domain.entity.Loan;
+import com.bms.persistence.LoanDAO;
 
 /**
- * 
+ * LoanDecisionHandler - UC-10: Approve / Reject Loans
+ * Allows admins to review pending loans and make decisions
  */
 public class LoanDecisionHandler {
+    private final LoanDAO loanDAO;
 
-    /**
-     * Default constructor
-     */
     public LoanDecisionHandler() {
+        this.loanDAO = new LoanDAO();
     }
 
-
-
-
-
     /**
-     * @return
+     * Get all pending loan applications
      */
-    public Set<Loan> getPendingLoans() {
-        // TODO implement here
-        return null;
+    public List<Loan> getPendingLoans() {
+        return loanDAO.findByStatus("PENDING");
     }
 
     /**
-     * @param loanId 
-     * @return
+     * Get details for a specific loan
      */
     public Loan getLoanDetails(int loanId) {
-        // TODO implement here
-        return null;
+        return loanDAO.findById(loanId);
     }
 
     /**
-     * @param loanId 
-     * @param decision 
-     * @return
+     * Approve or reject a loan
+     * 
+     * @param loanId   the loan ID
+     * @param decision "APPROVED" or "REJECTED"
+     * @return true on success
      */
-    public void decideLoan(int loanId, String decision) {
-        // TODO implement here
-    }
+    public boolean decideLoan(int loanId, String decision) {
+        // Validate decision
+        if (decision == null || (!decision.equals("APPROVED") && !decision.equals("REJECTED"))) {
+            return false;
+        }
 
-    /**
-     * @return
-     */
-    private java.util.Date now() {
-        // TODO implement here
-        return null;
-    }
+        // Verify loan exists and is PENDING
+        Loan loan = loanDAO.findById(loanId);
+        if (loan == null || !"PENDING".equals(loan.getStatus())) {
+            return false;
+        }
 
+        // Update decision
+        return loanDAO.updateDecision(loanId, decision, LocalDateTime.now());
+    }
 }
