@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Creational Design Patterns Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .page-break {
+        page-break-before: always;
+      }
+
+      h2 {
+        page-break-before: always;
+      }
+
+      h2:first-of-type {
+        page-break-before: avoid;
+      }
+
+      pre.mermaid {
+        page-break-inside: avoid;
+      }
+
+      table {
+        page-break-inside: avoid;
+      }
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 30px 40px;
+      color: #222;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      border-bottom: 3px solid #1976d2;
+      padding-bottom: 12px;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: #1976d2;
+      font-size: 19px;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 6px;
+      margin-top: 35px;
+    }
+
+    h3 {
+      color: #333;
+      font-size: 15px;
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 12px 0;
+      font-size: 12.5px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 7px 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f4ff;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #fafafa;
+    }
+
+    code {
+      background: #f5f5f5;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-family: 'Consolas', 'Courier New', monospace;
+    }
+
+    pre {
+      background: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 12px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+    }
+
+    .mermaid {
+      text-align: center;
+      margin: 16px 0;
+      background: #fff;
+    }
+
+    .toc {
+      background: #f8faff;
+      border: 1px solid #d0d8e8;
+      border-radius: 6px;
+      padding: 16px 24px;
+      margin: 20px 0 30px 0;
+    }
+
+    .toc h3 {
+      margin-top: 0;
+      color: #1976d2;
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .toc li {
+      margin: 4px 0;
+    }
+
+    .toc a {
+      color: #1976d2;
+      text-decoration: none;
+    }
+
+    hr {
+      border: none;
+      border-top: 2px solid #e0e0e0;
+      margin: 30px 0;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    ul,
+    ol {
+      margin: 8px 0;
+      padding-left: 22px;
+    }
+
+    li {
+      margin: 3px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Creational Design Patterns Report (Deliverable 1)</h1>
+  <p class="subtitle"><strong>Project:</strong> Bank Management System &nbsp;|&nbsp; <strong>Course:</strong> Software
+    Engineering — Semester 2</p>
+
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li><a href="#s1">Singleton — DataSourceFactory</a></li>
+      <li><a href="#s2">Singleton — AuthContext</a></li>
+      <li><a href="#s3">Factory Method — TransactionFactory</a></li>
+      <li><a href="#s4">Abstract Factory — DAOFactory</a></li>
+      <li><a href="#s5">Abstract Factory — ScreenFactory</a></li>
+    </ol>
+  </div>
+
+  <!-- ==================== SECTION 1 ==================== -->
+  <h2 id="s1">1. Singleton — DataSourceFactory</h2>
+
+  <h3>Identified Problem</h3>
+  <p>The system has 7 DAO classes (<code>AccountDAO</code>, <code>CustomerDAO</code>, <code>TransactionDAO</code>,
+    <code>TransferDAO</code>, <code>LoanDAO</code>, <code>InterestPostingDAO</code>, <code>OverdraftEventDAO</code>),
+    each needing a database connection pool to communicate with SQL Server. Without centralised control:</p>
+  <ul>
+    <li><strong>Multiple connection pools</strong> would be created if each DAO instantiated its own
+      <code>HikariDataSource</code>, exhausting database connections and memory.</li>
+    <li><strong>Configuration duplication</strong> — every DAO would independently read
+      <code>application.properties</code> and configure pool parameters.</li>
+    <li><strong>Uncontrolled lifecycle</strong> — without a single owner, there is no clean way to shut down all
+      connections on application exit.</li>
+  </ul>
+
+  <h3>Justification</h3>
+  <p>The <strong>Singleton</strong> pattern ensures exactly one <code>DataSourceFactory</code> instance (and one
+    connection pool) exists application-wide.</p>
+  <table>
+    <tr>
+      <th>Problem</th>
+      <th>How Singleton Solves It</th>
+    </tr>
+    <tr>
+      <td>Multiple connection pools</td>
+      <td>One pool is created and shared by all 7 DAOs via <code>getInstance().getDataSource()</code></td>
+    </tr>
+    <tr>
+      <td>Configuration duplication</td>
+      <td>Properties are loaded once in the private constructor</td>
+    </tr>
+    <tr>
+      <td>Uncontrolled lifecycle</td>
+      <td>The static <code>shutdown()</code> method closes the single pool on exit</td>
+    </tr>
+  </table>
+  <p><strong>Double-checked locking</strong> is used because the application is multi-threaded (JavaFX UI thread +
+    background tasks). It guarantees thread-safe lazy initialization without synchronization overhead on subsequent
+    calls.</p>
+  <p><strong>Why not other patterns?</strong> Factory Method and Abstract Factory create <em>multiple instances</em> of
+    different types. The connection pool must be <em>exactly one shared instance</em>, making Singleton the correct fit.
+  </p>
+
+  <h3>UML Class Diagram</h3>
+  <pre class="mermaid">
+classDiagram
+    direction LR
+    class DataSourceFactory {
+        -instance : DataSourceFactory$
+        -dataSource : DataSource
+        -PROPERTIES_FILE : String$
+        -DataSourceFactory()
+        +getInstance()$ DataSourceFactory
+        +getDataSource() DataSource
+        -createDataSource()$ DataSource
+        -loadProperties()$ Properties
+        +shutdown()$
+    }
+    class AccountDAO {
+        -dataSource : DataSource
+    }
+    class CustomerDAO {
+        -dataSource : DataSource
+    }
+    class TransactionDAO {
+        -dataSource : DataSource
+    }
+    class LoanDAO {
+        -dataSource : DataSource
+    }
+    DataSourceFactory ..> DataSourceFactory : returns single instance
+    AccountDAO ..> DataSourceFactory : getInstance
+    CustomerDAO ..> DataSourceFactory : getInstance
+    TransactionDAO ..> DataSourceFactory : getInstance
+    LoanDAO ..> DataSourceFactory : getInstance
+</pre>
+
+  <!-- ==================== SECTION 2 ==================== -->
+  <h2 id="s2">2. Singleton — AuthContext</h2>
+
+  <h3>Identified Problem</h3>
+  <p>After login, the customer's identity must be accessible across the entire application — in controllers (to record
+    who performed transactions), in screens (to display the user's name and role), and in navigation logic (to route
+    admins vs. customers). Without centralised session state:</p>
+  <ul>
+    <li><strong>Session fragmentation</strong> — if each screen or controller created its own <code>AuthContext</code>,
+      they would have different views of who is logged in.</li>
+    <li><strong>Parameter threading</strong> — without a global session holder, the <code>Customer</code> object would
+      need to be passed through every method signature.</li>
+    <li><strong>Concurrent access risk</strong> — multiple threads reading/writing session state simultaneously could
+      allow inconsistent states.</li>
+  </ul>
+
+  <h3>Justification</h3>
+  <p>The <strong>Singleton</strong> pattern ensures a single <code>AuthContext</code> instance holds the authoritative
+    session state.</p>
+  <table>
+    <tr>
+      <th>Problem</th>
+      <th>How Singleton Solves It</th>
+    </tr>
+    <tr>
+      <td>Session fragmentation</td>
+      <td>One instance = one source of truth accessible via <code>getInstance()</code></td>
+    </tr>
+    <tr>
+      <td>Parameter threading</td>
+      <td>Any class calls <code>AuthContext.getInstance().getLoggedInCustomer()</code> directly</td>
+    </tr>
+    <tr>
+      <td>Concurrent access</td>
+      <td>All mutating methods (<code>login()</code>, <code>logout()</code>) are <code>synchronized</code> on the single
+        instance</td>
+    </tr>
+  </table>
+  <p><strong>Double-checked locking</strong> ensures thread-safe initialization. All instance methods are individually
+    <code>synchronized</code> because <code>AuthContext</code> is mutable (unlike <code>DataSourceFactory</code> which
+    is immutable after construction).</p>
+  <p><strong>Why not other patterns?</strong> ThreadLocal would give each thread its own session copy — the opposite of
+    what's needed. Dependency Injection adds framework complexity unnecessary for a JavaFX desktop app with a single
+    session.</p>
+
+  <h3>UML Class Diagram</h3>
+  <pre class="mermaid">
+classDiagram
+    direction LR
+    class AuthContext {
+        -instance : AuthContext$
+        -loggedInCustomer : Customer
+        -AuthContext()
+        +getInstance()$ AuthContext
+        +login(Customer) boolean
+        +logout()
+        +getLoggedInCustomer() Customer
+        +getLoggedInCustomerId() int
+        +isLoggedIn() boolean
+        +isAdmin() boolean
+        +getRole() String
+    }
+    class Customer {
+        -customerId : int
+        -fullName : String
+        -role : String
+    }
+    class AuthenticationController {
+        -authContext : AuthContext
+    }
+    class BankManagementSystemApp
+    class DepositHandler
+    class WithdrawCashController
+    AuthContext ..> AuthContext : returns single instance
+    AuthContext --> Customer : holds session
+    AuthenticationController ..> AuthContext : getInstance
+    BankManagementSystemApp ..> AuthContext : getInstance
+    DepositHandler ..> AuthContext : getInstance
+    WithdrawCashController ..> AuthContext : getInstance
+</pre>
+
+  <!-- ==================== SECTION 3 ==================== -->
+  <h2 id="s3">3. Factory Method — TransactionFactory</h2>
+
+  <h3>Identified Problem</h3>
+  <p><code>Transaction</code> objects are created in 4 controllers, each for a different use-case:</p>
+  <table>
+    <tr>
+      <th>Controller</th>
+      <th>Transaction type(s)</th>
+      <th>Duplicated lines</th>
+    </tr>
+    <tr>
+      <td><code>DepositHandler</code></td>
+      <td><code>"Deposit"</code></td>
+      <td>8 setter calls</td>
+    </tr>
+    <tr>
+      <td><code>WithdrawCashController</code></td>
+      <td><code>"Withdrawal"</code></td>
+      <td>8 setter calls</td>
+    </tr>
+    <tr>
+      <td><code>TransferHandler</code></td>
+      <td><code>"TransferDebit"</code>, <code>"TransferCredit"</code></td>
+      <td>2 × 8 setter calls</td>
+    </tr>
+    <tr>
+      <td><code>MonthlyInterestHandler</code></td>
+      <td><code>"InterestPosting"</code></td>
+      <td>8 setter calls</td>
+    </tr>
+  </table>
+  <p>Every creation site repeated the same boilerplate: <code>new Transaction()</code> followed by 8 setter calls with
+    hard-coded type strings, type-specific reference-code prefixes (<code>TXN-</code>, <code>INT-</code>), and default
+    note text. This caused:</p>
+  <ul>
+    <li><strong>~40 lines of duplicated code</strong> scattered across 4 classes</li>
+    <li><strong>Hard-coded type strings</strong> risking typos and inconsistencies</li>
+    <li><strong>Type-specific defaults buried in business logic</strong> rather than centralised</li>
+    <li><strong>Difficult extensibility</strong> — adding a new transaction type meant copying the same 8-line block
+    </li>
+  </ul>
+
+  <h3>Justification</h3>
+  <p>The <strong>Factory Method</strong> pattern centralises object-creation logic in <code>TransactionFactory</code>,
+    with one static factory method per transaction type.</p>
+  <table>
+    <tr>
+      <th>Problem</th>
+      <th>How Factory Method Solves It</th>
+    </tr>
+    <tr>
+      <td>Code duplication</td>
+      <td>40 lines reduced to 5 one-liner calls</td>
+    </tr>
+    <tr>
+      <td>Hard-coded type strings</td>
+      <td>Defined once inside the factory, not in every controller</td>
+    </tr>
+    <tr>
+      <td>Scattered defaults</td>
+      <td>Reference-code prefixes, notes, and performer values centralised</td>
+    </tr>
+    <tr>
+      <td>Difficult extensibility</td>
+      <td>Adding a new type = adding one factory method, no controller changes</td>
+    </tr>
+  </table>
+  <p><strong>Why Factory Method and not Abstract Factory?</strong> We are creating variants of a <em>single product</em>
+    (<code>Transaction</code>), not families of related products. Factory Method is the correct granularity.</p>
+
+  <h3>UML Class Diagram</h3>
+  <pre class="mermaid">
+classDiagram
+    direction LR
+    class Transaction {
+        -int transactionId
+        -String accountNumber
+        -String type
+        -BigDecimal amount
+        -LocalDateTime timestamp
+        -String performedBy
+        -String note
+        -BigDecimal balanceAfter
+        -String referenceCode
+    }
+    class TransactionFactory {
+        -TransactionFactory()
+        +createDeposit(...)$ Transaction
+        +createWithdrawal(...)$ Transaction
+        +createTransferDebit(...)$ Transaction
+        +createTransferCredit(...)$ Transaction
+        +createInterestPosting(...)$ Transaction
+        -generateReference(prefix)$ String
+    }
+    class DepositHandler
+    class WithdrawCashController
+    class TransferHandler
+    class MonthlyInterestHandler
+    TransactionFactory ..> Transaction : creates
+    DepositHandler ..> TransactionFactory : uses
+    WithdrawCashController ..> TransactionFactory : uses
+    TransferHandler ..> TransactionFactory : uses
+    MonthlyInterestHandler ..> TransactionFactory : uses
+</pre>
+
+  <!-- ==================== SECTION 4 ==================== -->
+  <h2 id="s4">4. Abstract Factory — DAOFactory</h2>
+
+  <h3>Identified Problem</h3>
+  <p>The system has 7 DAO classes instantiated directly via <code>new</code> inside 13 controller constructors:</p>
+  <table>
+    <tr>
+      <th>Controller</th>
+      <th>Hard-coded DAO construction</th>
+    </tr>
+    <tr>
+      <td><code>DepositHandler</code></td>
+      <td><code>new AccountDAO()</code>, <code>new TransactionDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>WithdrawCashController</code></td>
+      <td><code>new AccountDAO()</code>, <code>new TransactionDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>TransferHandler</code></td>
+      <td><code>new AccountDAO()</code>, <code>new TransactionDAO()</code>, <code>new TransferDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>MonthlyInterestHandler</code></td>
+      <td><code>new AccountDAO()</code>, <code>new TransactionDAO()</code>, <code>new InterestPostingDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>AuthenticationController</code></td>
+      <td><code>new CustomerDAO()</code>, <code>new AccountDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>CustomerProfileController</code></td>
+      <td><code>new CustomerDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>AccountBalanceController</code></td>
+      <td><code>new AccountDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>AccountStatusHandler</code></td>
+      <td><code>new AccountDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>LoanApplicationHandler</code></td>
+      <td><code>new LoanDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>LoanDecisionHandler</code></td>
+      <td><code>new LoanDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>LoanStatusController</code></td>
+      <td><code>new LoanDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>TransactionHistoryController</code></td>
+      <td><code>new TransactionDAO()</code></td>
+    </tr>
+    <tr>
+      <td><code>OverdraftHandler</code></td>
+      <td><code>new OverdraftEventDAO()</code></td>
+    </tr>
+  </table>
+  <p>This caused:</p>
+  <ul>
+    <li><strong>Tight coupling</strong> — every controller is directly dependent on concrete SQL Server DAO classes</li>
+    <li><strong>Untestable</strong> — controllers cannot be unit-tested without a real database</li>
+    <li><strong>Inconsistency risk</strong> — no mechanism to guarantee all DAOs come from the same persistence backend
+    </li>
+  </ul>
+
+  <h3>Justification</h3>
+  <p>The <strong>Abstract Factory</strong> pattern provides an interface (<code>DAOFactory</code>) with creation methods
+    for every DAO. A concrete factory (<code>SqlServerDAOFactory</code>) returns matching implementations.</p>
+  <table>
+    <tr>
+      <th>Problem</th>
+      <th>How Abstract Factory Solves It</th>
+    </tr>
+    <tr>
+      <td>Tight coupling</td>
+      <td>Controllers depend on the <code>DAOFactory</code> interface, not concrete classes</td>
+    </tr>
+    <tr>
+      <td>Untestable</td>
+      <td>An <code>InMemoryDAOFactory</code> can be injected for testing with stub DAOs</td>
+    </tr>
+    <tr>
+      <td>Inconsistency risk</td>
+      <td>The factory guarantees all DAOs come from the same backend</td>
+    </tr>
+  </table>
+  <p><strong>Why Abstract Factory and not Factory Method?</strong> Controllers need <em>families</em> of 2–3 related
+    DAOs that must all come from the same backend — Abstract Factory is designed for producing families of related
+    objects.</p>
+
+  <h3>UML Class Diagram</h3>
+  <pre class="mermaid">
+classDiagram
+    direction TB
+    class DAOFactory {
+        &lt;&lt;interface&gt;&gt;
+        +createAccountDAO() AccountDAO
+        +createCustomerDAO() CustomerDAO
+        +createTransactionDAO() TransactionDAO
+        +createTransferDAO() TransferDAO
+        +createLoanDAO() LoanDAO
+        +createInterestPostingDAO() InterestPostingDAO
+        +createOverdraftEventDAO() OverdraftEventDAO
+    }
+    class SqlServerDAOFactory {
+        -INSTANCE : SqlServerDAOFactory
+        -SqlServerDAOFactory()
+        +getInstance()$ SqlServerDAOFactory
+        +createAccountDAO() AccountDAO
+        +createCustomerDAO() CustomerDAO
+        +createTransactionDAO() TransactionDAO
+        +createTransferDAO() TransferDAO
+        +createLoanDAO() LoanDAO
+        +createInterestPostingDAO() InterestPostingDAO
+        +createOverdraftEventDAO() OverdraftEventDAO
+    }
+    class AccountDAO
+    class CustomerDAO
+    class TransactionDAO
+    class TransferDAO
+    class LoanDAO
+    class DepositHandler {
+        +DepositHandler()
+        +DepositHandler(DAOFactory)
+    }
+    class TransferHandler {
+        +TransferHandler()
+        +TransferHandler(DAOFactory)
+    }
+    class AuthenticationController {
+        +AuthenticationController()
+        +AuthenticationController(DAOFactory)
+    }
+    DAOFactory <|.. SqlServerDAOFactory : implements
+    SqlServerDAOFactory ..> AccountDAO : creates
+    SqlServerDAOFactory ..> CustomerDAO : creates
+    SqlServerDAOFactory ..> TransactionDAO : creates
+    SqlServerDAOFactory ..> TransferDAO : creates
+    SqlServerDAOFactory ..> LoanDAO : creates
+    DepositHandler ..> DAOFactory : uses
+    TransferHandler ..> DAOFactory : uses
+    AuthenticationController ..> DAOFactory : uses
+</pre>
+
+  <!-- ==================== SECTION 5 ==================== -->
+  <h2 id="s5">5. Abstract Factory — ScreenFactory</h2>
+
+  <h3>Identified Problem</h3>
+  <p>In <code>BankManagementSystemApp</code>, 15 presentation screens are constructed directly with <code>new</code>
+    across multiple methods:</p>
+  <table>
+    <tr>
+      <th>Method</th>
+      <th>Screens created with <code>new</code></th>
+    </tr>
+    <tr>
+      <td><code>start()</code></td>
+      <td><code>LoginScreen</code>, <code>AccountSelectionScreen</code>, <code>AccountBalanceScreen</code>,
+        <code>TransactionHistoryScreen</code>, <code>AdminDashboard</code></td>
+    </tr>
+    <tr>
+      <td><code>setupNavigationCallbacks()</code></td>
+      <td><code>CreateCustomerProfileForm</code>, <code>DepositCashForm</code>, <code>WithdrawCashForm</code>,
+        <code>UpdateAccountStatusForm</code>, <code>LoanReviewForm</code>, <code>MonthlyInterestJob</code>,
+        <code>OverdraftAlertView</code></td>
+    </tr>
+    <tr>
+      <td><code>createMenuBar()</code></td>
+      <td><code>TransferFundsForm</code>, <code>LoanStatusView</code>, <code>ApplyForLoanForm</code></td>
+    </tr>
+  </table>
+  <p>This caused:</p>
+  <ul>
+    <li><strong>Tight coupling</strong> — <code>BankManagementSystemApp</code> imports and instantiates all 15 concrete
+      screen classes directly</li>
+    <li><strong>No UI swappability</strong> — the app is locked to JavaFX; switching toolkits requires rewriting the
+      main class</li>
+    <li><strong>Inconsistent families</strong> — admin and customer screens form two role-based families that must be
+      created consistently from the same toolkit</li>
+  </ul>
+
+  <h3>Justification</h3>
+  <p>The <strong>Abstract Factory</strong> pattern provides a <code>ScreenFactory</code> interface with creation methods
+    for each screen. <code>JavaFXScreenFactory</code> returns current implementations.</p>
+  <table>
+    <tr>
+      <th>Problem</th>
+      <th>How Abstract Factory Solves It</th>
+    </tr>
+    <tr>
+      <td>Tight coupling</td>
+      <td><code>BankManagementSystemApp</code> depends on <code>ScreenFactory</code>, not 15 concrete classes</td>
+    </tr>
+    <tr>
+      <td>No UI swappability</td>
+      <td>A <code>SwingScreenFactory</code> could produce alternative implementations without modifying the app</td>
+    </tr>
+    <tr>
+      <td>Inconsistent families</td>
+      <td>The factory guarantees all screens come from the same UI toolkit</td>
+    </tr>
+  </table>
+  <p><strong>Why Abstract Factory and not Factory Method?</strong> The application needs <em>families</em> of related
+    screens (admin + customer), all from the same toolkit — exactly what Abstract Factory provides.</p>
+
+  <h3>UML Class Diagram</h3>
+  <pre class="mermaid">
+classDiagram
+    direction TB
+    class ScreenFactory {
+        &lt;&lt;interface&gt;&gt;
+        +createLoginScreen() LoginScreen
+        +createAccountSelectionScreen() AccountSelectionScreen
+        +createAccountBalanceScreen() AccountBalanceScreen
+        +createTransactionHistoryScreen() TransactionHistoryScreen
+        +createAdminDashboard() AdminDashboard
+        +createCustomerProfileForm() CreateCustomerProfileForm
+        +createDepositForm() DepositCashForm
+        +createWithdrawForm() WithdrawCashForm
+        +createAccountStatusForm() UpdateAccountStatusForm
+        +createLoanReviewForm() LoanReviewForm
+        +createInterestJobScreen() MonthlyInterestJob
+        +createOverdraftAlertView() OverdraftAlertView
+        +createTransferForm() TransferFundsForm
+        +createLoanApplicationForm() ApplyForLoanForm
+        +createLoanStatusView() LoanStatusView
+    }
+    class JavaFXScreenFactory {
+        +createLoginScreen() LoginScreen
+        +createDepositForm() DepositCashForm
+        +createWithdrawForm() WithdrawCashForm
+        +createTransferForm() TransferFundsForm
+        +createLoanReviewForm() LoanReviewForm
+        +createLoanApplicationForm() ApplyForLoanForm
+        +createLoanStatusView() LoanStatusView
+        +... other methods()
+    }
+    class LoginScreen
+    class AdminDashboard
+    class DepositCashForm
+    class WithdrawCashForm
+    class TransferFundsForm
+    class LoanReviewForm
+    class ApplyForLoanForm
+    class LoanStatusView
+    class BankManagementSystemApp {
+        -screenFactory : ScreenFactory
+        +start(Stage)
+        -setupNavigationCallbacks()
+        -resetAll()
+    }
+    ScreenFactory <|.. JavaFXScreenFactory : implements
+    JavaFXScreenFactory ..> LoginScreen : creates
+    JavaFXScreenFactory ..> AdminDashboard : creates
+    JavaFXScreenFactory ..> DepositCashForm : creates
+    JavaFXScreenFactory ..> WithdrawCashForm : creates
+    JavaFXScreenFactory ..> TransferFundsForm : creates
+    JavaFXScreenFactory ..> LoanReviewForm : creates
+    JavaFXScreenFactory ..> ApplyForLoanForm : creates
+    JavaFXScreenFactory ..> LoanStatusView : creates
+    BankManagementSystemApp ..> ScreenFactory : uses
+</pre>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'default' });
+  </script>
+</body>
+
+</html>
