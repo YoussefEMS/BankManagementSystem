@@ -20,6 +20,7 @@ com\bms\presentation\MonthlyInterestJob.class
 com\bms\BankManagementSystemApp.class
 com\bms\domain\controller\LoanApplicationHandler.class
 com\bms\domain\entity\Loan.class
+com\bms\domain\entity\TransactionFactory.class
 com\bms\domain\controller\AuthenticationController.class
 com\bms\persistence\TransferDAO.class
 com\bms\domain\controller\DepositHandler.class
@@ -30,7 +31,9 @@ com\bms\presentation\LoginScreen.class
 com\bms\domain\controller\OverdraftHandler.class
 com\bms\domain\controller\WithdrawCashController.class
 com\bms\domain\controller\TransactionHistoryController.class
+com\bms\presentation\JavaFXScreenFactory.class
 com\bms\domain\entity\Customer.class
+com\bms\persistence\SqlServerDAOFactory.class
 com\bms\presentation\CreateCustomerProfileForm.class
 com\bms\presentation\TransferFundsForm.class
 com\bms\domain\entity\Account.class
@@ -43,4 +46,6 @@ com\bms\persistence\CustomerDAO.class
 com\bms\persistence\DataSourceFactory.class
 com\bms\presentation\WithdrawCashForm.class
 com\bms\persistence\AuthContext.class
+com\bms\presentation\ScreenFactory.class
 com\bms\persistence\OverdraftEventDAO.class
+com\bms\persistence\DAOFactory.class
