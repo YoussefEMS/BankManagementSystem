@@ -147,17 +147,7 @@ BEGIN TRY
         (from_account_no, to_account_no, amount, timestamp, reference_code, status)
     VALUES
         (N'EG-001-1000002', N'EG-004-1000008', 2000.00, '2026-02-02T11:40:00', N'TRX-20260202-0001', N'COMPLETED'),
-        (N'EG-001-1000007', N'EG-001-1000006', 5000.00, '2026-02-10T14:00:00', N'TRX-20260210-0002', N'COMPLETED'),
-        (N'EG-001-9999999', N'EG-001-1000009', 1000.00, '2026-02-18T15:20:00', N'TRX-20260218-0003', N'COMPLETED');
-    /*
-      WARNING:
-      The third transfer above uses a non-existent source account and will FAIL because of FK constraints.
-      That is the inevitable result of trying to keep the sample transaction while your schema requires
-      both sides of Transfer to exist. So this row must be corrected or removed.
-    */
-
-    /* Remove the invalid insert and replace it with a valid one */
-    DELETE FROM [Transfer] WHERE reference_code = N'TRX-20260218-0003';
+        (N'EG-001-1000007', N'EG-001-1000006', 5000.00, '2026-02-10T14:00:00', N'TRX-20260210-0002', N'COMPLETED')
 
     INSERT INTO [Account]
         (account_number, customer_id, account_type, balance, currency, status, date_opened)
