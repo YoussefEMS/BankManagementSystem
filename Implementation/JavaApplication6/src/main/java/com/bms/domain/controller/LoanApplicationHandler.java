@@ -41,8 +41,9 @@ public class LoanApplicationHandler {
         loan.setPurpose(purpose);
         loan.setStatus("PENDING");
 
-        // Set a default interest rate based on loan type
-        double interestRate = getDefaultRate(loanType);
+        // BRIDGE IN ACTION: Use the appropriate calculator strategy for this loan type
+        LoanInterestCalculator calculator = getLoanCalculator(loanType);
+        double interestRate = calculator.calculateRate(amount, durationMonths);
         loan.setInterestRate(interestRate);
 
         // Persist
@@ -61,14 +62,15 @@ public class LoanApplicationHandler {
         return true;
     }
 
-    private double getDefaultRate(String loanType) {
+    private LoanInterestCalculator getLoanCalculator(String loanType) {
         if (loanType == null)
-            return 10.0;
+            return new DefaultLoanInterestCalculator(); // 10% default rate
+
         return switch (loanType.toUpperCase()) {
-            case "PERSONAL" -> 15.0;
-            case "HOME" -> 5.0;
-            case "AUTO" -> 8.0;
-            default -> 10.0;
+            case "PERSONAL" -> new PersonalLoanInterestCalculator();
+            case "HOME" -> new HomeLoanInterestCalculator();
+            case "AUTO" -> new AutoLoanInterestCalculator();
+            default -> new DefaultLoanInterestCalculator(); // 10% default rate for unknown types
         };
     }
 }
