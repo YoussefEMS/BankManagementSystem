@@ -6,4 +6,6 @@
 /Implementation/JavaApplication6/.metals/
 /Implementation/JavaApplication6/.vscode/
 /Implementation/JavaApplication6/src/main/resources/application.properties
+.vscode/
+.metals/
 
