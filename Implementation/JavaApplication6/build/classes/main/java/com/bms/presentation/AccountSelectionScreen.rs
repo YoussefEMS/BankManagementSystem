@@ -1,2 +1,0 @@
-com.bms.presentation.AccountSelectionScreen$AccountListCell
-com.bms.presentation.AccountSelectionScreen
