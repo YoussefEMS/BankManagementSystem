@@ -3,7 +3,7 @@ package com.bms.domain.controller;
 import com.bms.domain.entity.Account;
 import com.bms.persistence.AccountDAO;
 import com.bms.persistence.DAOFactory;
-import com.bms.persistence.SqlServerDAOFactory;
+import com.bms.persistence.ConfiguredDAOFactory;
 
 /**
  * AccountBalanceController - Domain logic for viewing account balance
@@ -14,7 +14,7 @@ public class AccountBalanceController {
     private final AccountDAO accountDAO;
 
     public AccountBalanceController() {
-        this(SqlServerDAOFactory.getInstance());
+        this(ConfiguredDAOFactory.getInstance());
     }
 
     public AccountBalanceController(DAOFactory factory) {

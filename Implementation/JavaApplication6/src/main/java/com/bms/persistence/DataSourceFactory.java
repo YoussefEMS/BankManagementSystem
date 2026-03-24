@@ -6,6 +6,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import com.bms.persistence.adapter.DatabaseAdapter;
+import com.bms.persistence.adapter.DatabaseAdapterFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -20,12 +22,18 @@ public class DataSourceFactory {
 
     // UML: -dataSource: DataSource (private, NOT static)
     private final DataSource dataSource;
+    private final DatabaseAdapter databaseAdapter;
 
     private static final String PROPERTIES_FILE = "application.properties";
 
     // UML: -DataSourceFactory() (private constructor)
     private DataSourceFactory() {
-        this.dataSource = createDataSource();
+        Properties props = loadProperties();
+        this.databaseAdapter = DatabaseAdapterFactory.resolve(
+                props.getProperty("jdbc.databaseType"),
+                props.getProperty("jdbc.url"),
+                props.getProperty("jdbc.driver"));
+        this.dataSource = createDataSource(props);
     }
 
     // UML: +getInstance(): DataSourceFactory (static, public)
@@ -45,10 +53,12 @@ public class DataSourceFactory {
         return dataSource;
     }
 
-    // keep as helper (private static is fine)
-    private static DataSource createDataSource() {
-        Properties props = loadProperties();
+    public DatabaseAdapter getDatabaseAdapter() {
+        return databaseAdapter;
+    }
 
+    // keep as helper (private static is fine)
+    private static DataSource createDataSource(Properties props) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(props.getProperty("jdbc.url"));
         config.setUsername(props.getProperty("jdbc.user"));

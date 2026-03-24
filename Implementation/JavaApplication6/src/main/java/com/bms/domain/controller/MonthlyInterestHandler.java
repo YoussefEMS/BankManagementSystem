@@ -11,7 +11,7 @@ import com.bms.domain.entity.TransactionFactory;
 import com.bms.persistence.AccountDAO;
 import com.bms.persistence.DAOFactory;
 import com.bms.persistence.InterestPostingDAO;
-import com.bms.persistence.SqlServerDAOFactory;
+import com.bms.persistence.ConfiguredDAOFactory;
 import com.bms.persistence.TransactionDAO;
 
 public class MonthlyInterestHandler {
@@ -20,7 +20,7 @@ public class MonthlyInterestHandler {
     private final InterestPostingDAO interestPostingDAO;
 
     public MonthlyInterestHandler() {
-        this(SqlServerDAOFactory.getInstance());
+        this(ConfiguredDAOFactory.getInstance());
     }
 
     public MonthlyInterestHandler(DAOFactory factory) {

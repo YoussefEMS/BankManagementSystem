@@ -1,5 +1,7 @@
 package com.bms.persistence;
 
+import com.bms.persistence.adapter.DatabaseAdapter;
+
 /**
  * SqlServerDAOFactory - Concrete Abstract Factory for SQL Server persistence.
  * Creates DAO instances that use SQL Server via the HikariCP connection pool
@@ -53,5 +55,10 @@ public class SqlServerDAOFactory implements DAOFactory {
     @Override
     public OverdraftEventDAO createOverdraftEventDAO() {
         return new OverdraftEventDAO();
+    }
+
+    @Override
+    public DatabaseAdapter getDatabaseAdapter() {
+        return DataSourceFactory.getInstance().getDatabaseAdapter();
     }
 }

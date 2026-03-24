@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.bms.domain.entity.Transaction;
 import com.bms.persistence.DAOFactory;
-import com.bms.persistence.SqlServerDAOFactory;
+import com.bms.persistence.ConfiguredDAOFactory;
 import com.bms.persistence.TransactionDAO;
 
 /**
@@ -20,7 +20,7 @@ public class TransactionHistoryController {
     private final TransactionDAO transactionDAO;
 
     public TransactionHistoryController() {
-        this(SqlServerDAOFactory.getInstance());
+        this(ConfiguredDAOFactory.getInstance());
     }
 
     public TransactionHistoryController(DAOFactory factory) {

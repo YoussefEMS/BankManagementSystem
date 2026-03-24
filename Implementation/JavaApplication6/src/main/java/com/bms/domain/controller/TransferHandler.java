@@ -11,7 +11,7 @@ import com.bms.domain.entity.Transfer;
 import com.bms.persistence.AccountDAO;
 import com.bms.persistence.AuthContext;
 import com.bms.persistence.DAOFactory;
-import com.bms.persistence.SqlServerDAOFactory;
+import com.bms.persistence.ConfiguredDAOFactory;
 import com.bms.persistence.TransactionDAO;
 import com.bms.persistence.TransferDAO;
 
@@ -25,7 +25,7 @@ public class TransferHandler {
     private final TransferDAO transferDAO;
 
     public TransferHandler() {
-        this(SqlServerDAOFactory.getInstance());
+        this(ConfiguredDAOFactory.getInstance());
     }
 
     public TransferHandler(DAOFactory factory) {

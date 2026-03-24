@@ -1,5 +1,7 @@
 package com.bms.persistence;
 
+import com.bms.persistence.adapter.DatabaseAdapter;
+
 /**
  * DAOFactory - Abstract Factory interface for creating Data Access Objects.
  * Decouples the controller layer from concrete DAO implementations,
@@ -21,4 +23,6 @@ public interface DAOFactory {
     InterestPostingDAO createInterestPostingDAO();
 
     OverdraftEventDAO createOverdraftEventDAO();
+
+    DatabaseAdapter getDatabaseAdapter();
 }

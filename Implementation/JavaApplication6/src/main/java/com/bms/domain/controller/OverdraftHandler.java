@@ -6,7 +6,7 @@ import java.util.List;
 import com.bms.domain.entity.OverdraftEvent;
 import com.bms.persistence.DAOFactory;
 import com.bms.persistence.OverdraftEventDAO;
-import com.bms.persistence.SqlServerDAOFactory;
+import com.bms.persistence.ConfiguredDAOFactory;
 
 /**
  * OverdraftHandler - UC-13: Overdraft Detection & Alerts
@@ -16,7 +16,7 @@ public class OverdraftHandler {
     private final OverdraftEventDAO overdraftEventDAO;
 
     public OverdraftHandler() {
-        this(SqlServerDAOFactory.getInstance());
+        this(ConfiguredDAOFactory.getInstance());
     }
 
     public OverdraftHandler(DAOFactory factory) {

@@ -5,7 +5,7 @@ import java.util.List;
 import com.bms.domain.entity.Loan;
 import com.bms.persistence.DAOFactory;
 import com.bms.persistence.LoanDAO;
-import com.bms.persistence.SqlServerDAOFactory;
+import com.bms.persistence.ConfiguredDAOFactory;
 
 /**
  * LoanStatusController - UC-11: View Loan Status
@@ -15,7 +15,7 @@ public class LoanStatusController {
     private final LoanDAO loanDAO;
 
     public LoanStatusController() {
-        this(SqlServerDAOFactory.getInstance());
+        this(ConfiguredDAOFactory.getInstance());
     }
 
     public LoanStatusController(DAOFactory factory) {

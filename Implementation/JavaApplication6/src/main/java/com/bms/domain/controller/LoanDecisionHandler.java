@@ -6,7 +6,7 @@ import java.util.List;
 import com.bms.domain.entity.Loan;
 import com.bms.persistence.DAOFactory;
 import com.bms.persistence.LoanDAO;
-import com.bms.persistence.SqlServerDAOFactory;
+import com.bms.persistence.ConfiguredDAOFactory;
 
 /**
  * LoanDecisionHandler - UC-10: Approve / Reject Loans
@@ -16,7 +16,7 @@ public class LoanDecisionHandler {
     private final LoanDAO loanDAO;
 
     public LoanDecisionHandler() {
-        this(SqlServerDAOFactory.getInstance());
+        this(ConfiguredDAOFactory.getInstance());
     }
 
     public LoanDecisionHandler(DAOFactory factory) {

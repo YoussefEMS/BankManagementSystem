@@ -8,7 +8,7 @@ import com.bms.persistence.AccountDAO;
 import com.bms.persistence.AuthContext;
 import com.bms.persistence.CustomerDAO;
 import com.bms.persistence.DAOFactory;
-import com.bms.persistence.SqlServerDAOFactory;
+import com.bms.persistence.ConfiguredDAOFactory;
 
 /**
  * AuthenticationController - Domain logic for authentication and session
@@ -22,7 +22,7 @@ public class AuthenticationController {
     private final AuthContext authContext;
 
     public AuthenticationController() {
-        this(SqlServerDAOFactory.getInstance());
+        this(ConfiguredDAOFactory.getInstance());
     }
 
     public AuthenticationController(DAOFactory factory) {
