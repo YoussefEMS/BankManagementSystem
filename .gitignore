@@ -6,6 +6,8 @@
 /Implementation/JavaApplication6/.metals/
 /Implementation/JavaApplication6/.vscode/
 /Implementation/JavaApplication6/src/main/resources/application.properties
+/Implementation/JavaApplication6/chrome-headless-profile
+/Implementation/JavaApplication6/tools
 .vscode/
 .metals/
 

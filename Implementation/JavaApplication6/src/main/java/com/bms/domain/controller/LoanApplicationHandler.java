@@ -1,23 +1,30 @@
 package com.bms.domain.controller;
 
-import com.bms.domain.entity.Loan;
-import com.bms.persistence.DAOFactory;
-import com.bms.persistence.LoanDAO;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import com.bms.persistence.ConfiguredDAOFactory;
+import com.bms.persistence.DAOFactory;
 
 /**
  * LoanApplicationHandler - UC-09: Apply for Loan
  * Validates loan inputs, creates a PENDING loan application
  */
 public class LoanApplicationHandler {
-    private final LoanDAO loanDAO;
+    private final Map<String, AbstractLoanApplicationProcessor> processors;
+    private final AbstractLoanApplicationProcessor defaultProcessor;
 
     public LoanApplicationHandler() {
         this(ConfiguredDAOFactory.getInstance());
     }
 
     public LoanApplicationHandler(DAOFactory factory) {
-        this.loanDAO = factory.createLoanDAO();
+        this.processors = new HashMap<>();
+        this.processors.put("PERSONAL", new PersonalLoanApplicationProcessor(factory));
+        this.processors.put("HOME", new HomeLoanApplicationProcessor(factory));
+        this.processors.put("AUTO", new AutoLoanApplicationProcessor(factory));
+        this.defaultProcessor = new DefaultLoanApplicationProcessor(factory);
     }
 
     /**
@@ -27,50 +34,14 @@ public class LoanApplicationHandler {
      */
     public int applyForLoan(int customerId, double amount, String loanType,
             int durationMonths, String purpose) {
-        // Validate inputs
-        if (!validateInputs(amount, loanType, durationMonths, purpose)) {
+        if (loanType == null || loanType.trim().isEmpty()) {
             return -1;
         }
 
-        // Build loan entity
-        Loan loan = new Loan();
-        loan.setCustomerId(customerId);
-        loan.setAmount(amount);
-        loan.setLoanType(loanType);
-        loan.setDurationMonths(durationMonths);
-        loan.setPurpose(purpose);
-        loan.setStatus("PENDING");
-
-        // BRIDGE IN ACTION: Use the appropriate calculator strategy for this loan type
-        LoanInterestCalculator calculator = getLoanCalculator(loanType);
-        double interestRate = calculator.calculateRate(amount, durationMonths);
-        loan.setInterestRate(interestRate);
-
-        // Persist
-        return loanDAO.insert(loan);
+        return getProcessor(loanType).applyForLoan(customerId, amount, loanType, durationMonths, purpose);
     }
 
-    private boolean validateInputs(double amount, String loanType, int durationMonths, String purpose) {
-        if (amount <= 0)
-            return false;
-        if (loanType == null || loanType.trim().isEmpty())
-            return false;
-        if (durationMonths <= 0 || durationMonths > 360)
-            return false;
-        if (purpose == null || purpose.trim().isEmpty())
-            return false;
-        return true;
-    }
-
-    private LoanInterestCalculator getLoanCalculator(String loanType) {
-        if (loanType == null)
-            return new DefaultLoanInterestCalculator(); // 10% default rate
-
-        return switch (loanType.toUpperCase()) {
-            case "PERSONAL" -> new PersonalLoanInterestCalculator();
-            case "HOME" -> new HomeLoanInterestCalculator();
-            case "AUTO" -> new AutoLoanInterestCalculator();
-            default -> new DefaultLoanInterestCalculator(); // 10% default rate for unknown types
-        };
+    private AbstractLoanApplicationProcessor getProcessor(String loanType) {
+        return processors.getOrDefault(loanType.trim().toUpperCase(Locale.ROOT), defaultProcessor);
     }
 }

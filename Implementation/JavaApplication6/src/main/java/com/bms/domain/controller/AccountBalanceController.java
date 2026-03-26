@@ -1,9 +1,15 @@
 package com.bms.domain.controller;
 
+import com.bms.domain.decorator.accountinfo.AccountInfoService;
+import com.bms.domain.decorator.accountinfo.AccountInfoView;
+import com.bms.domain.decorator.accountinfo.BasicAccountInfoService;
+import com.bms.domain.decorator.accountinfo.CurrencyFormatDecorator;
+import com.bms.domain.decorator.accountinfo.OverdraftWarningDecorator;
+import com.bms.domain.decorator.accountinfo.RewardPointsDecorator;
 import com.bms.domain.entity.Account;
+import com.bms.persistence.ConfiguredDAOFactory;
 import com.bms.persistence.AccountDAO;
 import com.bms.persistence.DAOFactory;
-import com.bms.persistence.ConfiguredDAOFactory;
 
 /**
  * AccountBalanceController - Domain logic for viewing account balance
@@ -12,6 +18,7 @@ import com.bms.persistence.ConfiguredDAOFactory;
  */
 public class AccountBalanceController {
     private final AccountDAO accountDAO;
+    private final AccountInfoService accountInfoService;
 
     public AccountBalanceController() {
         this(ConfiguredDAOFactory.getInstance());
@@ -19,6 +26,10 @@ public class AccountBalanceController {
 
     public AccountBalanceController(DAOFactory factory) {
         this.accountDAO = factory.createAccountDAO();
+        this.accountInfoService = new RewardPointsDecorator(
+                new OverdraftWarningDecorator(
+                        new CurrencyFormatDecorator(
+                                new BasicAccountInfoService())));
     }
 
     /**
@@ -47,21 +58,12 @@ public class AccountBalanceController {
      * @return String array [accountNumber, status, balance, currency] or null if
      *         not found
      */
-    public String[] getAccountDetails(String accountNo) {
+    public AccountInfoView getAccountDetails(String accountNo) {
         Account account = viewAccountSummary(accountNo);
 
         if (account == null) {
             return null;
         }
-
-        // Format balance to 2 decimal places
-        String formattedBalance = String.format("%.2f", account.getBalance());
-
-        return new String[] {
-                account.getAccountNumber(),
-                account.getStatus(),
-                formattedBalance,
-                account.getCurrency()
-        };
+        return accountInfoService.getAccountInfo(account);
     }
 }

@@ -1,328 +1,205 @@
 # Bank Management System
 
-A JavaFX-based Bank Management System with JDBC backend, implemented as a Maven project with a strict 3-layer architecture.
+A JavaFX desktop banking application built with Java 17, Maven, JDBC, and Microsoft SQL Server.
 
-## Project Structure
+This repository contains a course project that models common retail banking workflows for both customers and administrators, including account access, transactions, loan processing, interest posting, and overdraft monitoring. The codebase also demonstrates several object-oriented design patterns in a working application.
 
+## Overview
+
+The application is split into three main areas:
+
+- `presentation`: JavaFX screens and navigation
+- `domain`: business logic, controllers, entities, and pattern-based workflow components
+- `persistence`: DAO abstractions, SQL Server integration, datasource setup, and database-adapter infrastructure
+
+The main entry point is `com.bms.BankManagementSystemApp`.
+
+## Implemented Features
+
+### Customer workflows
+
+- Login and role-based routing
+- Account selection
+- Account balance viewing
+- Transaction history viewing
+- Transfer between accounts
+- Loan application submission
+- Loan status viewing
+- Loan catalog comparison
+
+### Admin workflows
+
+- Admin dashboard
+- Customer profile creation
+- Cash deposit
+- Cash withdrawal
+- Account status updates
+- Loan review and decision handling
+- Monthly interest posting
+- Overdraft alert viewing
+
+## Design Patterns Used
+
+The project is not only a banking application, but also a design-pattern implementation exercise. The codebase currently includes:
+
+- Abstract Factory for screen creation and DAO creation
+- Factory Method for transaction creation
+- Singleton for shared runtime infrastructure
+- Bridge for interest posting and loan-application processing
+- Adapter for database dialect abstraction and payment gateway integration
+- Decorator for account-info and transaction-processing enhancements
+- Flyweight for loan product catalog sharing
+
+Supporting documentation for the structural patterns is included in:
+
+- [structural_design_patterns_report.md](/c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/structural_design_patterns_report.md)
+- [structural_design_patterns_report.html](/c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/structural_design_patterns_report.html)
+
+## Tech Stack
+
+- Java 17
+- JavaFX 22
+- Maven
+- JDBC
+- Microsoft SQL Server
+- HikariCP
+- SLF4J + Logback
+
+## Repository Layout
+
+```text
+src/main/java/com/bms
+├── BankManagementSystemApp.java
+├── domain
+│   ├── controller
+│   ├── decorator
+│   ├── entity
+│   └── flyweight
+├── payment
+├── persistence
+│   └── adapter
+└── presentation
+
+src/main/resources
+├── application.properties
+└── db
+    ├── schema.sql
+    └── seed_auth_data.sql
 ```
-src/main/java/com/bms/
-├── BankManagementSystemApp.java          # JavaFX Application entry point
-├── domain/
-│   ├── controller/
-│   │   ├── AccountBalanceController.java # UC-02 Domain logic
-│   │   └── TransactionHistoryController.java # UC-04 Domain logic
-│   └── entity/
-│       ├── Account.java                  # Account entity
-│       └── Transaction.java              # Transaction entity
-├── persistence/
-│   ├── DataSourceFactory.java            # HikariCP connection pool
-│   ├── AccountDAO.java                   # Account data access
-│   └── TransactionDAO.java               # Transaction data access
-└── presentation/
-    ├── AccountBalanceScreen.java         # UC-02 JavaFX UI
-    └── TransactionHistoryScreen.java     # UC-04 JavaFX UI
-
-src/main/resources/
-├── application.properties                 # Database configuration
-└── db/
-    ├── schema.sql                         # Database schema
-    └── seed.sql                           # Sample data
-```
-
-## Architecture Overview
-
-### 3-Layer Architecture
-1. **View Layer (JavaFX UI)** - `com.bms.presentation`
-   - User interaction only
-   - No business logic or SQL
-   - Calls Domain Controllers only
-
-2. **Domain Layer** - `com.bms.domain`
-   - Business logic and validation
-   - Contains Entities and Controllers
-   - Domain Controllers may call DAOs
-   - Entities have no DAO dependencies
-
-3. **Data Access Layer** - `com.bms.persistence`
-   - All SQL and JDBC operations
-   - HikariCP connection pooling
-   - No JavaFX imports
-
-## Use Cases Implemented
-
-### UC-02: View Account Balance
-- **Screen**: AccountBalanceScreen
-- **Inputs**: Account Number
-- **Outputs**: Account Status, Balance, Currency, Account Number (echo)
-- **Behavior**: 
-  - Free-text account number input
-  - If account not found: displays blank output (no error dialog)
-  - Shows balance in read-only format
-
-### UC-04: View Transaction History
-- **Screen**: TransactionHistoryScreen
-- **Inputs**: 
-  - Account Number (required)
-  - Start Date (optional)
-  - End Date (optional)
-  - Transaction Type filter (optional, defaults to "All")
-- **Outputs**: Transaction table with columns:
-  - Timestamp (format: yyyy-MM-dd HH:mm:ss)
-  - Type (Deposit, Withdrawal, TransferDebit, TransferCredit, InterestPosting)
-  - Amount
-  - Note
-  - Balance After
-- **Behavior**:
-  - If no transactions found: displays empty table with optional "No results" label
-  - Results ordered by timestamp (most recent first)
-  - No error dialogs for not-found cases
-
-## Technology Stack
-
-- **Java**: 17+
-- **Build Tool**: Maven
-- **UI Framework**: JavaFX 22.0.1 with OpenJFX Maven Plugin
-- **Database Connectivity**: JDBC + HikariCP 5.1.0 (connection pooling)
-- **Database**: Microsoft SQL Server with JDBC Driver 13.2.1
-- **Logging**: SLF4J + Logback
 
 ## Prerequisites
 
-- **Java 17+** installed
-- **Apache NetBeans** with Maven support
-- **Microsoft SQL Server** installed and running (or SQL Server 2019+ with network access)
-- **Maven** (bundled with NetBeans or installed separately)
+Before running the project, make sure you have:
 
-## Setup Instructions
+- Java 17 or newer
+- Maven 3.8+ (recommended)
+- Microsoft SQL Server running locally or remotely
+- A database named `bank_management_system`, or an updated JDBC URL that points to your chosen database
 
-### 1. Database Setup
+## Database Setup
 
-#### Microsoft SQL Server (MSSQL)
-```bash
-# Create database
-sqlcmd -S localhost -U sa -P YourPassword123! -Q "CREATE DATABASE bank_management_system"
+The project is currently configured for SQL Server.
 
-# Run schema script
-sqlcmd -S localhost -U sa -P YourPassword123! -d bank_management_system -i src\main\resources\db\schema.sql
+1. Create a SQL Server database.
+2. Run [schema.sql](/c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/resources/db/schema.sql).
+3. Run [seed_auth_data.sql](/c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/resources/db/seed_auth_data.sql).
+4. Update [application.properties](/c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/resources/application.properties) with your local connection details.
 
-# Run seed script
-sqlcmd -S localhost -U sa -P YourPassword123! -d bank_management_system -i src\main\resources\db\seed.sql
+The seed script inserts demo customers, admin users, accounts, transactions, transfers, overdraft events, and loans.
 
-# Verify tables
-sqlcmd -S localhost -U sa -P YourPassword123! -d bank_management_system -Q "SELECT * FROM INFORMATION_SCHEMA.TABLES"
-```
+## Configuration
 
-**Note**: Replace `localhost`, `sa`, and `YourPassword123!` with your SQL Server hostname, username, and password.
+Database settings live in [application.properties](/c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/resources/application.properties).
 
-#### For SQL Server via SSMS (GUI)
-1. Open SQL Server Management Studio (SSMS)
-2. Connect to your SQL Server instance
-3. New Query → Copy contents of `src/main/resources/db/schema.sql` → Execute
-4. New Query → Copy contents of `src/main/resources/db/seed.sql` → Execute
-5. Verify by running: `SELECT * FROM Transactions ORDER BY timestamp DESC` (should show 30 records)
+Expected settings:
 
-#### For Other Databases
-To use PostgreSQL or another database, update `src/main/resources/application.properties`:
-- Change `jdbc.url`, `jdbc.user`, `jdbc.password`
-- Update `jdbc.driver` for your database
-- Update `src/main/resources/db/schema.sql` and `seed.sql` to match your database syntax
-
-### 2. Configure Database Connection
-
-Edit `src/main/resources/application.properties`:
 ```properties
-jdbc.url=jdbc:sqlserver://localhost:1433;databaseName=bank_management_system;encrypt=true;trustServerCertificate=true
-jdbc.user=sa
-jdbc.password=YourPassword123!
+jdbc.url=jdbc:sqlserver://HOST:PORT;databaseName=bank_management_system;encrypt=true;trustServerCertificate=true
+jdbc.user=your_username
+jdbc.password=your_password
 jdbc.driver=com.microsoft.sqlserver.jdbc.SQLServerDriver
 ```
 
-**Configuration Details**:
-- `localhost:1433` - SQL Server hostname and port (1433 is default)
-- `databaseName` - The database name created in step 1
-- `encrypt=true` - Use encrypted connection
-- `trustServerCertificate=true` - Trust self-signed certificates (for local dev; use proper certs in production)
-- `jdbc.user` and `jdbc.password` - Your SQL Server credentials
+The repository currently contains environment-specific values in `application.properties`. Replace them before running the project on your machine, and do not reuse them in a public or shared environment.
 
-### 3. Open Project in NetBeans
+## Running the Application
 
-1. **File** → **Open Project**
-2. Navigate to the project directory
-3. Select the folder containing `pom.xml`
-4. Click "Open Project"
-5. NetBeans will detect it as a Maven project automatically
+From the project root:
 
-### 4. Run the Application
-
-#### Option A: NetBeans GUI (Recommended)
-1. In NetBeans, right-click the project
-2. Select **Run** (or press F6)
-3. NetBeans will execute `javafx:run` Maven goal automatically (via `nbactions.xml`)
-
-#### Option B: NetBeans Maven Runner
-1. Right-click the project
-2. Select **Run Maven** → **Goals...**
-3. Enter: `clean javafx:run`
-4. Click **Execute**
-
-#### Option C: Terminal
 ```bash
-cd /path/to/project
 mvn clean javafx:run
 ```
 
-## Demo Walkthrough
+The `pom.xml` defaults the JavaFX platform classifier to `win`. If you are building on another platform, override it explicitly:
 
-### UC-02: View Account Balance
-1. **Launch the app** via "Run" in NetBeans
-2. **Menu**: Operations → View Account Balance (UC-02)
-3. **Enter Account Number**: `ACC001`
-4. **Click View**
-5. **Expected Result**: 
-   - Account Number: ACC001
-   - Status: ACTIVE
-   - Balance: 4030.00
-   - Currency: USD
-6. **Try Unknown Account**: Enter `INVALID` and click View
-   - **Result**: Shows "No account found" message (blank output, no error dialog)
-
-### UC-04: View Transaction History
-1. **Launch the app** via "Run" in NetBeans
-2. **Menu**: Operations → View Transaction History (UC-04)
-3. **Enter Account Number**: `ACC001`
-4. **Leave filters blank** (defaults to "All" type, no date range)
-5. **Click Search**
-6. **Expected Result**: Table shows 10 transactions for ACC001
-   - Most recent first (timestamp descending)
-   - Types: Deposit, Withdrawal, TransferCredit, InterestPosting
-   - Amounts and balances displayed correctly
-7. **Try Filtered Search**:
-   - Account: `ACC002`
-   - Type: "Deposit" only
-   - Click Search
-   - **Result**: Shows only Deposit transactions for ACC002
-8. **Try Date Range**:
-   - Account: `ACC001`
-   - Start Date: 2024-12-20
-   - End Date: 2024-12-31
-   - Click Search
-   - **Result**: Shows only transactions in December 20-31, 2024
-9. **Try Unknown Account**: Enter `INVALID`
-   - **Result**: Shows empty table with "No transactions found" message
-
-## Sample Data
-
-The seed script (`seed.sql`) includes:
-- **3 Customers**: Ahmed Hassan, Fatima Ali, Mohamed Ibrahim
-- **4 Accounts**: ACC001-ACC004 with various balances
-- **30+ Transactions** across all accounts with:
-  - Various types: Deposit, Withdrawal, Transfer, InterestPosting
-  - Realistic timestamps spanning from 2023 to 2024
-  - Proper balance tracking
-  - Varied amounts and notes
-
-### Sample Test Accounts
-| Account | Type | Balance | Customer | Transactions |
-|---------|------|---------|----------|--------------|
-| ACC001 | CHECKING | 4030.00 | Ahmed Hassan | 10 |
-| ACC002 | SAVINGS | 14470.00 | Ahmed Hassan | 8 |
-| ACC003 | CHECKING | 3000.00 | Fatima Ali | 6 |
-| ACC004 | SAVINGS | 25604.50 | Mohamed Ibrahim | 6 |
-
-## Build Artifacts
-
-### Compile Project
 ```bash
-mvn clean compile
+mvn clean javafx:run -Djavafx.platform=linux
 ```
 
-### Build JAR
+or:
+
+```bash
+mvn clean javafx:run -Djavafx.platform=mac
+```
+
+## Building
+
+To build the project:
+
 ```bash
 mvn clean package
 ```
 
-### Run Tests (if added)
-```bash
-mvn clean test
-```
+The Maven build uses the Shade plugin to produce a runnable packaged JAR in `target/`.
 
-## Troubleshooting
+## Current Backend Support
 
-### Issue: "Cannot find application.properties"
-- **Cause**: Resource files not copied to target directory
-- **Solution**: Rebuild the project (`mvn clean compile`)
+The persistence layer includes adapter infrastructure for:
 
-### Issue: "Connection refused" when running
-- **Cause**: PostgreSQL not running or incorrect connection details
-- **Solution**:
-  - Verify PostgreSQL is running
-  - Check database name, user, and password in `application.properties`
-  - Ensure schema and seed SQL scripts have been executed
+- SQL Server
+- MySQL
+- Oracle
+- PostgreSQL
 
-### Issue: "ClassNotFoundException: org.postgresql.Driver"
-- **Cause**: PostgreSQL JDBC driver not in classpath
-- **Solution**: Check that `pom.xml` includes the PostgreSQL dependency (already included)
+At the moment, SQL Server is the actual supported runtime backend. The other adapters exist as part of the architecture and design-pattern implementation, not as complete production-ready backends.
 
-### Issue: NetBeans doesn't recognize Maven project
-- **Cause**: `pom.xml` not in project root
-- **Solution**: Ensure `pom.xml` is in the root directory of the project
+## Example Application Flow
 
-### Issue: "javafx:run" goal not found
-- **Cause**: OpenJFX Maven plugin not configured
-- **Solution**: Verify `pom.xml` includes `org.openjfx:javafx-maven-plugin`
+Typical runtime flow:
 
-## Environment Variables (Optional)
+1. The application starts at the login screen.
+2. After authentication, the user is routed by role.
+3. Customers move through account selection, balance/history views, transfers, and loan features.
+4. Admin users access operational screens such as deposits, withdrawals, loan review, interest posting, and overdraft alerts.
 
-For advanced PostgreSQL configuration, you can set environment variables:
-```bash
-export DB_URL=jdbc:postgresql://localhost:5432/bank_management_system
-export DB_USER=postgres
-export DB_PASSWORD=postgres
-```
+## Notable Packages
 
-Then update `application.properties` to use `${DB_URL}` syntax (requires Maven resource filtering).
+- `com.bms.presentation`: JavaFX UI components and screen factories
+- `com.bms.domain.controller`: use-case orchestration and workflow logic
+- `com.bms.domain.entity`: domain models such as `Account`, `Loan`, and `Transaction`
+- `com.bms.domain.decorator`: decorator-based enhancements
+- `com.bms.domain.flyweight`: flyweight-based loan catalog modeling
+- `com.bms.persistence`: DAO contracts, factories, auth context, and datasource configuration
+- `com.bms.payment`: payment gateway abstraction and adapter examples
 
-## Dependencies
+## Project Status
 
-All dependencies are managed by Maven and defined in `pom.xml`:
-- OpenJFX (JavaFX controls and FXML)
-- HikariCP (connection pooling)
-- PostgreSQL JDBC Driver
-- SLF4J + Logback (logging)
+This is a coursework project and should be treated as an educational implementation rather than a production banking system.
 
-Run `mvn dependency:tree` to see the full dependency tree.
+Known limitations:
 
-## Known Limitations
+- No automated test suite is currently included
+- Persistence is effectively SQL Server-specific at runtime
+- Security is coursework-level and not production-grade
+- Configuration is environment-local rather than profile-driven
+- Some infrastructure exists primarily to support design-pattern coverage
 
-1. No authentication/login system implemented
-2. UC-02 and UC-04 are read-only (no create/update operations)
-3. Database schema assumes UTF-8 encoding
-4. Single-threaded UI (no async database calls, but HikariCP manages concurrency)
+## Suggested First Steps for a New Viewer
 
-## Future Enhancements
+If you are opening the repository for the first time, this is the fastest path to understanding it:
 
-- Additional use cases (Create Account, Deposit, Withdraw, Transfer)
-- User authentication and authorization
-- Transaction filtering by multiple criteria simultaneously
-- Export transaction history to CSV/PDF
-- Real-time balance updates
-- Audit logging
-- Database migration support (Flyway)
-
-## License
-
-This project is provided as-is for educational purposes.
-
-## Support
-
-For issues or questions:
-1. Check the Troubleshooting section above
-2. Verify database connectivity
-3. Review application logs in console output
-4. Check `application.properties` configuration
-
----
-
-**Last Updated**: December 2024
-**Version**: 1.0.0
-**Status**: Ready for production use
+1. Read [pom.xml](/c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/pom.xml) for the runtime stack and build configuration.
+2. Open [BankManagementSystemApp.java](/c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/BankManagementSystemApp.java) to see the navigation flow.
+3. Review the `presentation`, `domain`, and `persistence` packages in that order.
+4. Check the database schema in [schema.sql](/c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/resources/db/schema.sql).
+5. Read the structural design pattern report for the design rationale.

@@ -2,6 +2,7 @@ package com.bms.presentation;
 
 import com.bms.domain.controller.AccountBalanceController;
 import com.bms.domain.controller.AuthenticationController;
+import com.bms.domain.decorator.accountinfo.AccountInfoView;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -30,6 +31,8 @@ public class AccountBalanceScreen {
     private Label balanceLabel;
     private Label currencyLabel;
     private Label accountNumberDisplayLabel;
+    private Label rewardPointsLabel;
+    private Label warningLabel;
     private Label noResultLabel;
 
     public AccountBalanceScreen() {
@@ -171,11 +174,25 @@ public class AccountBalanceScreen {
         currencyLabel = new Label("");
         currencyBox.getChildren().addAll(currencyLabelText, currencyLabel);
 
+        // Reward points
+        HBox rewardPointsBox = new HBox(20);
+        Label rewardPointsLabelText = new Label("Reward Points:");
+        rewardPointsLabelText.setPrefWidth(150);
+        rewardPointsLabelText.setStyle("-fx-font-weight: bold;");
+        rewardPointsLabel = new Label("");
+        rewardPointsBox.getChildren().addAll(rewardPointsLabelText, rewardPointsLabel);
+
+        warningLabel = new Label("");
+        warningLabel.setStyle("-fx-text-fill: #d32f2f; -fx-font-weight: bold;");
+        warningLabel.setWrapText(true);
+
         detailsBox.getChildren().addAll(
             accountNoBox,
             statusBox,
             balanceBox,
-            currencyBox
+            currencyBox,
+            rewardPointsBox,
+            warningLabel
         );
 
         section.getChildren().addAll(resultsLabel, noResultLabel, detailsBox);
@@ -197,11 +214,10 @@ public class AccountBalanceScreen {
 
         try {
             // Call controller to get account details as strings
-            String[] accountDetails = balanceController.getAccountDetails(accountNo);
+            AccountInfoView accountDetails = balanceController.getAccountDetails(accountNo);
 
-            if (accountDetails != null && accountDetails.length == 4) {
-                // Display account details - accountDetails: [accountNumber, status, balance, currency]
-                displayAccount(accountDetails[0], accountDetails[1], accountDetails[2], accountDetails[3]);
+            if (accountDetails != null) {
+                displayAccount(accountDetails);
                 noResultLabel.setVisible(false);
             } else {
                 // No account found - show blank/empty output
@@ -220,11 +236,13 @@ public class AccountBalanceScreen {
     /**
      * Display account details on the screen
      */
-    private void displayAccount(String accountNumber, String status, String balance, String currency) {
-        accountNumberDisplayLabel.setText(accountNumber);
-        statusLabel.setText(status);
-        balanceLabel.setText(balance);
-        currencyLabel.setText(currency);
+    private void displayAccount(AccountInfoView accountInfoView) {
+        accountNumberDisplayLabel.setText(accountInfoView.getAccountNumber());
+        statusLabel.setText(accountInfoView.getStatus());
+        balanceLabel.setText(accountInfoView.getBalance());
+        currencyLabel.setText(accountInfoView.getCurrency());
+        rewardPointsLabel.setText(accountInfoView.getRewardPoints());
+        warningLabel.setText(accountInfoView.getWarningMessage());
     }
 
     /**
@@ -235,6 +253,8 @@ public class AccountBalanceScreen {
         statusLabel.setText("");
         balanceLabel.setText("");
         currencyLabel.setText("");
+        rewardPointsLabel.setText("");
+        warningLabel.setText("");
     }
 
     /**

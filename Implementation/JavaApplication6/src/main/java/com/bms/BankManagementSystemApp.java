@@ -8,6 +8,7 @@ import com.bms.presentation.ApplyForLoanForm;
 import com.bms.presentation.CreateCustomerProfileForm;
 import com.bms.presentation.DepositCashForm;
 import com.bms.presentation.JavaFXScreenFactory;
+import com.bms.presentation.LoanCatalogComparisonView;
 import com.bms.presentation.LoanReviewForm;
 import com.bms.presentation.LoanStatusView;
 import com.bms.presentation.LoginScreen;
@@ -256,6 +257,13 @@ public class BankManagementSystemApp extends Application {
             root.setCenter(view.getRoot());
         });
 
+        MenuItem loanCatalogItem = new MenuItem("Loan Catalog");
+        loanCatalogItem.setOnAction(event -> {
+            LoanCatalogComparisonView view = screenFactory.createLoanCatalogComparisonView();
+            view.setOnBack(this::showAccountSelectionScreen);
+            root.setCenter(view.getRoot());
+        });
+
         MenuItem applyLoanItem = new MenuItem("Apply for Loan");
         applyLoanItem.setOnAction(event -> {
             ApplyForLoanForm form = screenFactory.createLoanApplicationForm();
@@ -263,7 +271,7 @@ public class BankManagementSystemApp extends Application {
             root.setCenter(form.getRoot());
         });
 
-        accountMenu.getItems().addAll(transferItem, loanStatusItem, applyLoanItem);
+        accountMenu.getItems().addAll(transferItem, loanStatusItem, loanCatalogItem, applyLoanItem);
 
         // User menu
         Menu userMenu = new Menu("User");

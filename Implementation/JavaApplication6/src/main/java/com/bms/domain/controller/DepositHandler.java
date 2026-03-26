@@ -2,6 +2,11 @@ package com.bms.domain.controller;
 
 import java.math.BigDecimal;
 
+import com.bms.domain.decorator.transaction.AuditDecorator;
+import com.bms.domain.decorator.transaction.BasicTransactionProcessor;
+import com.bms.domain.decorator.transaction.NotificationDecorator;
+import com.bms.domain.decorator.transaction.TransactionContext;
+import com.bms.domain.decorator.transaction.TransactionProcessor;
 import com.bms.domain.entity.Account;
 import com.bms.domain.entity.Transaction;
 import com.bms.domain.entity.TransactionFactory;
@@ -18,6 +23,7 @@ import com.bms.persistence.TransactionDAO;
 public class DepositHandler {
     private final AccountDAO accountDAO;
     private final TransactionDAO transactionDAO;
+    private final TransactionProcessor transactionProcessor;
 
     public DepositHandler() {
         this(ConfiguredDAOFactory.getInstance());
@@ -26,6 +32,9 @@ public class DepositHandler {
     public DepositHandler(DAOFactory factory) {
         this.accountDAO = factory.createAccountDAO();
         this.transactionDAO = factory.createTransactionDAO();
+        this.transactionProcessor = new NotificationDecorator(
+                new AuditDecorator(
+                        new BasicTransactionProcessor()));
     }
 
     /**
@@ -34,37 +43,43 @@ public class DepositHandler {
      * @return the transaction ID (> 0 on success), 0 or negative on failure
      */
     public int postDeposit(String accountNo, double amount, String description) {
-        // Validate amount
-        if (!validateAmount(amount)) {
-            return -1;
-        }
-
-        // Look up account
-        Account account = getAccount(accountNo);
-        if (account == null) {
-            return -2;
-        }
-
-        if (!"ACTIVE".equals(account.getStatus())) {
-            return -3; // Account not active
-        }
-
-        // Compute new balance
-        BigDecimal depositAmount = BigDecimal.valueOf(amount);
-        BigDecimal newBalance = account.getBalance().add(depositAmount);
-
-        // Update balance in DB
-        accountDAO.updateBalance(accountNo, newBalance);
-
-        // Record the transaction using Factory Method
         String performedBy = AuthContext.getInstance().isLoggedIn()
                 ? AuthContext.getInstance().getLoggedInCustomer().getFullName()
                 : "System";
+        TransactionContext context = new TransactionContext(
+                "Deposit",
+                accountNo,
+                null,
+                BigDecimal.valueOf(amount),
+                performedBy);
+        context.addNoteTag("Notification");
+        context.addNoteTag("Audit");
 
-        Transaction tx = TransactionFactory.createDeposit(
-                accountNo, depositAmount, newBalance, performedBy, description);
+        return transactionProcessor.process(context, currentContext -> {
+            if (!validateAmount(amount)) {
+                return -1;
+            }
 
-        return transactionDAO.insert(tx);
+            Account account = getAccount(accountNo);
+            if (account == null) {
+                return -2;
+            }
+
+            if (!"ACTIVE".equals(account.getStatus())) {
+                return -3;
+            }
+
+            BigDecimal depositAmount = currentContext.getRequestedAmount();
+            BigDecimal newBalance = account.getBalance().add(depositAmount);
+
+            accountDAO.updateBalance(accountNo, newBalance);
+
+            Transaction tx = TransactionFactory.createDeposit(
+                    accountNo, depositAmount, newBalance, currentContext.getPerformedBy(),
+                    currentContext.decorateNote(description));
+
+            return transactionDAO.insert(tx);
+        });
     }
 
     private boolean validateAmount(double amount) {

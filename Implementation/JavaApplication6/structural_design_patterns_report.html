@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>structural_design_patterns_report</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    nav#TOC {
+      display: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm 14mm;
+    }
+
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      h2,
+      h3,
+      pre.mermaid,
+      table {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: #1f2937;
+      line-height: 1.55;
+      font-size: 13px;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    h1 {
+      color: #0f172a;
+      font-size: 28px;
+      text-align: center;
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      color: #1d4ed8;
+      font-size: 20px;
+      border-bottom: 2px solid #dbeafe;
+      padding-bottom: 6px;
+      margin-top: 28px;
+    }
+
+    h3 {
+      color: #0f172a;
+      font-size: 15px;
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+
+    p,
+    li {
+      font-size: 13px;
+    }
+
+    a {
+      color: #1d4ed8;
+      text-decoration: none;
+    }
+
+    code {
+      background: #f3f4f6;
+      border-radius: 4px;
+      padding: 1px 4px;
+      font-size: 12px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    pre:not(.mermaid) {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 12px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px;
+      font-size: 12.5px;
+    }
+
+    th,
+    td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eff6ff;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    .mermaid {
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 8px;
+      padding: 18px;
+      margin: 14px 0 18px;
+      text-align: center;
+      overflow: visible;
+    }
+
+    .mermaid svg {
+      max-width: none;
+      width: 100%;
+      height: auto;
+      transform: scale(1.15);
+      transform-origin: top center;
+    }
+
+    .mermaid.mermaid-compact svg {
+      width: 92%;
+      max-width: 92%;
+      transform: none;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#structural-design-patterns-report-bank-management-system"
+id="toc-structural-design-patterns-report-bank-management-system"> Structural Design Patterns Report —
+Bank Management System</a>
+<ul>
+<li><a href="#table-of-contents" id="toc-table-of-contents"><span
+class="toc-section-number">1.1</span> Table of Contents</a></li>
+<li><a href="#bridge-pattern-use-1-interest-posting"
+id="toc-bridge-pattern-use-1-interest-posting"><span
+class="toc-section-number">1.2</span> 1. Bridge Pattern — Use 1:
+Interest Posting</a>
+<ul>
+<li><a href="#problem-identified" id="toc-problem-identified"><span
+class="toc-section-number">1.2.1</span> Problem Identified</a></li>
+<li><a href="#justification" id="toc-justification"><span
+class="toc-section-number">1.2.2</span> Justification</a></li>
+<li><a href="#participating-classes"
+id="toc-participating-classes"><span
+class="toc-section-number">1.2.3</span> Participating Classes</a></li>
+<li><a href="#uml-class-diagram" id="toc-uml-class-diagram"><span
+class="toc-section-number">1.2.4</span> UML Class Diagram</a></li>
+</ul></li>
+<li><a href="#bridge-pattern-use-2-loan-application-processing"
+id="toc-bridge-pattern-use-2-loan-application-processing"><span
+class="toc-section-number">1.3</span> 2. Bridge Pattern — Use 2: Loan
+Application Processing</a>
+<ul>
+<li><a href="#problem-identified-1" id="toc-problem-identified-1"><span
+class="toc-section-number">1.3.1</span> Problem Identified</a></li>
+<li><a href="#justification-1" id="toc-justification-1"><span
+class="toc-section-number">1.3.2</span> Justification</a></li>
+<li><a href="#participating-classes-1"
+id="toc-participating-classes-1"><span
+class="toc-section-number">1.3.3</span> Participating Classes</a></li>
+<li><a href="#uml-class-diagram-1" id="toc-uml-class-diagram-1"><span
+class="toc-section-number">1.3.4</span> UML Class Diagram</a></li>
+</ul></li>
+<li><a href="#adapter-pattern-use-1-database-sql-dialect-adapter"
+id="toc-adapter-pattern-use-1-database-sql-dialect-adapter"><span
+class="toc-section-number">1.4</span> 3. Adapter Pattern — Use 1:
+Database SQL-Dialect Adapter</a>
+<ul>
+<li><a href="#problem-identified-2" id="toc-problem-identified-2"><span
+class="toc-section-number">1.4.1</span> Problem Identified</a></li>
+<li><a href="#justification-2" id="toc-justification-2"><span
+class="toc-section-number">1.4.2</span> Justification</a></li>
+<li><a href="#participating-classes-2"
+id="toc-participating-classes-2"><span
+class="toc-section-number">1.4.3</span> Participating Classes</a></li>
+<li><a href="#uml-class-diagram-2" id="toc-uml-class-diagram-2"><span
+class="toc-section-number">1.4.4</span> UML Class Diagram</a></li>
+</ul></li>
+<li><a href="#adapter-pattern-use-2-payment-gateway"
+id="toc-adapter-pattern-use-2-payment-gateway"><span
+class="toc-section-number">1.5</span> 4. Adapter Pattern — Use 2:
+Payment Gateway</a>
+<ul>
+<li><a href="#problem-identified-3" id="toc-problem-identified-3"><span
+class="toc-section-number">1.5.1</span> Problem Identified</a></li>
+<li><a href="#justification-3" id="toc-justification-3"><span
+class="toc-section-number">1.5.2</span> Justification</a></li>
+<li><a href="#participating-classes-3"
+id="toc-participating-classes-3"><span
+class="toc-section-number">1.5.3</span> Participating Classes</a></li>
+<li><a href="#uml-class-diagram-3" id="toc-uml-class-diagram-3"><span
+class="toc-section-number">1.5.4</span> UML Class Diagram</a></li>
+</ul></li>
+<li><a href="#decorator-pattern-use-1-account-info-service"
+id="toc-decorator-pattern-use-1-account-info-service"><span
+class="toc-section-number">1.6</span> 5. Decorator Pattern — Use 1:
+Account Info Service</a>
+<ul>
+<li><a href="#problem-identified-4" id="toc-problem-identified-4"><span
+class="toc-section-number">1.6.1</span> Problem Identified</a></li>
+<li><a href="#justification-4" id="toc-justification-4"><span
+class="toc-section-number">1.6.2</span> Justification</a></li>
+<li><a href="#participating-classes-4"
+id="toc-participating-classes-4"><span
+class="toc-section-number">1.6.3</span> Participating Classes</a></li>
+<li><a href="#uml-class-diagram-4" id="toc-uml-class-diagram-4"><span
+class="toc-section-number">1.6.4</span> UML Class Diagram</a></li>
+</ul></li>
+<li><a href="#decorator-pattern-use-2-transaction-processor"
+id="toc-decorator-pattern-use-2-transaction-processor"><span
+class="toc-section-number">1.7</span> 6. Decorator Pattern — Use 2:
+Transaction Processor</a>
+<ul>
+<li><a href="#problem-identified-5" id="toc-problem-identified-5"><span
+class="toc-section-number">1.7.1</span> Problem Identified</a></li>
+<li><a href="#justification-5" id="toc-justification-5"><span
+class="toc-section-number">1.7.2</span> Justification</a></li>
+<li><a href="#participating-classes-5"
+id="toc-participating-classes-5"><span
+class="toc-section-number">1.7.3</span> Participating Classes</a></li>
+<li><a href="#uml-class-diagram-5" id="toc-uml-class-diagram-5"><span
+class="toc-section-number">1.7.4</span> UML Class Diagram</a></li>
+</ul></li>
+<li><a href="#flyweight-pattern-loan-product-catalog"
+id="toc-flyweight-pattern-loan-product-catalog"><span
+class="toc-section-number">1.8</span> 7. Flyweight Pattern — Loan
+Product Catalog</a>
+<ul>
+<li><a href="#problem-identified-6" id="toc-problem-identified-6"><span
+class="toc-section-number">1.8.1</span> Problem Identified</a></li>
+<li><a href="#justification-6" id="toc-justification-6"><span
+class="toc-section-number">1.8.2</span> Justification</a></li>
+<li><a href="#participating-classes-6"
+id="toc-participating-classes-6"><span
+class="toc-section-number">1.8.3</span> Participating Classes</a></li>
+<li><a href="#uml-class-diagram-6" id="toc-uml-class-diagram-6"><span
+class="toc-section-number">1.8.4</span> UML Class Diagram</a></li>
+</ul></li>
+<li><a href="#summary" id="toc-summary"><span
+class="toc-section-number">1.9</span> Summary</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1"
+id="structural-design-patterns-report-bank-management-system"> Structural Design Patterns Report
+— Bank Management System</h1>
+<h2 data-number="1.1" id="table-of-contents"><span
+class="header-section-number">1.1</span> Table of Contents</h2>
+<ol type="1">
+<li><a href="#1-bridge-pattern--use-1-interest-posting">Bridge Pattern —
+Use 1: Interest Posting</a></li>
+<li><a
+href="#2-bridge-pattern--use-2-loan-application-processing">Bridge
+Pattern — Use 2: Loan Application Processing</a></li>
+<li><a
+href="#3-adapter-pattern--use-1-database-sql-dialect-adapter">Adapter
+Pattern — Use 1: Database SQL-Dialect Adapter</a></li>
+<li><a href="#4-adapter-pattern--use-2-payment-gateway">Adapter Pattern
+— Use 2: Payment Gateway</a></li>
+<li><a href="#5-decorator-pattern--use-1-account-info-service">Decorator
+Pattern — Use 1: Account Info Service</a></li>
+<li><a
+href="#6-decorator-pattern--use-2-transaction-processor">Decorator
+Pattern — Use 2: Transaction Processor</a></li>
+<li><a href="#7-flyweight-pattern--loan-product-catalog">Flyweight
+Pattern — Loan Product Catalog</a></li>
+</ol>
+<hr />
+<h2 data-number="1.2" id="bridge-pattern-use-1-interest-posting"><span
+class="header-section-number">1.2</span> 1. Bridge Pattern — Use 1:
+Interest Posting</h2>
+<h3 data-number="1.2.1" id="problem-identified"><span
+class="header-section-number">1.2.1</span> Problem Identified</h3>
+<p>The system posts monthly interest to different account types
+(Savings, Money Market), each with a distinct interest rate and
+calculation formula. Without the Bridge pattern, supporting <em>N</em>
+account types × <em>M</em> interest algorithms would require N×M
+subclasses, creating a <strong>combinatorial explosion</strong> of
+tightly coupled classes. Any change to the posting workflow or a new
+interest formula would ripple across many classes.</p>
+<h3 data-number="1.2.2" id="justification"><span
+class="header-section-number">1.2.2</span> Justification</h3>
+<p>The <strong>Bridge</strong> pattern decouples the
+<em>abstraction</em> (the interest-posting workflow) from its
+<em>implementation</em> (the interest-calculation algorithm). This
+allows: - <strong>Independent variation</strong>: New account types can
+be added by subclassing <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AbstractInterestPostingHandler.java#20-72">AbstractInterestPostingHandler</a>,
+and new interest formulas by implementing <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/InterestCalculator.java#9-24">InterestCalculator</a>,
+without modifying existing code. - <strong>Open/Closed
+Principle</strong>: Both hierarchies are open for extension, closed for
+modification. - <strong>Testability</strong>: The <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/InterestCalculator.java#9-24">InterestCalculator</a>
+can be mocked independently of the posting workflow.</p>
+<h3 data-number="1.2.3" id="participating-classes"><span
+class="header-section-number">1.2.3</span> Participating Classes</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 31%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>Class</th>
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Abstraction</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AbstractInterestPostingHandler.java">AbstractInterestPostingHandler</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Refined Abstraction</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/SavingsInterestPostingHandler.java">SavingsInterestPostingHandler</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Refined Abstraction</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/MoneyMarketInterestPostingHandler.java">MoneyMarketInterestPostingHandler</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Implementor</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/InterestCalculator.java">InterestCalculator</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Implementor</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/SavingsInterest.java">SavingsInterest</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Implementor</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/MoneyMarketInterest.java">MoneyMarketInterest</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.2.4" id="uml-class-diagram"><span
+class="header-section-number">1.2.4</span> UML Class Diagram</h3>
+<pre class="mermaid">
+classDiagram
+    class InterestCalculator {
+        &lt;&lt;interface&gt;&gt;
+        +calculate(balance: BigDecimal): BigDecimal
+        +getRate(): double
+    }
+
+    class SavingsInterest {
+        -ANNUAL_RATE: double = 0.025
+        -MONTHLY_RATE: double
+        +calculate(balance: BigDecimal): BigDecimal
+        +getRate(): double
+    }
+
+    class MoneyMarketInterest {
+        -ANNUAL_RATE: double = 0.04
+        -MONTHLY_RATE: double
+        +calculate(balance: BigDecimal): BigDecimal
+        +getRate(): double
+    }
+
+    class AbstractInterestPostingHandler {
+        &lt;&lt;abstract&gt;&gt;
+        #calculator: InterestCalculator
+        #accountDAO: AccountDAO
+        #transactionDAO: TransactionDAO
+        #interestPostingDAO: InterestPostingDAO
+        +postInterest(): int
+        #getAccountType(): String*
+        #processInterest(account: Account): boolean
+    }
+
+    class SavingsInterestPostingHandler {
+        +SavingsInterestPostingHandler(factory: DAOFactory)
+        #getAccountType(): String
+    }
+
+    class MoneyMarketInterestPostingHandler {
+        +MoneyMarketInterestPostingHandler(factory: DAOFactory)
+        #getAccountType(): String
+    }
+
+    InterestCalculator &lt;|.. SavingsInterest
+    InterestCalculator &lt;|.. MoneyMarketInterest
+    AbstractInterestPostingHandler o-- InterestCalculator : calculator
+    AbstractInterestPostingHandler &lt;|-- SavingsInterestPostingHandler
+    AbstractInterestPostingHandler &lt;|-- MoneyMarketInterestPostingHandler
+</pre>
+<hr />
+<h2 data-number="1.3"
+id="bridge-pattern-use-2-loan-application-processing"><span
+class="header-section-number">1.3</span> 2. Bridge Pattern — Use 2: Loan
+Application Processing</h2>
+<h3 data-number="1.3.1" id="problem-identified-1"><span
+class="header-section-number">1.3.1</span> Problem Identified</h3>
+<p>Loan applications can be of several types (Personal, Home, Auto) and
+each has its own interest-rate calculation strategy. The loan-processing
+workflow (validation, persistence, status management) is common across
+types, but the rate computation differs. Combining both concerns in a
+single class hierarchy would again create a combinatorial explosion and
+would violate the <strong>Single Responsibility Principle</strong>.</p>
+<h3 data-number="1.3.2" id="justification-1"><span
+class="header-section-number">1.3.2</span> Justification</h3>
+<p>The <strong>Bridge</strong> pattern decouples the <em>loan
+application workflow</em> (abstraction) from the <em>interest-rate
+calculation strategy</em> (implementation): - <strong>Abstraction
+hierarchy</strong>: <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AbstractLoanApplicationProcessor.java#11-57">AbstractLoanApplicationProcessor</a>
+defines the application workflow; refined abstractions like <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/PersonalLoanApplicationProcessor.java#8-19">PersonalLoanApplicationProcessor</a>
+fix the loan type. - <strong>Implementor hierarchy</strong>: <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanInterestCalculator.java#9-27">LoanInterestCalculator</a>
+defines the rate-computation interface; concrete implementations provide
+type-specific rates. - New loan types only need a new refined
+abstraction + a new calculator without modifying existing code.</p>
+<h3 data-number="1.3.3" id="participating-classes-1"><span
+class="header-section-number">1.3.3</span> Participating Classes</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 31%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>Class</th>
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Abstraction</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AbstractLoanApplicationProcessor.java">AbstractLoanApplicationProcessor</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Refined Abstraction</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/PersonalLoanApplicationProcessor.java">PersonalLoanApplicationProcessor</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Refined Abstraction</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/HomeLoanApplicationProcessor.java">HomeLoanApplicationProcessor</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Refined Abstraction</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AutoLoanApplicationProcessor.java">AutoLoanApplicationProcessor</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Refined Abstraction</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/DefaultLoanApplicationProcessor.java">DefaultLoanApplicationProcessor</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Implementor</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanInterestCalculator.java">LoanInterestCalculator</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Implementor</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/PersonalLoanInterestCalculator.java">PersonalLoanInterestCalculator</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Implementor</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/HomeLoanInterestCalculator.java">HomeLoanInterestCalculator</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Implementor</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AutoLoanInterestCalculator.java">AutoLoanInterestCalculator</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Implementor</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/DefaultLoanInterestCalculator.java">DefaultLoanInterestCalculator</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+<tr>
+<td><strong>Client</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanApplicationHandler.java">LoanApplicationHandler</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.3.4" id="uml-class-diagram-1"><span
+class="header-section-number">1.3.4</span> UML Class Diagram</h3>
+<pre class="mermaid">
+classDiagram
+    class LoanInterestCalculator {
+        &lt;&lt;interface&gt;&gt;
+        +calculateRate(amount: double, durationMonths: int): double
+        +getLoanType(): String
+    }
+
+    class PersonalLoanInterestCalculator {
+        -RATE: double = 15.0
+        +calculateRate(amount: double, durationMonths: int): double
+        +getLoanType(): String
+    }
+
+    class HomeLoanInterestCalculator {
+        -RATE: double = 5.0
+        +calculateRate(amount: double, durationMonths: int): double
+        +getLoanType(): String
+    }
+
+    class AutoLoanInterestCalculator {
+        -RATE: double = 8.0
+        +calculateRate(amount: double, durationMonths: int): double
+        +getLoanType(): String
+    }
+
+    class DefaultLoanInterestCalculator {
+        -RATE: double = 10.0
+        +calculateRate(amount: double, durationMonths: int): double
+        +getLoanType(): String
+    }
+
+    class AbstractLoanApplicationProcessor {
+        &lt;&lt;abstract&gt;&gt;
+        #calculator: LoanInterestCalculator
+        #loanDAO: LoanDAO
+        +applyForLoan(customerId, amount, requestedLoanType, durationMonths, purpose): int
+        #getLoanType(): String*
+        #resolveLoanType(requestedLoanType: String): String
+        #validateInputs(amount, durationMonths, purpose): boolean
+    }
+
+    class PersonalLoanApplicationProcessor {
+        #getLoanType(): String
+    }
+    class HomeLoanApplicationProcessor {
+        #getLoanType(): String
+    }
+    class AutoLoanApplicationProcessor {
+        #getLoanType(): String
+    }
+    class DefaultLoanApplicationProcessor {
+        #getLoanType(): String
+        #resolveLoanType(requestedLoanType: String): String
+    }
+
+    class LoanApplicationHandler {
+        -processors: Map~String, AbstractLoanApplicationProcessor~
+        -defaultProcessor: AbstractLoanApplicationProcessor
+        +applyForLoan(customerId, amount, loanType, durationMonths, purpose): int
+    }
+
+    LoanInterestCalculator &lt;|.. PersonalLoanInterestCalculator
+    LoanInterestCalculator &lt;|.. HomeLoanInterestCalculator
+    LoanInterestCalculator &lt;|.. AutoLoanInterestCalculator
+    LoanInterestCalculator &lt;|.. DefaultLoanInterestCalculator
+    AbstractLoanApplicationProcessor o-- LoanInterestCalculator : calculator
+    AbstractLoanApplicationProcessor &lt;|-- PersonalLoanApplicationProcessor
+    AbstractLoanApplicationProcessor &lt;|-- HomeLoanApplicationProcessor
+    AbstractLoanApplicationProcessor &lt;|-- AutoLoanApplicationProcessor
+    AbstractLoanApplicationProcessor &lt;|-- DefaultLoanApplicationProcessor
+    LoanApplicationHandler --&gt; AbstractLoanApplicationProcessor : uses
+</pre>
+<hr />
+<h2 data-number="1.4"
+id="adapter-pattern-use-1-database-sql-dialect-adapter"><span
+class="header-section-number">1.4</span> 3. Adapter Pattern — Use 1:
+Database SQL-Dialect Adapter</h2>
+<h3 data-number="1.4.1" id="problem-identified-2"><span
+class="header-section-number">1.4.1</span> Problem Identified</h3>
+<p>The BMS persistence layer must support multiple relational database
+engines (SQL Server, MySQL, Oracle, PostgreSQL), each with incompatible
+SQL dialects for pagination, auto-generated keys, timestamps, date
+formatting, and feature support. The existing DAO classes are written
+against a <strong>generic interface</strong>, but each database engine
+provides a <strong>vendor-specific API</strong> that is
+incompatible.</p>
+<h3 data-number="1.4.2" id="justification-2"><span
+class="header-section-number">1.4.2</span> Justification</h3>
+<p>The <strong>Adapter</strong> pattern (Object Adapter variant) is used
+to present a uniform <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/DatabaseAdapter.java#8-26">DatabaseAdapter</a>
+interface that adapts the vendor-specific SQL differences to a common
+contract: - <strong>Target</strong>: The <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/DatabaseAdapter.java#8-26">DatabaseAdapter</a>
+interface that the DAO layer and <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/DataSourceFactory.java#18-98">DataSourceFactory</a>
+expect. - <strong>Adaptees</strong>: The vendor-specific SQL quirks
+(e.g., MySQL’s <code>LIMIT ?,?</code>, Oracle’s
+<code>OFFSET … ROWS FETCH NEXT</code>, PostgreSQL’s
+<code>RETURNING id</code>). - <strong>Adapters</strong>: <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/MySQLAdapter.java#7-87">MySQLAdapter</a>,
+<a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/OracleAdapter.java#7-85">OracleAdapter</a>,
+<a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/PostgreSQLAdapter.java#7-88">PostgreSQLAdapter</a>,
+<a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/SqlServerAdapter.java#7-77">SqlServerAdapter</a>
+— each encapsulates the dialect-specific logic behind the common
+interface.</p>
+<p>This allows the DAO layer to remain database-agnostic and swap
+backends through configuration alone.</p>
+<h3 data-number="1.4.3" id="participating-classes-2"><span
+class="header-section-number">1.4.3</span> Participating Classes</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 31%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>Class</th>
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Target</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/DatabaseAdapter.java">DatabaseAdapter</a></td>
+<td><code>persistence.adapter</code></td>
+</tr>
+<tr>
+<td><strong>Adapter</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/MySQLAdapter.java">MySQLAdapter</a></td>
+<td><code>persistence.adapter</code></td>
+</tr>
+<tr>
+<td><strong>Adapter</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/OracleAdapter.java">OracleAdapter</a></td>
+<td><code>persistence.adapter</code></td>
+</tr>
+<tr>
+<td><strong>Adapter</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/PostgreSQLAdapter.java">PostgreSQLAdapter</a></td>
+<td><code>persistence.adapter</code></td>
+</tr>
+<tr>
+<td><strong>Adapter</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/SqlServerAdapter.java">SqlServerAdapter</a></td>
+<td><code>persistence.adapter</code></td>
+</tr>
+<tr>
+<td><strong>Factory</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/DatabaseAdapterFactory.java">DatabaseAdapterFactory</a></td>
+<td><code>persistence.adapter</code></td>
+</tr>
+<tr>
+<td><strong>Client</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/DataSourceFactory.java">DataSourceFactory</a></td>
+<td><code>persistence</code></td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.4.4" id="uml-class-diagram-2"><span
+class="header-section-number">1.4.4</span> UML Class Diagram</h3>
+<pre class="mermaid">
+classDiagram
+    class DatabaseAdapter {
+        &lt;&lt;interface&gt;&gt;
+        +getDatabaseName(): String
+        +buildPaginatedQuery(baseQuery, offset, limit): String
+        +buildInsertQuery(tableName, columns): String
+        +getLastInsertedId(connection, tableName): long
+        +getTransactionIsolationLevelName(): String
+        +supportsFeature(feature): boolean
+        +getCurrentTimestampFunction(): String
+        +formatDate(date, format): String
+    }
+
+    class MySQLAdapter {
+        +getDatabaseName(): String
+        +buildPaginatedQuery(baseQuery, offset, limit): String
+        +getLastInsertedId(connection, tableName): long
+        +getCurrentTimestampFunction(): String
+    }
+
+    class OracleAdapter {
+        +getDatabaseName(): String
+        +buildPaginatedQuery(baseQuery, offset, limit): String
+        +getLastInsertedId(connection, tableName): long
+        +getCurrentTimestampFunction(): String
+    }
+
+    class PostgreSQLAdapter {
+        +getDatabaseName(): String
+        +buildPaginatedQuery(baseQuery, offset, limit): String
+        +getLastInsertedId(connection, tableName): long
+        +getCurrentTimestampFunction(): String
+    }
+
+    class SqlServerAdapter {
+        +getDatabaseName(): String
+        +buildPaginatedQuery(baseQuery, offset, limit): String
+        +getLastInsertedId(connection, tableName): long
+        +getCurrentTimestampFunction(): String
+    }
+
+    class DatabaseAdapterFactory {
+        +getAdapter(dbType: DatabaseType): DatabaseAdapter$
+        +getAdapter(databaseType: String): DatabaseAdapter$
+        +resolve(explicitType, jdbcUrl, jdbcDriver): DatabaseAdapter$
+    }
+
+    class DataSourceFactory {
+        -databaseAdapter: DatabaseAdapter
+        +getDatabaseAdapter(): DatabaseAdapter
+    }
+
+    DatabaseAdapter &lt;|.. MySQLAdapter
+    DatabaseAdapter &lt;|.. OracleAdapter
+    DatabaseAdapter &lt;|.. PostgreSQLAdapter
+    DatabaseAdapter &lt;|.. SqlServerAdapter
+    DatabaseAdapterFactory ..&gt; DatabaseAdapter : creates
+    DataSourceFactory o-- DatabaseAdapter : uses
+</pre>
+<hr />
+<h2 data-number="1.5" id="adapter-pattern-use-2-payment-gateway"><span
+class="header-section-number">1.5</span> 4. Adapter Pattern — Use 2:
+Payment Gateway</h2>
+<h3 data-number="1.5.1" id="problem-identified-3"><span
+class="header-section-number">1.5.1</span> Problem Identified</h3>
+<p>The BMS needs to process payments through external third-party
+providers (Stripe, PayPal, Square) when executing fund transfers. Each
+provider exposes a <strong>proprietary, incompatible API</strong>:
+Stripe uses API keys and amounts in cents, PayPal uses OAuth client
+credentials and order objects, and Square uses access tokens with
+location IDs and its own currency format. The domain layer (<a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransferHandler.java#34-164">TransferHandler</a>)
+should not couple to any vendor SDK.</p>
+<h3 data-number="1.5.2" id="justification-3"><span
+class="header-section-number">1.5.2</span> Justification</h3>
+<p>The <strong>Adapter</strong> pattern (Object Adapter variant)
+introduces a uniform <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/PaymentGateway.java#13-47">PaymentGateway</a>
+interface that the domain layer programs against: -
+<strong>Target</strong>: <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/PaymentGateway.java#13-47">PaymentGateway</a>
+— the contract <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransferHandler.java#34-164">TransferHandler</a>
+expects. - <strong>Adaptees</strong>: The vendor-specific APIs (Stripe
+Charge API, PayPal Orders API, Square Payments API). -
+<strong>Adapters</strong>: <code>StripeAdapter</code>,
+<code>PayPalAdapter</code>, <code>SquareAdapter</code> — each
+encapsulates the vendor-specific authentication, request conversion, and
+response translation behind the common <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/PaymentGateway.java#13-47">PaymentGateway</a>
+interface.</p>
+<p>This allows the system to switch payment providers through
+configuration alone, without modifying domain logic.</p>
+<h3 data-number="1.5.3" id="participating-classes-3"><span
+class="header-section-number">1.5.3</span> Participating Classes</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 31%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>Class</th>
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Target</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/PaymentGateway.java">PaymentGateway</a></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java#46-49">payment</a></td>
+</tr>
+<tr>
+<td><strong>Adapter</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/StripeAdapter.java">StripeAdapter</a></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java#46-49">payment</a></td>
+</tr>
+<tr>
+<td><strong>Adapter</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/PayPalAdapter.java">PayPalAdapter</a></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java#46-49">payment</a></td>
+</tr>
+<tr>
+<td><strong>Adapter</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/SquareAdapter.java">SquareAdapter</a></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java#46-49">payment</a></td>
+</tr>
+<tr>
+<td><strong>Factory</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/PaymentGatewayFactory.java">PaymentGatewayFactory</a></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java#46-49">payment</a></td>
+</tr>
+<tr>
+<td><strong>Request DTO</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/PaymentRequest.java">PaymentRequest</a></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java#46-49">payment</a></td>
+</tr>
+<tr>
+<td><strong>Response DTO</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/PaymentResponse.java">PaymentResponse</a></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java#46-49">payment</a></td>
+</tr>
+<tr>
+<td><strong>Client</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/TransferHandler.java">TransferHandler</a></td>
+<td><code>domain.controller</code></td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.5.4" id="uml-class-diagram-3"><span
+class="header-section-number">1.5.4</span> UML Class Diagram</h3>
+<pre class="mermaid">
+classDiagram
+    class PaymentGateway {
+        &lt;&lt;interface&gt;&gt;
+        +processPayment(request: PaymentRequest): PaymentResponse
+        +refundPayment(gatewayTransactionId: String, amount: BigDecimal): PaymentResponse
+        +getGatewayName(): String
+        +isHealthy(): boolean
+    }
+
+    class StripeAdapter {
+        -apiKey: String
+        +processPayment(request: PaymentRequest): PaymentResponse
+        +refundPayment(gatewayTransactionId: String, amount: BigDecimal): PaymentResponse
+        +getGatewayName(): String
+        +isHealthy(): boolean
+    }
+
+    class PayPalAdapter {
+        -clientId: String
+        -clientSecret: String
+        +processPayment(request: PaymentRequest): PaymentResponse
+        +refundPayment(gatewayTransactionId: String, amount: BigDecimal): PaymentResponse
+        +getGatewayName(): String
+        +isHealthy(): boolean
+    }
+
+    class SquareAdapter {
+        -accessToken: String
+        -locationId: String
+        +processPayment(request: PaymentRequest): PaymentResponse
+        +refundPayment(gatewayTransactionId: String, amount: BigDecimal): PaymentResponse
+        +getGatewayName(): String
+        +isHealthy(): boolean
+    }
+
+    class PaymentGatewayFactory {
+        +createGateway(type: GatewayType, credentials: String[]): PaymentGateway$
+        +createGateway(gatewayConfig: String): PaymentGateway$
+    }
+
+    class PaymentRequest {
+        -transactionId: String
+        -amount: BigDecimal
+        -currency: String
+        -description: String
+        -customerEmail: String
+    }
+
+    class PaymentResponse {
+        -gatewayTransactionId: String
+        -status: PaymentStatus
+        -message: String
+        -gatewayName: String
+        +isApproved(): boolean
+    }
+
+    class TransferHandler {
+        -paymentGateway: PaymentGateway
+        +transferFunds(customerId, sourceAccountNo, destinationAccountNo, amount): String
+    }
+
+    PaymentGateway &lt;|.. StripeAdapter
+    PaymentGateway &lt;|.. PayPalAdapter
+    PaymentGateway &lt;|.. SquareAdapter
+    PaymentGatewayFactory ..&gt; PaymentGateway : creates
+    PaymentGateway ..&gt; PaymentRequest : accepts
+    PaymentGateway ..&gt; PaymentResponse : returns
+    TransferHandler o-- PaymentGateway : uses
+</pre>
+<hr />
+<h2 data-number="1.6"
+id="decorator-pattern-use-1-account-info-service"><span
+class="header-section-number">1.6</span> 5. Decorator Pattern — Use 1:
+Account Info Service</h2>
+<h3 data-number="1.6.1" id="problem-identified-4"><span
+class="header-section-number">1.6.1</span> Problem Identified</h3>
+<p>When displaying an account balance, different presentation concerns
+must be layered onto the basic account data: <strong>currency
+formatting</strong>, <strong>overdraft warnings</strong>, and
+<strong>reward-point calculations</strong>. Using subclassing to combine
+these features would lead to an explosion of classes (e.g.,
+<code>CurrencyFormattedService</code>,
+<code>CurrencyFormattedWithWarningService</code>,
+<code>CurrencyFormattedWithRewardsService</code>, etc.). Furthermore,
+different screens may require different combinations of these
+enhancements.</p>
+<h3 data-number="1.6.2" id="justification-4"><span
+class="header-section-number">1.6.2</span> Justification</h3>
+<p>The <strong>Decorator</strong> pattern allows features to be stacked
+dynamically at runtime via composition: - Each decorator wraps an <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/accountinfo/AccountInfoService.java#5-8">AccountInfoService</a>
+and adds one concern. - Decorators are composable — <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AccountBalanceController.java#19-70">AccountBalanceController</a>
+chains
+<code>CurrencyFormatDecorator → OverdraftWarningDecorator → RewardPointsDecorator</code>.
+- Adding a new enhancement (e.g., loyalty tier labeling) requires only a
+new decorator class, no modification to existing code.</p>
+<p><strong>Usage in</strong> <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AccountBalanceController.java">AccountBalanceController</a>:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">this</span><span class="op">.</span><span class="fu">accountInfoService</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">RewardPointsDecorator</span><span class="op">(</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="fu">OverdraftWarningDecorator</span><span class="op">(</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">new</span> <span class="fu">CurrencyFormatDecorator</span><span class="op">(</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            <span class="kw">new</span> <span class="fu">BasicAccountInfoService</span><span class="op">())));</span></span></code></pre></div>
+<h3 data-number="1.6.3" id="participating-classes-4"><span
+class="header-section-number">1.6.3</span> Participating Classes</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 31%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>Class</th>
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Component</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/accountinfo/AccountInfoService.java">AccountInfoService</a></td>
+<td><code>domain.decorator.accountinfo</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Component</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/accountinfo/BasicAccountInfoService.java">BasicAccountInfoService</a></td>
+<td><code>domain.decorator.accountinfo</code></td>
+</tr>
+<tr>
+<td><strong>Base Decorator</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/accountinfo/AccountInfoDecorator.java">AccountInfoDecorator</a></td>
+<td><code>domain.decorator.accountinfo</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Decorator</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/accountinfo/CurrencyFormatDecorator.java">CurrencyFormatDecorator</a></td>
+<td><code>domain.decorator.accountinfo</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Decorator</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/accountinfo/OverdraftWarningDecorator.java">OverdraftWarningDecorator</a></td>
+<td><code>domain.decorator.accountinfo</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Decorator</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/accountinfo/RewardPointsDecorator.java">RewardPointsDecorator</a></td>
+<td><code>domain.decorator.accountinfo</code></td>
+</tr>
+<tr>
+<td><strong>Data Transfer Object</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/accountinfo/AccountInfoView.java">AccountInfoView</a></td>
+<td><code>domain.decorator.accountinfo</code></td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.6.4" id="uml-class-diagram-4"><span
+class="header-section-number">1.6.4</span> UML Class Diagram</h3>
+<pre class="mermaid">
+classDiagram
+    class AccountInfoService {
+        &lt;&lt;interface&gt;&gt;
+        +getAccountInfo(account: Account): AccountInfoView
+    }
+
+    class BasicAccountInfoService {
+        +getAccountInfo(account: Account): AccountInfoView
+    }
+
+    class AccountInfoDecorator {
+        &lt;&lt;abstract&gt;&gt;
+        #wrappedService: AccountInfoService
+        +AccountInfoDecorator(wrappedService: AccountInfoService)
+        +getAccountInfo(account: Account): AccountInfoView
+    }
+
+    class CurrencyFormatDecorator {
+        +getAccountInfo(account: Account): AccountInfoView
+    }
+
+    class OverdraftWarningDecorator {
+        +getAccountInfo(account: Account): AccountInfoView
+    }
+
+    class RewardPointsDecorator {
+        -POINT_DIVISOR: BigDecimal
+        +getAccountInfo(account: Account): AccountInfoView
+    }
+
+    class AccountInfoView {
+        -accountNumber: String
+        -status: String
+        -balance: String
+        -currency: String
+        -rewardPoints: String
+        -warningMessage: String
+    }
+
+    AccountInfoService &lt;|.. BasicAccountInfoService
+    AccountInfoService &lt;|.. AccountInfoDecorator
+    AccountInfoDecorator o-- AccountInfoService : wrappedService
+    AccountInfoDecorator &lt;|-- CurrencyFormatDecorator
+    AccountInfoDecorator &lt;|-- OverdraftWarningDecorator
+    AccountInfoDecorator &lt;|-- RewardPointsDecorator
+    AccountInfoService ..&gt; AccountInfoView : returns
+</pre>
+<hr />
+<h2 data-number="1.7"
+id="decorator-pattern-use-2-transaction-processor"><span
+class="header-section-number">1.7</span> 6. Decorator Pattern — Use 2:
+Transaction Processor</h2>
+<h3 data-number="1.7.1" id="problem-identified-5"><span
+class="header-section-number">1.7.1</span> Problem Identified</h3>
+<p>Transaction processing needs cross-cutting concerns applied around
+the core operation: <strong>audit logging</strong>, <strong>fee
+calculation</strong>, and <strong>notification dispatch</strong>. These
+concerns are orthogonal — some transactions need fees but not audit,
+others need all three. Hard-coding every combination into the handler
+classes would produce rigid, duplicated code.</p>
+<h3 data-number="1.7.2" id="justification-5"><span
+class="header-section-number">1.7.2</span> Justification</h3>
+<p>The <strong>Decorator</strong> pattern wraps the core <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/TransactionProcessor.java#3-6">TransactionProcessor</a>
+with optional cross-cutting behaviors: - <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/BasicTransactionProcessor.java#3-9">BasicTransactionProcessor</a>
+executes the raw operation. - <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/AuditDecorator.java#3-19">AuditDecorator</a>
+adds audit logging before and after. - <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/FeeDecorator.java#5-21">FeeDecorator</a>
+applies transaction fees before processing. - <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/NotificationDecorator.java#3-16">NotificationDecorator</a>
+sends a notification after processing. - Decorators can be freely
+composed per use case.</p>
+<p><strong>Usage in</strong> <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/DepositHandler.java">DepositHandler</a>:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">this</span><span class="op">.</span><span class="fu">transactionProcessor</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">NotificationDecorator</span><span class="op">(</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="fu">AuditDecorator</span><span class="op">(</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">new</span> <span class="fu">BasicTransactionProcessor</span><span class="op">()));</span></span></code></pre></div>
+<h3 data-number="1.7.3" id="participating-classes-5"><span
+class="header-section-number">1.7.3</span> Participating Classes</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 31%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>Class</th>
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Component</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/TransactionProcessor.java">TransactionProcessor</a></td>
+<td><code>domain.decorator.transaction</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Component</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/BasicTransactionProcessor.java">BasicTransactionProcessor</a></td>
+<td><code>domain.decorator.transaction</code></td>
+</tr>
+<tr>
+<td><strong>Base Decorator</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/TransactionProcessorDecorator.java">TransactionProcessorDecorator</a></td>
+<td><code>domain.decorator.transaction</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Decorator</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/AuditDecorator.java">AuditDecorator</a></td>
+<td><code>domain.decorator.transaction</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Decorator</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/FeeDecorator.java">FeeDecorator</a></td>
+<td><code>domain.decorator.transaction</code></td>
+</tr>
+<tr>
+<td><strong>Concrete Decorator</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/NotificationDecorator.java">NotificationDecorator</a></td>
+<td><code>domain.decorator.transaction</code></td>
+</tr>
+<tr>
+<td><strong>Context</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/TransactionContext.java">TransactionContext</a></td>
+<td><code>domain.decorator.transaction</code></td>
+</tr>
+<tr>
+<td><strong>Operation</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/TransactionOperation.java">TransactionOperation</a></td>
+<td><code>domain.decorator.transaction</code></td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.7.4" id="uml-class-diagram-5"><span
+class="header-section-number">1.7.4</span> UML Class Diagram</h3>
+<pre class="mermaid">
+classDiagram
+    class TransactionProcessor {
+        &lt;&lt;interface&gt;&gt;
+        +process~T~(context: TransactionContext, operation: TransactionOperation~T~): T
+    }
+
+    class BasicTransactionProcessor {
+        +process~T~(context: TransactionContext, operation: TransactionOperation~T~): T
+    }
+
+    class TransactionProcessorDecorator {
+        &lt;&lt;abstract&gt;&gt;
+        #wrappedProcessor: TransactionProcessor
+        +TransactionProcessorDecorator(wrappedProcessor: TransactionProcessor)
+        +process~T~(context: TransactionContext, operation: TransactionOperation~T~): T
+    }
+
+    class AuditDecorator {
+        +process~T~(context: TransactionContext, operation: TransactionOperation~T~): T
+    }
+
+    class FeeDecorator {
+        -feeAmount: BigDecimal
+        -feeDescription: String
+        +process~T~(context: TransactionContext, operation: TransactionOperation~T~): T
+    }
+
+    class NotificationDecorator {
+        +process~T~(context: TransactionContext, operation: TransactionOperation~T~): T
+    }
+
+    class TransactionContext {
+        -transactionType: String
+        -accountNumber: String
+        -requestedAmount: BigDecimal
+        -feeAmount: BigDecimal
+        -auditEntries: List~String~
+        +addFee(amount, description): void
+        +addAuditEntry(entry: String): void
+        +decorateNote(baseNote: String): String
+    }
+
+    class TransactionOperation~T~ {
+        &lt;&lt;functional interface&gt;&gt;
+        +execute(context: TransactionContext): T
+    }
+
+    TransactionProcessor &lt;|.. BasicTransactionProcessor
+    TransactionProcessor &lt;|.. TransactionProcessorDecorator
+    TransactionProcessorDecorator o-- TransactionProcessor : wrappedProcessor
+    TransactionProcessorDecorator &lt;|-- AuditDecorator
+    TransactionProcessorDecorator &lt;|-- FeeDecorator
+    TransactionProcessorDecorator &lt;|-- NotificationDecorator
+    TransactionProcessor ..&gt; TransactionContext : uses
+    TransactionProcessor ..&gt; TransactionOperation : uses
+</pre>
+<hr />
+<h2 data-number="1.8" id="flyweight-pattern-loan-product-catalog"><span
+class="header-section-number">1.8</span> 7. Flyweight Pattern — Loan
+Product Catalog</h2>
+<h3 data-number="1.8.1" id="problem-identified-6"><span
+class="header-section-number">1.8.1</span> Problem Identified</h3>
+<p>The Loan Catalog and Comparison feature allows customers to compare
+loan products side-by-side for arbitrary amounts and durations. Each
+comparison scenario includes significant <strong>shared, immutable
+product metadata</strong> (display name, description, rate policy label,
+eligibility notes, interest calculator). Without sharing, every
+comparison scenario would duplicate this metadata, wasting memory —
+especially problematic when many customers run comparisons
+concurrently.</p>
+<h3 data-number="1.8.2" id="justification-6"><span
+class="header-section-number">1.8.2</span> Justification</h3>
+<p>The <strong>Flyweight</strong> pattern separates <strong>intrinsic
+state</strong> (shared product metadata — immutable, identical across
+all scenarios) from <strong>extrinsic state</strong> (per-scenario
+customer inputs — amount, duration, calculated installments): - <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanProductFlyweight.java#8-50">LoanProductFlyweight</a>
+is the flyweight object holding intrinsic state. - <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanProductFlyweightFactory.java#14-61">LoanProductFlyweightFactory</a>
+is the flyweight factory that caches and reuses flyweight instances
+(keyed by loan type). - <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java#6-54">LoanComparisonScenario</a>
+holds the extrinsic state (amount, duration, calculated results) and
+references a shared flyweight.</p>
+<p><strong>Usage in</strong> <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanCatalogController.java">LoanCatalogController</a>:
+for each comparison, scenarios are built using shared <a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanProductFlyweight.java#8-50">LoanProductFlyweight</a>
+instances from the factory, avoiding duplicating product metadata per
+scenario.</p>
+<h3 data-number="1.8.3" id="participating-classes-6"><span
+class="header-section-number">1.8.3</span> Participating Classes</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 31%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>Class</th>
+<th>Package</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Flyweight</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanProductFlyweight.java">LoanProductFlyweight</a></td>
+<td><code>domain.flyweight.loan</code></td>
+</tr>
+<tr>
+<td><strong>Flyweight Factory</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanProductFlyweightFactory.java">LoanProductFlyweightFactory</a></td>
+<td><code>domain.flyweight.loan</code></td>
+</tr>
+<tr>
+<td><strong>Extrinsic Context</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java">LoanComparisonScenario</a></td>
+<td><code>domain.flyweight.loan</code></td>
+</tr>
+<tr>
+<td><strong>Client</strong></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/presentation/LoanCatalogComparisonView.java">LoanCatalogComparisonView</a></td>
+<td><code>presentation</code></td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.8.4" id="uml-class-diagram-6"><span
+class="header-section-number">1.8.4</span> UML Class Diagram</h3>
+<pre class="mermaid mermaid-compact">
+classDiagram
+    class LoanProductFlyweight {
+        -loanType: String
+        -displayName: String
+        -description: String
+        -ratePolicyLabel: String
+        -eligibilityNotes: String
+        -interestCalculator: LoanInterestCalculator
+        +getLoanType(): String
+        +getDisplayName(): String
+        +getDescription(): String
+        +getRatePolicyLabel(): String
+        +getEligibilityNotes(): String
+        +calculateRate(amount, durationMonths): double
+    }
+
+    class LoanProductFlyweightFactory {
+        -PRODUCTS: Map~String, LoanProductFlyweight~
+        -register(product: LoanProductFlyweight): void$
+        +getProduct(loanType: String): LoanProductFlyweight$
+        +getAllProducts(): Collection~LoanProductFlyweight~$
+    }
+
+    class LoanComparisonScenario {
+        -product: LoanProductFlyweight
+        -amount: double
+        -durationMonths: int
+        -annualRate: double
+        -monthlyInstallment: double
+        -totalRepayment: double
+        -totalInterest: double
+        +getProduct(): LoanProductFlyweight
+        +getAmount(): double
+        +getDurationMonths(): int
+        +getAnnualRate(): double
+        +getMonthlyInstallment(): double
+    }
+
+    LoanProductFlyweightFactory o-- LoanProductFlyweight : caches
+    LoanComparisonScenario --&gt; LoanProductFlyweight : references shared flyweight
+    LoanProductFlyweightFactory ..&gt; LoanComparisonScenario : client creates scenarios using
+</pre>
+<hr />
+<h2 data-number="1.9" id="summary"><span
+class="header-section-number">1.9</span> Summary</h2>
+<table>
+<colgroup>
+<col style="width: 4%" />
+<col style="width: 13%" />
+<col style="width: 14%" />
+<col style="width: 30%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>Pattern</th>
+<th>Use Case</th>
+<th>Abstraction / Target</th>
+<th>Implementation / Adaptee</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Bridge</td>
+<td>Interest Posting</td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AbstractInterestPostingHandler.java#20-72">AbstractInterestPostingHandler</a></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/InterestCalculator.java#9-24">InterestCalculator</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Bridge</td>
+<td>Loan Application</td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/AbstractLoanApplicationProcessor.java#11-57">AbstractLoanApplicationProcessor</a></td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/controller/LoanInterestCalculator.java#9-27">LoanInterestCalculator</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Adapter</td>
+<td>SQL Dialect</td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/persistence/adapter/DatabaseAdapter.java#8-26">DatabaseAdapter</a></td>
+<td>MySQL / Oracle / PostgreSQL / SqlServer</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Adapter</td>
+<td>Payment Gateway</td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/payment/PaymentGateway.java#13-47">PaymentGateway</a></td>
+<td>Stripe / PayPal / Square adapters</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Decorator</td>
+<td>Account Info</td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/accountinfo/AccountInfoService.java#5-8">AccountInfoService</a></td>
+<td>Currency / Overdraft / RewardPoints decorators</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Decorator</td>
+<td>Transaction Processing</td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/decorator/transaction/TransactionProcessor.java#3-6">TransactionProcessor</a></td>
+<td>Audit / Fee / Notification decorators</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Flyweight</td>
+<td>Loan Product Catalog</td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanProductFlyweight.java#8-50">LoanProductFlyweight</a>
+(shared)</td>
+<td><a
+href="file:///c:/Users/Youssef/Documents/Uni/Software/Semester%201/Project/Implementation/JavaApplication6/src/main/java/com/bms/domain/flyweight/loan/LoanComparisonScenario.java#6-54">LoanComparisonScenario</a>
+(extrinsic)</td>
+</tr>
+</tbody>
+</table>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: "default",
+    securityLevel: "loose",
+    flowchart: { useMaxWidth: true },
+    class: {
+      useMaxWidth: false,
+      nodeSpacing: 60,
+      rankSpacing: 70
+    }
+  });
+</script>
+</body>
+</html>

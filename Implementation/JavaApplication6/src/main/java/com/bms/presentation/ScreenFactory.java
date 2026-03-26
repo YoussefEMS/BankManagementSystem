@@ -37,6 +37,8 @@ public interface ScreenFactory {
     // On-demand customer screens
     TransferFundsForm createTransferForm();
 
+    LoanCatalogComparisonView createLoanCatalogComparisonView();
+
     ApplyForLoanForm createLoanApplicationForm();
 
     LoanStatusView createLoanStatusView();

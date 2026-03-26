@@ -72,6 +72,11 @@ public class JavaFXScreenFactory implements ScreenFactory {
     }
 
     @Override
+    public LoanCatalogComparisonView createLoanCatalogComparisonView() {
+        return new LoanCatalogComparisonView();
+    }
+
+    @Override
     public ApplyForLoanForm createLoanApplicationForm() {
         return new ApplyForLoanForm();
     }
