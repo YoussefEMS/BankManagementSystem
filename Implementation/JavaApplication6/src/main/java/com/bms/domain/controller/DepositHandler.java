@@ -6,35 +6,28 @@ import com.bms.domain.decorator.transaction.AuditDecorator;
 import com.bms.domain.decorator.transaction.BasicTransactionProcessor;
 import com.bms.domain.decorator.transaction.NotificationDecorator;
 import com.bms.domain.decorator.transaction.TransactionContext;
-import com.bms.domain.decorator.transaction.TransactionProcessor;
 import com.bms.domain.entity.Account;
 import com.bms.domain.entity.Transaction;
 import com.bms.domain.entity.TransactionFactory;
-import com.bms.persistence.AccountDAO;
 import com.bms.persistence.AuthContext;
 import com.bms.persistence.DAOFactory;
 import com.bms.persistence.ConfiguredDAOFactory;
-import com.bms.persistence.TransactionDAO;
 
 /**
  * DepositHandler - UC-05: Process Deposit
- * Validates amount, looks up account, updates balance, records transaction
+ * Validates amount, looks up account, updates balance, records transaction.
+ * Refactored to utilize AbstractTransactionTemplate.
  */
-public class DepositHandler {
-    private final AccountDAO accountDAO;
-    private final TransactionDAO transactionDAO;
-    private final TransactionProcessor transactionProcessor;
+public class DepositHandler extends AbstractTransactionTemplate<Integer> {
 
     public DepositHandler() {
         this(ConfiguredDAOFactory.getInstance());
     }
 
     public DepositHandler(DAOFactory factory) {
-        this.accountDAO = factory.createAccountDAO();
-        this.transactionDAO = factory.createTransactionDAO();
-        this.transactionProcessor = new NotificationDecorator(
+        super(factory, new NotificationDecorator(
                 new AuditDecorator(
-                        new BasicTransactionProcessor()));
+                        new BasicTransactionProcessor())));
     }
 
     /**
@@ -55,40 +48,49 @@ public class DepositHandler {
         context.addNoteTag("Notification");
         context.addNoteTag("Audit");
 
-        return transactionProcessor.process(context, currentContext -> {
-            if (!validateAmount(amount)) {
-                return -1;
-            }
-
-            Account account = getAccount(accountNo);
-            if (account == null) {
-                return -2;
-            }
-
-            if (!"ACTIVE".equals(account.getStatus())) {
-                return -3;
-            }
-
-            BigDecimal depositAmount = currentContext.getRequestedAmount();
-            BigDecimal newBalance = account.getBalance().add(depositAmount);
-
-            accountDAO.updateBalance(accountNo, newBalance);
-
-            Transaction tx = TransactionFactory.createDeposit(
-                    accountNo, depositAmount, newBalance, currentContext.getPerformedBy(),
-                    currentContext.decorateNote(description));
-
-            return transactionDAO.insert(tx);
-        });
+        return executeTransaction(context, description);
     }
 
-    private boolean validateAmount(double amount) {
-        return amount > 0;
+    @Override
+    protected boolean validateInputs(TransactionContext context) {
+        return context.getRequestedAmount().doubleValue() > 0;
     }
 
-    private Account getAccount(String accountNo) {
-        if (accountNo == null || accountNo.trim().isEmpty())
-            return null;
-        return accountDAO.findByAccountNo(accountNo.trim());
+    @Override
+    protected boolean validateAccountsAndState(TransactionContext context) {
+        String accountNo = context.getAccountNumber();
+        if (accountNo == null || accountNo.trim().isEmpty()) return false;
+        Account account = accountDAO.findByAccountNo(accountNo.trim());
+        return account != null && "ACTIVE".equals(account.getStatus());
+    }
+
+    @Override
+    protected boolean checkSpecificBusinessRules(TransactionContext context) {
+        return true; 
+    }
+
+    @Override
+    protected Integer executeFinancialImpact(TransactionContext context, String description) {
+        String accountNo = context.getAccountNumber();
+        Account account = accountDAO.findByAccountNo(accountNo);
+        
+        BigDecimal depositAmount = context.getRequestedAmount();
+        BigDecimal newBalance = account.getBalance().add(depositAmount);
+
+        accountDAO.updateBalance(accountNo, newBalance);
+
+        Transaction tx = TransactionFactory.createDeposit(
+                accountNo, depositAmount, newBalance, context.getPerformedBy(),
+                context.decorateNote(description));
+
+        return transactionDAO.insert(tx);
+    }
+
+    @Override
+    protected Integer getFailureResult(int failureStep) {
+        // Map template steps to old legacy error codes where possible
+        if (failureStep == 1) return -1; // Amount error
+        if (failureStep == 2) return -2; // Account error
+        return -failureStep;
     }
 }

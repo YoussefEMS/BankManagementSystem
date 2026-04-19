@@ -8,42 +8,34 @@ import com.bms.domain.decorator.transaction.BasicTransactionProcessor;
 import com.bms.domain.decorator.transaction.FeeDecorator;
 import com.bms.domain.decorator.transaction.NotificationDecorator;
 import com.bms.domain.decorator.transaction.TransactionContext;
-import com.bms.domain.decorator.transaction.TransactionProcessor;
 import com.bms.domain.entity.Account;
 import com.bms.domain.entity.Transaction;
 import com.bms.domain.entity.TransactionFactory;
-import com.bms.persistence.AccountDAO;
 import com.bms.persistence.AuthContext;
 import com.bms.persistence.DAOFactory;
 import com.bms.persistence.ConfiguredDAOFactory;
-import com.bms.persistence.TransactionDAO;
 
 /**
  * WithdrawCashController - UC-06: Process Withdrawal
- * Validates amount, checks funds, updates balance, records transaction
+ * Validates amount, checks funds, updates balance, records transaction.
+ * Refactored to utilize AbstractTransactionTemplate.
  */
-public class WithdrawCashController {
+public class WithdrawCashController extends AbstractTransactionTemplate<Integer> {
     private static final BigDecimal WITHDRAWAL_FEE = new BigDecimal("5.00");
-
-    private final AccountDAO accountDAO;
-    private final TransactionDAO transactionDAO;
     private final OverdraftHandler overdraftHandler;
-    private final TransactionProcessor transactionProcessor;
 
     public WithdrawCashController() {
         this(ConfiguredDAOFactory.getInstance());
     }
 
     public WithdrawCashController(DAOFactory factory) {
-        this.accountDAO = factory.createAccountDAO();
-        this.transactionDAO = factory.createTransactionDAO();
-        this.overdraftHandler = new OverdraftHandler(factory);
-        this.transactionProcessor = new NotificationDecorator(
+        super(factory, new NotificationDecorator(
                 new AuditDecorator(
                         new FeeDecorator(
                                 new BasicTransactionProcessor(),
                                 WITHDRAWAL_FEE,
-                                "Cash withdrawal service fee")));
+                                "Cash withdrawal service fee"))));
+        this.overdraftHandler = new OverdraftHandler(factory);
     }
 
     /**
@@ -64,54 +56,78 @@ public class WithdrawCashController {
         context.addNoteTag("Notification");
         context.addNoteTag("Audit");
 
-        return transactionProcessor.process(context, currentContext -> {
-            if (!validateAmount(amount)) {
-                return -1;
-            }
-
-            if (!validateAccountExistsAndActive(accountNo)) {
-                return -2;
-            }
-
-            if (!checkSufficientFunds(accountNo, currentContext.getTotalDebitAmount().doubleValue())) {
-                return -3;
-            }
-
-            Account account = accountDAO.findByAccountNo(accountNo);
-            BigDecimal withdrawAmount = currentContext.getRequestedAmount();
-            BigDecimal balanceAfterWithdrawal = account.getBalance().subtract(withdrawAmount);
-            BigDecimal finalBalance = balanceAfterWithdrawal.subtract(currentContext.getFeeAmount());
-
-            accountDAO.updateBalance(accountNo, finalBalance);
-
-            Transaction cashWithdrawalTx = TransactionFactory.createWithdrawal(
-                    accountNo, withdrawAmount, balanceAfterWithdrawal, currentContext.getPerformedBy(),
-                    currentContext.decorateNote(description));
-            int txId = transactionDAO.insert(cashWithdrawalTx);
-
-            if (txId <= 0) {
-                return txId;
-            }
-
-            if (currentContext.hasFee()) {
-                Transaction feeTx = TransactionFactory.createWithdrawal(
-                        accountNo, currentContext.getFeeAmount(), finalBalance, currentContext.getPerformedBy(),
-                        currentContext.getFeeDescription());
-                transactionDAO.insert(feeTx);
-            }
-
-            if (finalBalance.compareTo(BigDecimal.ZERO) < 0) {
-                overdraftHandler.checkOverdraft(accountNo, finalBalance.doubleValue(),
-                        txId, LocalDateTime.now());
-            }
-
-            return txId;
-        });
+        return executeTransaction(context, description);
     }
 
+    @Override
+    protected boolean validateInputs(TransactionContext context) {
+        return context.getRequestedAmount().doubleValue() > 0;
+    }
+
+    @Override
+    protected boolean validateAccountsAndState(TransactionContext context) {
+        String accountNo = context.getAccountNumber();
+        if (accountNo == null || accountNo.trim().isEmpty()) return false;
+        Account account = accountDAO.findByAccountNo(accountNo.trim());
+        return account != null && "ACTIVE".equals(account.getStatus());
+    }
+
+    @Override
+    protected boolean checkSpecificBusinessRules(TransactionContext context) {
+        // Check sufficient funds (RequestedAmount + Fees)
+        String accountNo = context.getAccountNumber();
+        Account account = accountDAO.findByAccountNo(accountNo);
+        if (account == null) return false;
+        
+        return account.getBalance().compareTo(context.getTotalDebitAmount()) >= 0;
+    }
+
+    @Override
+    protected Integer executeFinancialImpact(TransactionContext context, String description) {
+        String accountNo = context.getAccountNumber();
+        Account account = accountDAO.findByAccountNo(accountNo);
+        
+        BigDecimal withdrawAmount = context.getRequestedAmount();
+        BigDecimal balanceAfterWithdrawal = account.getBalance().subtract(withdrawAmount);
+        BigDecimal finalBalance = balanceAfterWithdrawal.subtract(context.getFeeAmount());
+
+        accountDAO.updateBalance(accountNo, finalBalance);
+
+        Transaction cashWithdrawalTx = TransactionFactory.createWithdrawal(
+                accountNo, withdrawAmount, balanceAfterWithdrawal, context.getPerformedBy(),
+                context.decorateNote(description));
+        int txId = transactionDAO.insert(cashWithdrawalTx);
+
+        if (txId <= 0) {
+            return txId;
+        }
+
+        if (context.hasFee()) {
+            Transaction feeTx = TransactionFactory.createWithdrawal(
+                    accountNo, context.getFeeAmount(), finalBalance, context.getPerformedBy(),
+                    context.getFeeDescription());
+            transactionDAO.insert(feeTx);
+        }
+
+        if (finalBalance.compareTo(BigDecimal.ZERO) < 0) {
+            overdraftHandler.checkOverdraft(accountNo, finalBalance.doubleValue(),
+                    txId, LocalDateTime.now());
+        }
+
+        return txId;
+    }
+
+    @Override
+    protected Integer getFailureResult(int failureStep) {
+        if (failureStep == 1) return -1; // Amount error
+        if (failureStep == 2) return -2; // Account existence/state error
+        if (failureStep == 3) return -3; // Insufficient funds
+        return -failureStep;
+    }
+
+    // Keep public utility methods intact for external usage if they were relied upon
     public boolean validateAccountExistsAndActive(String accountNo) {
-        if (accountNo == null || accountNo.trim().isEmpty())
-            return false;
+        if (accountNo == null || accountNo.trim().isEmpty()) return false;
         Account account = accountDAO.findByAccountNo(accountNo.trim());
         return account != null && "ACTIVE".equals(account.getStatus());
     }
@@ -121,13 +137,12 @@ public class WithdrawCashController {
     }
 
     public void authorizeWithdraw(String actorId, String accountNo) {
-        // Authorization is handled by role-check in the presentation layer
+        // Kept for backward compatibility
     }
 
     public boolean checkSufficientFunds(String accountNo, double amount) {
         Account account = accountDAO.findByAccountNo(accountNo);
-        if (account == null)
-            return false;
+        if (account == null) return false;
         return account.getBalance().compareTo(BigDecimal.valueOf(amount)) >= 0;
     }
 }

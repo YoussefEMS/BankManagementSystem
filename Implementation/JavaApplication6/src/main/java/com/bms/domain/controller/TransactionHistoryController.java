@@ -63,15 +63,24 @@ public class TransactionHistoryController {
             normalizedFilter = "All";
         }
 
-        // Call DAO to retrieve transactions
-        List<Transaction> transactions = transactionDAO.findByAccountNo(
+        // Call DAO to retrieve ALL transactions for the account
+        List<Transaction> allTransactions = transactionDAO.findByAccountNo(
                 accountNo.trim(),
-                startDateTime,
-                endDateTime,
-                normalizedFilter);
+                null,
+                null,
+                "All");
+
+        // Apply Iterator Pattern to filter transactions
+        TransactionCollection historyCollection = new AccountTransactionHistory(allTransactions);
+        TransactionIterator iterator = historyCollection.createIterator(startDateTime, endDateTime, normalizedFilter);
+        
+        java.util.List<Transaction> filteredTransactions = new java.util.ArrayList<>();
+        while (iterator.hasNext()) {
+            filteredTransactions.add(iterator.next());
+        }
 
         // Return list (empty or populated, no error handling)
-        return transactions;
+        return filteredTransactions;
     }
 
     /**
