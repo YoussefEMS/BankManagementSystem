@@ -9,11 +9,29 @@ import com.bms.persistence.DAOFactory;
 
 /**
  * LoanApplicationHandler - UC-09: Apply for Loan
- * Validates loan inputs, creates a PENDING loan application
+ * Routes the request to the correct loan application processor.
  */
 public class LoanApplicationHandler {
     private final Map<String, AbstractLoanApplicationProcessor> processors;
     private final AbstractLoanApplicationProcessor defaultProcessor;
+
+    public static class LoanResult {
+        private final int loanId;
+        private final String status;
+
+        public LoanResult(int loanId, String status) {
+            this.loanId = loanId;
+            this.status = status;
+        }
+
+        public int getLoanId() {
+            return loanId;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+    }
 
     public LoanApplicationHandler() {
         this(ConfiguredDAOFactory.getInstance());
@@ -28,17 +46,22 @@ public class LoanApplicationHandler {
     }
 
     /**
-     * Submit a loan application
-     * 
-     * @return the generated loan ID (> 0 on success), negative on failure
+     * Submit a loan application and return both loan ID and status.
      */
-    public int applyForLoan(int customerId, double amount, String loanType,
+    public LoanResult applyForLoan(int customerId, double amount, String loanType,
             int durationMonths, String purpose) {
         if (loanType == null || loanType.trim().isEmpty()) {
-            return -1;
+            return new LoanResult(-1, null);
         }
 
-        return getProcessor(loanType).applyForLoan(customerId, amount, loanType, durationMonths, purpose);
+        AbstractLoanApplicationProcessor.ProcessingResult result =
+                getProcessor(loanType).applyForLoanWithResult(customerId, amount, loanType, durationMonths, purpose);
+
+        if (result == null) {
+            return new LoanResult(-1, null);
+        }
+
+        return new LoanResult(result.getLoanId(), result.getStatus());
     }
 
     private AbstractLoanApplicationProcessor getProcessor(String loanType) {

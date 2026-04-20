@@ -185,4 +185,14 @@ public class AuthenticationController {
     public String getUserRole() {
         return authContext.getRole();
     }
+
+    public String getLoggedInCustomerAccountTypeByNumber(String accountNumber) {
+        List<Account> accounts = getLoggedInCustomerAccounts();
+
+        return accounts.stream()
+                .filter(account -> account.getAccountNumber().equals(accountNumber))
+                .map(Account::getAccountType)
+                .findFirst()
+                .orElse(null);
+    }
 }

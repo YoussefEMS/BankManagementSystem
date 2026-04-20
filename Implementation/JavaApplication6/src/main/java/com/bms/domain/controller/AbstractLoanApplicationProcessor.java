@@ -1,6 +1,16 @@
 package com.bms.domain.controller;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import com.bms.domain.entity.Account;
+import com.bms.domain.entity.Customer;
 import com.bms.domain.entity.Loan;
+import com.bms.domain.strategy.loan.LoanApprovalContext;
+import com.bms.domain.strategy.loan.LoanApprovalStrategy;
+import com.bms.domain.strategy.loan.LoanApprovalStrategyFactory;
+import com.bms.persistence.AccountDAO;
+import com.bms.persistence.CustomerDAO;
 import com.bms.persistence.DAOFactory;
 import com.bms.persistence.LoanDAO;
 
@@ -11,17 +21,76 @@ import com.bms.persistence.LoanDAO;
 public abstract class AbstractLoanApplicationProcessor {
     protected final LoanInterestCalculator calculator;
     protected final LoanDAO loanDAO;
+    protected final CustomerDAO customerDAO;
+    protected final AccountDAO accountDAO;
+    protected final LoanApprovalStrategyFactory approvalStrategyFactory;
+
+    public static class ProcessingResult {
+        private final int loanId;
+        private final String status;
+
+        public ProcessingResult(int loanId, String status) {
+            this.loanId = loanId;
+            this.status = status;
+        }
+
+        public int getLoanId() {
+            return loanId;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+    }
 
     protected AbstractLoanApplicationProcessor(LoanInterestCalculator calculator, DAOFactory factory) {
         this.calculator = calculator;
         this.loanDAO = factory.createLoanDAO();
+        this.customerDAO = factory.createCustomerDAO();
+        this.accountDAO = factory.createAccountDAO();
+        this.approvalStrategyFactory = new LoanApprovalStrategyFactory();
     }
 
+    /**
+     * Keeps compatibility if any other class still expects only loan ID.
+     */
     public int applyForLoan(int customerId, double amount, String requestedLoanType,
             int durationMonths, String purpose) {
+        ProcessingResult result = applyForLoanWithResult(customerId, amount, requestedLoanType, durationMonths, purpose);
+        return result != null ? result.getLoanId() : -1;
+    }
+
+    /**
+     * Applies for a loan and returns both generated loan ID and final status.
+     */
+    public ProcessingResult applyForLoanWithResult(int customerId, double amount, String requestedLoanType,
+            int durationMonths, String purpose) {
         if (!validateInputs(amount, durationMonths, purpose)) {
-            return -1;
+            return null;
         }
+
+        Customer customer = customerDAO.findById(customerId);
+        if (customer == null) {
+            return null;
+        }
+
+        List<Account> accounts = accountDAO.findByCustomerId(customerId);
+        BigDecimal customerBalance = BigDecimal.ZERO;
+
+        if (accounts != null) {
+            for (Account account : accounts) {
+                if (account.getBalance() != null) {
+                    customerBalance = customerBalance.add(account.getBalance());
+                }
+            }
+        }
+
+        String customerTier = customer.getTier();
+        LoanApprovalStrategy strategy = approvalStrategyFactory.getStrategy(customerTier);
+        LoanApprovalContext context = new LoanApprovalContext(strategy);
+
+        boolean approved = context.approveLoan(BigDecimal.valueOf(amount), customerBalance);
+        String finalStatus = approved ? "APPROVED" : "REJECTED";
 
         Loan loan = new Loan();
         loan.setCustomerId(customerId);
@@ -29,10 +98,15 @@ public abstract class AbstractLoanApplicationProcessor {
         loan.setLoanType(resolveLoanType(requestedLoanType));
         loan.setDurationMonths(durationMonths);
         loan.setPurpose(purpose);
-        loan.setStatus("PENDING");
+        loan.setStatus(finalStatus);
         loan.setInterestRate(calculator.calculateRate(amount, durationMonths));
 
-        return loanDAO.insert(loan);
+        int loanId = loanDAO.insert(loan);
+        if (loanId <= 0) {
+            return null;
+        }
+
+        return new ProcessingResult(loanId, finalStatus);
     }
 
     protected abstract String getLoanType();

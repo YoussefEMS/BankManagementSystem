@@ -3,6 +3,7 @@ package com.bms.presentation;
 import com.bms.domain.controller.AccountBalanceController;
 import com.bms.domain.controller.AuthenticationController;
 import com.bms.domain.decorator.accountinfo.AccountInfoView;
+import com.bms.strategy.interest.InterestService;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -27,6 +28,7 @@ public class AccountBalanceScreen {
     // UI Components
     private ComboBox<String> accountNumberCombo;
     private Button viewButton;
+    private Button calculateInterestButton;
     private Label statusLabel;
     private Label balanceLabel;
     private Label currencyLabel;
@@ -34,6 +36,10 @@ public class AccountBalanceScreen {
     private Label rewardPointsLabel;
     private Label warningLabel;
     private Label noResultLabel;
+    private Label calculatedInterestLabel;
+
+    private final InterestService interestService = new InterestService();
+    private AccountInfoView currentAccountInfoView;
 
     public AccountBalanceScreen() {
         this.balanceController = new AccountBalanceController();
@@ -182,6 +188,21 @@ public class AccountBalanceScreen {
         rewardPointsLabel = new Label("");
         rewardPointsBox.getChildren().addAll(rewardPointsLabelText, rewardPointsLabel);
 
+        // Calculated Interest
+        HBox interestBox = new HBox(20);
+        Label interestLabelText = new Label("Calculated Interest:");
+        interestLabelText.setPrefWidth(150);
+        interestLabelText.setStyle("-fx-font-weight: bold;");
+        calculatedInterestLabel = new Label("");
+        calculatedInterestLabel.setStyle("-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #2E7D32;");
+        interestBox.getChildren().addAll(interestLabelText, calculatedInterestLabel);
+
+        // Calculate Interest Button
+        calculateInterestButton = new Button("Calculate Interest");
+        calculateInterestButton.setPrefWidth(160);
+        calculateInterestButton.setStyle("-fx-font-size: 12; -fx-padding: 8;");
+        calculateInterestButton.setOnAction(e -> handleCalculateInterest());
+
         warningLabel = new Label("");
         warningLabel.setStyle("-fx-text-fill: #d32f2f; -fx-font-weight: bold;");
         warningLabel.setWrapText(true);
@@ -192,6 +213,8 @@ public class AccountBalanceScreen {
             balanceBox,
             currencyBox,
             rewardPointsBox,
+            interestBox,
+            calculateInterestButton,
             warningLabel
         );
 
@@ -217,6 +240,7 @@ public class AccountBalanceScreen {
             AccountInfoView accountDetails = balanceController.getAccountDetails(accountNo);
 
             if (accountDetails != null) {
+                currentAccountInfoView = accountDetails;
                 displayAccount(accountDetails);
                 noResultLabel.setVisible(false);
             } else {
@@ -234,6 +258,31 @@ public class AccountBalanceScreen {
     }
 
     /**
+     * Handle calculate interest button click
+     */
+    private void handleCalculateInterest() {
+        if (currentAccountInfoView == null) {
+            calculatedInterestLabel.setText("No account selected");
+            return;
+        }
+
+        try {
+            String selectedAccountNumber = currentAccountInfoView.getAccountNumber();
+            String accountType = authController.getLoggedInCustomerAccountTypeByNumber(selectedAccountNumber);
+
+            String balanceText = currentAccountInfoView.getBalance();
+            balanceText = balanceText.replace(",", "").trim();
+
+            double balance = Double.parseDouble(balanceText);
+            double interest = interestService.calculateInterest(accountType, balance);
+
+            calculatedInterestLabel.setText(String.format("%.2f", interest));
+        } catch (Exception e) {
+            calculatedInterestLabel.setText("Error: " + e.getMessage());
+        }
+    }
+
+    /**
      * Display account details on the screen
      */
     private void displayAccount(AccountInfoView accountInfoView) {
@@ -243,17 +292,20 @@ public class AccountBalanceScreen {
         currencyLabel.setText(accountInfoView.getCurrency());
         rewardPointsLabel.setText(accountInfoView.getRewardPoints());
         warningLabel.setText(accountInfoView.getWarningMessage());
+        calculatedInterestLabel.setText("");
     }
 
     /**
      * Clear all result displays
      */
     private void clearResults() {
+        currentAccountInfoView = null;
         accountNumberDisplayLabel.setText("");
         statusLabel.setText("");
         balanceLabel.setText("");
         currencyLabel.setText("");
         rewardPointsLabel.setText("");
+        calculatedInterestLabel.setText("");
         warningLabel.setText("");
     }
 

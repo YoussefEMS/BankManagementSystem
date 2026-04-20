@@ -62,8 +62,9 @@ public class ApplyForLoanForm {
 
         Button backBtn = new Button("Back");
         backBtn.setOnAction(e -> {
-            if (onBack != null)
+            if (onBack != null) {
                 onBack.run();
+            }
         });
 
         statusLabel = new Label();
@@ -88,14 +89,23 @@ public class ApplyForLoanForm {
             }
 
             int customerId = AuthContext.getInstance().getLoggedInCustomerId();
-            int loanId = controller.applyForLoan(customerId, amount, loanType, duration, purpose);
 
-            if (loanId > 0) {
-                statusLabel.setStyle("-fx-text-fill: green;");
-                statusLabel.setText("Loan application submitted! Loan ID: " + loanId + " (Status: PENDING)");
+            LoanApplicationHandler.LoanResult result =
+                    controller.applyForLoan(customerId, amount, loanType, duration, purpose);
+
+            if (result.getLoanId() > 0) {
+                if ("APPROVED".equalsIgnoreCase(result.getStatus())) {
+                    statusLabel.setStyle("-fx-text-fill: green;");
+                } else {
+                    statusLabel.setStyle("-fx-text-fill: red;");
+                }
+
+                statusLabel.setText("Loan " + result.getStatus() + ". Loan ID: " + result.getLoanId());
+
                 amountField.clear();
                 durationField.clear();
                 purposeField.clear();
+                loanTypeCombo.setValue(null);
             } else {
                 statusLabel.setStyle("-fx-text-fill: red;");
                 statusLabel.setText("Error: Please check all fields.");
