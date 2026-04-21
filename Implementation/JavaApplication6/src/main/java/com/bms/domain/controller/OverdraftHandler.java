@@ -4,13 +4,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.bms.domain.entity.OverdraftEvent;
+import com.bms.observer.overdraft.OverdraftNotificationService;
 import com.bms.persistence.DAOFactory;
 import com.bms.persistence.OverdraftEventDAO;
 import com.bms.persistence.ConfiguredDAOFactory;
 
 /**
  * OverdraftHandler - UC-13: Overdraft Detection & Alerts
- * Checks for overdraft conditions and records events
+ * Checks for overdraft conditions and publishes overdraft events
  */
 public class OverdraftHandler {
     private final OverdraftEventDAO overdraftEventDAO;
@@ -24,7 +25,7 @@ public class OverdraftHandler {
     }
 
     /**
-     * Check if a transaction resulted in an overdraft and record it
+     * Check if a transaction resulted in an overdraft and publish it
      * 
      * @param accountNo     the account number
      * @param newBalance    the new balance after the transaction
@@ -40,7 +41,7 @@ public class OverdraftHandler {
             event.setAmount(Math.abs(newBalance));
             event.setTimestamp(timestamp != null ? timestamp : LocalDateTime.now());
             event.setAlertSent(true); // Mark as alert sent
-            overdraftEventDAO.insert(event);
+            OverdraftNotificationService.getInstance().publish(event);
         }
     }
 

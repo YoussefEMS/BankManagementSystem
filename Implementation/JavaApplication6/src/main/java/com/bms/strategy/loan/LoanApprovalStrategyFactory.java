@@ -1,4 +1,4 @@
-package com.bms.domain.strategy.loan;
+package com.bms.strategy.loan;
 
 public class LoanApprovalStrategyFactory {
 

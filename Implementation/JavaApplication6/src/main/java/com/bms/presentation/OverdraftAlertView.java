@@ -5,8 +5,11 @@ import java.util.List;
 
 import com.bms.domain.controller.OverdraftHandler;
 import com.bms.domain.entity.OverdraftEvent;
+import com.bms.observer.overdraft.AdminAlertObserver;
+import com.bms.observer.overdraft.OverdraftNotificationService;
+import com.bms.observer.overdraft.OverdraftObserver;
 
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,6 +29,7 @@ import javafx.scene.text.FontWeight;
 public class OverdraftAlertView {
     private final VBox root;
     private final OverdraftHandler controller;
+    private final OverdraftObserver alertObserver;
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private TableView<OverdraftEvent> table;
@@ -34,7 +38,9 @@ public class OverdraftAlertView {
 
     public OverdraftAlertView() {
         this.controller = new OverdraftHandler();
+        this.alertObserver = new AdminAlertObserver(event -> Platform.runLater(this::loadEvents));
         this.root = createLayout();
+        OverdraftNotificationService.getInstance().subscribe(alertObserver);
     }
 
     @SuppressWarnings("unchecked")
@@ -77,6 +83,7 @@ public class OverdraftAlertView {
 
         Button backBtn = new Button("Back");
         backBtn.setOnAction(e -> {
+            OverdraftNotificationService.getInstance().unsubscribe(alertObserver);
             if (onBack != null)
                 onBack.run();
         });

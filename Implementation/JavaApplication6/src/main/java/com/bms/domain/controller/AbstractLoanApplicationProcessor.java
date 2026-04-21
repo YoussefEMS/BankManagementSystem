@@ -6,13 +6,13 @@ import java.util.List;
 import com.bms.domain.entity.Account;
 import com.bms.domain.entity.Customer;
 import com.bms.domain.entity.Loan;
-import com.bms.domain.strategy.loan.LoanApprovalContext;
-import com.bms.domain.strategy.loan.LoanApprovalStrategy;
-import com.bms.domain.strategy.loan.LoanApprovalStrategyFactory;
 import com.bms.persistence.AccountDAO;
 import com.bms.persistence.CustomerDAO;
 import com.bms.persistence.DAOFactory;
 import com.bms.persistence.LoanDAO;
+import com.bms.strategy.loan.LoanApprovalContext;
+import com.bms.strategy.loan.LoanApprovalStrategy;
+import com.bms.strategy.loan.LoanApprovalStrategyFactory;
 
 /**
  * Bridge abstraction for submitting loan applications.
