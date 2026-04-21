@@ -2,8 +2,8 @@ package com.bms.domain.controller;
 
 import com.bms.domain.entity.Customer;
 import com.bms.persistence.CustomerDAO;
-import com.bms.persistence.DAOFactory;
-import com.bms.persistence.ConfiguredDAOFactory;
+import com.bms.persistence.PersistenceProvider;
+import com.bms.persistence.ConfiguredPersistenceProvider;
 
 /**
  * CustomerProfileController - UC-03: Create Customer Profile
@@ -13,10 +13,10 @@ public class CustomerProfileController {
     private final CustomerDAO customerDAO;
 
     public CustomerProfileController() {
-        this(ConfiguredDAOFactory.getInstance());
+        this(ConfiguredPersistenceProvider.getInstance());
     }
 
-    public CustomerProfileController(DAOFactory factory) {
+    public CustomerProfileController(PersistenceProvider factory) {
         this.customerDAO = factory.createCustomerDAO();
     }
 

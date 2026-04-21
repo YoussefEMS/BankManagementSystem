@@ -21,7 +21,7 @@ public class CustomerDAO {
      * Constructor initializes DataSource
      */
     public CustomerDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = DataSourceProvider.getInstance().getDataSource();
     }
 
     /**

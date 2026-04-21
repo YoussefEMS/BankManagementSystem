@@ -22,7 +22,7 @@ public class LoanDAO {
     private final DataSource dataSource;
 
     public LoanDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = DataSourceProvider.getInstance().getDataSource();
     }
 
     /**

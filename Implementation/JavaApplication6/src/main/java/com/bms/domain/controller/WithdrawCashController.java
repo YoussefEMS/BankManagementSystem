@@ -3,39 +3,39 @@ package com.bms.domain.controller;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.bms.domain.decorator.transaction.AuditDecorator;
-import com.bms.domain.decorator.transaction.BasicTransactionProcessor;
-import com.bms.domain.decorator.transaction.FeeDecorator;
-import com.bms.domain.decorator.transaction.NotificationDecorator;
-import com.bms.domain.decorator.transaction.TransactionContext;
+import com.bms.domain.controller.AuditedTransactionProcessor;
+import com.bms.domain.controller.BasicTransactionProcessor;
+import com.bms.domain.controller.FeeChargingTransactionProcessor;
+import com.bms.domain.controller.NotifyingTransactionProcessor;
+import com.bms.domain.entity.TransactionContext;
 import com.bms.domain.entity.Account;
 import com.bms.domain.entity.Transaction;
-import com.bms.domain.entity.TransactionFactory;
+import com.bms.domain.entity.TransactionRecordBuilder;
 import com.bms.persistence.AuthContext;
-import com.bms.persistence.DAOFactory;
-import com.bms.persistence.ConfiguredDAOFactory;
+import com.bms.persistence.PersistenceProvider;
+import com.bms.persistence.ConfiguredPersistenceProvider;
 
 /**
  * WithdrawCashController - UC-06: Process Withdrawal
  * Validates amount, checks funds, updates balance, records transaction.
- * Refactored to utilize AbstractTransactionTemplate.
+ * Refactored to utilize AbstractTransactionProcessor.
  */
-public class WithdrawCashController extends AbstractTransactionTemplate<Integer> {
+public class WithdrawCashController extends AbstractTransactionProcessor<Integer> {
     private static final BigDecimal WITHDRAWAL_FEE = new BigDecimal("5.00");
-    private final OverdraftHandler overdraftHandler;
+    private final OverdraftMonitor overdraftHandler;
 
     public WithdrawCashController() {
-        this(ConfiguredDAOFactory.getInstance());
+        this(ConfiguredPersistenceProvider.getInstance());
     }
 
-    public WithdrawCashController(DAOFactory factory) {
-        super(factory, new NotificationDecorator(
-                new AuditDecorator(
-                        new FeeDecorator(
+    public WithdrawCashController(PersistenceProvider factory) {
+        super(factory, new NotifyingTransactionProcessor(
+                new AuditedTransactionProcessor(
+                        new FeeChargingTransactionProcessor(
                                 new BasicTransactionProcessor(),
                                 WITHDRAWAL_FEE,
                                 "Cash withdrawal service fee"))));
-        this.overdraftHandler = new OverdraftHandler(factory);
+        this.overdraftHandler = new OverdraftMonitor(factory);
     }
 
     /**
@@ -93,7 +93,7 @@ public class WithdrawCashController extends AbstractTransactionTemplate<Integer>
 
         accountDAO.updateBalance(accountNo, finalBalance);
 
-        Transaction cashWithdrawalTx = TransactionFactory.createWithdrawal(
+        Transaction cashWithdrawalTx = TransactionRecordBuilder.createWithdrawal(
                 accountNo, withdrawAmount, balanceAfterWithdrawal, context.getPerformedBy(),
                 context.decorateNote(description));
         int txId = transactionDAO.insert(cashWithdrawalTx);
@@ -103,7 +103,7 @@ public class WithdrawCashController extends AbstractTransactionTemplate<Integer>
         }
 
         if (context.hasFee()) {
-            Transaction feeTx = TransactionFactory.createWithdrawal(
+            Transaction feeTx = TransactionRecordBuilder.createWithdrawal(
                     accountNo, context.getFeeAmount(), finalBalance, context.getPerformedBy(),
                     context.getFeeDescription());
             transactionDAO.insert(feeTx);

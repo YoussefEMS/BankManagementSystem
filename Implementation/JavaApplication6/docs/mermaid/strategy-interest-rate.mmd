@@ -1,0 +1,22 @@
+classDiagram
+    class InterestCalculationStrategy {
+        <<interface>>
+        +calculateInterest(double) double
+    }
+    class StandardInterestCalculationStrategy
+    class PremiumInterestCalculationStrategy
+    class BusinessInterestCalculationStrategy
+    class AccountInterestCalculator {
+        -InterestCalculationStrategy strategy
+        +setStrategy(InterestCalculationStrategy) void
+        +calculate(double) double
+    }
+    class InterestService {
+        +calculateInterest(String, double) double
+    }
+    InterestCalculationStrategy <|.. StandardInterestCalculationStrategy
+    InterestCalculationStrategy <|.. PremiumInterestCalculationStrategy
+    InterestCalculationStrategy <|.. BusinessInterestCalculationStrategy
+    AccountInterestCalculator --> InterestCalculationStrategy
+    InterestService --> AccountInterestCalculator
+    InterestService --> InterestCalculationStrategy

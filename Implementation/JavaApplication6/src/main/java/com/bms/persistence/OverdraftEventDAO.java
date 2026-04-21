@@ -22,7 +22,7 @@ public class OverdraftEventDAO {
     private final DataSource dataSource;
 
     public OverdraftEventDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = DataSourceProvider.getInstance().getDataSource();
     }
 
     /**

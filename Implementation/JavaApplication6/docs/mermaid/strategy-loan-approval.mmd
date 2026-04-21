@@ -1,0 +1,26 @@
+classDiagram
+    class LoanApprovalStrategy {
+        <<interface>>
+        +approve(BigDecimal, BigDecimal) boolean
+    }
+    class StandardLoanApprovalStrategy
+    class PremiumLoanApprovalStrategy
+    class BusinessLoanApprovalStrategy
+    class LoanApprovalStrategyFactory {
+        +getStrategy(String) LoanApprovalStrategy
+    }
+    class LoanApprovalContext {
+        -LoanApprovalStrategy strategy
+        +setStrategy(LoanApprovalStrategy) void
+        +approveLoan(BigDecimal, BigDecimal) boolean
+    }
+    class AbstractLoanApplicationProcessor {
+        +applyForLoanWithResult(int, double, String, int, String) ProcessingResult
+    }
+    LoanApprovalStrategy <|.. StandardLoanApprovalStrategy
+    LoanApprovalStrategy <|.. PremiumLoanApprovalStrategy
+    LoanApprovalStrategy <|.. BusinessLoanApprovalStrategy
+    LoanApprovalStrategyFactory --> LoanApprovalStrategy
+    LoanApprovalContext --> LoanApprovalStrategy
+    AbstractLoanApplicationProcessor --> LoanApprovalStrategyFactory
+    AbstractLoanApplicationProcessor --> LoanApprovalContext

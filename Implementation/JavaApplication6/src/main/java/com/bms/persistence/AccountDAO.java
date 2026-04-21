@@ -21,7 +21,7 @@ public class AccountDAO {
     private final DataSource dataSource;
 
     public AccountDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = DataSourceProvider.getInstance().getDataSource();
     }
 
     /**

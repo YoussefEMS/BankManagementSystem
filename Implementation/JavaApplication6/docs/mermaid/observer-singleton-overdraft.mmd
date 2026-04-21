@@ -1,0 +1,30 @@
+classDiagram
+    class OverdraftNotificationService {
+        -static OverdraftNotificationService INSTANCE
+        -List~OverdraftAlertListener~ observers
+        -OverdraftNotificationService()
+        +static getInstance() OverdraftNotificationService
+        +subscribe(OverdraftAlertListener) void
+        +unsubscribe(OverdraftAlertListener) void
+        +publish(OverdraftEvent) void
+    }
+    class OverdraftAlertListener {
+        <<interface>>
+        +onOverdraft(OverdraftEvent) void
+    }
+    class OverdraftEventRecorder
+    class CustomerOverdraftNotifier
+    class OverdraftAuditLogger
+    class AdminOverdraftAlertDispatcher
+    class OverdraftMonitor {
+        +checkOverdraft(String, double, int, LocalDateTime) void
+    }
+    class OverdraftAlertView
+    OverdraftAlertListener <|.. OverdraftEventRecorder
+    OverdraftAlertListener <|.. CustomerOverdraftNotifier
+    OverdraftAlertListener <|.. OverdraftAuditLogger
+    OverdraftAlertListener <|.. AdminOverdraftAlertDispatcher
+    OverdraftNotificationService --> OverdraftAlertListener
+    OverdraftMonitor --> OverdraftNotificationService
+    OverdraftAlertView --> AdminOverdraftAlertDispatcher
+    OverdraftAlertView --> OverdraftNotificationService

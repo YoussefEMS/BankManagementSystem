@@ -20,7 +20,7 @@ public class InterestPostingDAO {
     private final DataSource dataSource;
 
     public InterestPostingDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = DataSourceProvider.getInstance().getDataSource();
     }
 
     /**

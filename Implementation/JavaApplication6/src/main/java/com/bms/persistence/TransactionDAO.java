@@ -21,7 +21,7 @@ public class TransactionDAO {
     private final DataSource dataSource;
 
     public TransactionDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = DataSourceProvider.getInstance().getDataSource();
     }
 
     /**

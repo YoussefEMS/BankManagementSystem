@@ -7,8 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.bms.domain.entity.Transaction;
-import com.bms.persistence.DAOFactory;
-import com.bms.persistence.ConfiguredDAOFactory;
+import com.bms.persistence.PersistenceProvider;
+import com.bms.persistence.ConfiguredPersistenceProvider;
 import com.bms.persistence.TransactionDAO;
 
 /**
@@ -20,10 +20,10 @@ public class TransactionHistoryController {
     private final TransactionDAO transactionDAO;
 
     public TransactionHistoryController() {
-        this(ConfiguredDAOFactory.getInstance());
+        this(ConfiguredPersistenceProvider.getInstance());
     }
 
-    public TransactionHistoryController(DAOFactory factory) {
+    public TransactionHistoryController(PersistenceProvider factory) {
         this.transactionDAO = factory.createTransactionDAO();
     }
 

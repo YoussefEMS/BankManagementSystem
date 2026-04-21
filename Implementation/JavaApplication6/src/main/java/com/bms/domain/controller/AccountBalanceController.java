@@ -1,15 +1,15 @@
 package com.bms.domain.controller;
 
-import com.bms.domain.decorator.accountinfo.AccountInfoService;
-import com.bms.domain.decorator.accountinfo.AccountInfoView;
-import com.bms.domain.decorator.accountinfo.BasicAccountInfoService;
-import com.bms.domain.decorator.accountinfo.CurrencyFormatDecorator;
-import com.bms.domain.decorator.accountinfo.OverdraftWarningDecorator;
-import com.bms.domain.decorator.accountinfo.RewardPointsDecorator;
+import com.bms.domain.controller.AccountInfoProvider;
+import com.bms.domain.entity.AccountInfoSnapshot;
+import com.bms.domain.controller.BaseAccountInfoProvider;
+import com.bms.domain.controller.CurrencyFormattedAccountInfoProvider;
+import com.bms.domain.controller.OverdraftWarningAccountInfoProvider;
+import com.bms.domain.controller.RewardPointsAccountInfoProvider;
 import com.bms.domain.entity.Account;
-import com.bms.persistence.ConfiguredDAOFactory;
+import com.bms.persistence.ConfiguredPersistenceProvider;
 import com.bms.persistence.AccountDAO;
-import com.bms.persistence.DAOFactory;
+import com.bms.persistence.PersistenceProvider;
 
 /**
  * AccountBalanceController - Domain logic for viewing account balance
@@ -18,18 +18,18 @@ import com.bms.persistence.DAOFactory;
  */
 public class AccountBalanceController {
     private final AccountDAO accountDAO;
-    private final AccountInfoService accountInfoService;
+    private final AccountInfoProvider accountInfoService;
 
     public AccountBalanceController() {
-        this(ConfiguredDAOFactory.getInstance());
+        this(ConfiguredPersistenceProvider.getInstance());
     }
 
-    public AccountBalanceController(DAOFactory factory) {
+    public AccountBalanceController(PersistenceProvider factory) {
         this.accountDAO = factory.createAccountDAO();
-        this.accountInfoService = new RewardPointsDecorator(
-                new OverdraftWarningDecorator(
-                        new CurrencyFormatDecorator(
-                                new BasicAccountInfoService())));
+        this.accountInfoService = new RewardPointsAccountInfoProvider(
+                new OverdraftWarningAccountInfoProvider(
+                        new CurrencyFormattedAccountInfoProvider(
+                                new BaseAccountInfoProvider())));
     }
 
     /**
@@ -58,7 +58,7 @@ public class AccountBalanceController {
      * @return String array [accountNumber, status, balance, currency] or null if
      *         not found
      */
-    public AccountInfoView getAccountDetails(String accountNo) {
+    public AccountInfoSnapshot getAccountDetails(String accountNo) {
         Account account = viewAccountSummary(accountNo);
 
         if (account == null) {

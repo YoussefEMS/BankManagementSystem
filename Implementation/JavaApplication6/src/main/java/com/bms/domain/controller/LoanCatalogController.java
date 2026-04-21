@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.bms.domain.flyweight.loan.LoanComparisonScenario;
-import com.bms.domain.flyweight.loan.LoanProductFlyweight;
-import com.bms.domain.flyweight.loan.LoanProductFlyweightFactory;
+import com.bms.domain.entity.LoanComparisonScenario;
+import com.bms.domain.entity.LoanProductTemplate;
+import com.bms.domain.controller.LoanProductCatalog;
 
 /**
  * UC: Loan Product Catalog and Comparison.
@@ -15,8 +15,8 @@ import com.bms.domain.flyweight.loan.LoanProductFlyweightFactory;
  */
 public class LoanCatalogController {
 
-    public Collection<LoanProductFlyweight> getLoanProducts() {
-        return LoanProductFlyweightFactory.getAllProducts();
+    public Collection<LoanProductTemplate> getLoanProducts() {
+        return LoanProductCatalog.getAllProducts();
     }
 
     public List<LoanComparisonScenario> compareProducts(double amount, int durationMonths) {
@@ -25,7 +25,7 @@ public class LoanCatalogController {
             return scenarios;
         }
 
-        for (LoanProductFlyweight product : getLoanProducts()) {
+        for (LoanProductTemplate product : getLoanProducts()) {
             double annualRate = product.calculateRate(amount, durationMonths);
             double monthlyInstallment = estimateMonthlyInstallment(amount, annualRate, durationMonths);
             double totalRepayment = monthlyInstallment * durationMonths;

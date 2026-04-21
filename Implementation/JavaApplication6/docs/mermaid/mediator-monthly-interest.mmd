@@ -1,0 +1,49 @@
+classDiagram
+    class MonthlyInterestWorkflow {
+        <<interface>>
+        +postMonthlyInterest(Date) MonthlyInterestContext
+        +registerPeer(String, Object) void
+        +unregisterPeer(String) void
+    }
+    class MonthlyInterestWorkflowCoordinator {
+        +postMonthlyInterest(Date) MonthlyInterestContext
+        -processAccountInterest(String, MonthlyInterestContext) void
+    }
+    class MonthlyInterestAccounts {
+        <<interface>>
+        +getActiveAccounts(MonthlyInterestContext) List
+        +getAccountType(String) String
+        +getAccountBalance(String) double
+    }
+    class MonthlyInterestCalculator {
+        <<interface>>
+        +getMonthlyInterestRate(String, MonthlyInterestContext) double
+        +calculateInterest(double, double, String, MonthlyInterestContext) double
+        +isEligibleForInterest(String, MonthlyInterestContext) boolean
+    }
+    class InterestTransactionBuilder {
+        <<interface>>
+        +createInterestTransaction(String, double, double, double, MonthlyInterestContext) int
+        +validateTransactionData(String, double) boolean
+    }
+    class InterestBalanceUpdater {
+        <<interface>>
+        +updateAccountBalance(String, double, double, MonthlyInterestContext) boolean
+        +recordInterestPostingMetadata(String, int, MonthlyInterestContext) boolean
+    }
+    class InterestPostingAuditLogger {
+        <<interface>>
+        +logBatchStart(MonthlyInterestContext) void
+        +logBatchCompletion(MonthlyInterestContext) void
+    }
+    class InterestNotificationSender {
+        <<interface>>
+        +notifyBatchCompletion(MonthlyInterestContext) boolean
+    }
+    MonthlyInterestWorkflow <|.. MonthlyInterestWorkflowCoordinator
+    MonthlyInterestWorkflowCoordinator --> MonthlyInterestAccounts
+    MonthlyInterestWorkflowCoordinator --> MonthlyInterestCalculator
+    MonthlyInterestWorkflowCoordinator --> InterestTransactionBuilder
+    MonthlyInterestWorkflowCoordinator --> InterestBalanceUpdater
+    MonthlyInterestWorkflowCoordinator --> InterestPostingAuditLogger
+    MonthlyInterestWorkflowCoordinator --> InterestNotificationSender

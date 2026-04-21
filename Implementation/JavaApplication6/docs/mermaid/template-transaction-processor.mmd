@@ -1,0 +1,27 @@
+classDiagram
+    class AbstractTransactionTemplate~T~ {
+        <<abstract>>
+        +executeTransaction(TransactionContext, String) T
+        #validateInputs(TransactionContext) boolean
+        #validateAccountsAndState(TransactionContext) boolean
+        #checkSpecificBusinessRules(TransactionContext) boolean
+        #executeFinancialImpact(TransactionContext, String) T
+        #getFailureResult(int) T
+    }
+    class DepositProcessor {
+        +postDeposit(String, double, String) int
+    }
+    class WithdrawCashController {
+        +withdrawCash(String, double, String) int
+    }
+    class FundsTransferProcessor {
+        +transferFunds(int, String, String, double) String
+    }
+    class TransactionProcessor {
+        <<interface>>
+        +process(TransactionContext, TransactionOperation) T
+    }
+    AbstractTransactionTemplate <|-- DepositProcessor
+    AbstractTransactionTemplate <|-- WithdrawCashController
+    AbstractTransactionTemplate <|-- FundsTransferProcessor
+    AbstractTransactionTemplate --> TransactionProcessor

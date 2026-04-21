@@ -1,0 +1,30 @@
+classDiagram
+    class TransactionCollection {
+        <<interface>>
+        +createIterator(LocalDateTime, LocalDateTime, String) TransactionIterator
+    }
+    class AccountTransactionHistory {
+        -List~Transaction~ accountTransactions
+        +createIterator(LocalDateTime, LocalDateTime, String) TransactionIterator
+    }
+    class TransactionIterator {
+        <<interface>>
+        +hasNext() boolean
+        +next() Transaction
+    }
+    class FilteredTransactionIterator {
+        -List~Transaction~ transactions
+        -int currentIndex
+        -Transaction nextMatchingTransaction
+        +hasNext() boolean
+        +next() Transaction
+        -matchesCriteria(Transaction) boolean
+    }
+    class TransactionHistoryController {
+        +viewTransactionHistory(String, LocalDate, LocalDate, String) List~Transaction~
+    }
+    TransactionCollection <|.. AccountTransactionHistory
+    TransactionIterator <|.. FilteredTransactionIterator
+    AccountTransactionHistory --> FilteredTransactionIterator
+    TransactionHistoryController --> TransactionCollection
+    TransactionHistoryController --> TransactionIterator

@@ -1,13 +1,13 @@
 package com.bms.domain.controller;
 
-import com.bms.persistence.DAOFactory;
+import com.bms.persistence.PersistenceProvider;
 
 /**
  * Refined bridge abstraction for auto loan applications.
  */
 public class AutoLoanApplicationProcessor extends AbstractLoanApplicationProcessor {
 
-    public AutoLoanApplicationProcessor(DAOFactory factory) {
+    public AutoLoanApplicationProcessor(PersistenceProvider factory) {
         super(new AutoLoanInterestCalculator(), factory);
     }
 

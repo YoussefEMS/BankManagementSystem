@@ -1,0 +1,25 @@
+classDiagram
+    class AbstractLoanInterestCalculatorTemplate {
+        <<abstract>>
+        +postInterest() int
+        #getAccountType() String
+        #processInterest(Account) boolean
+    }
+    class SavingsLoanInterestCalculator {
+        #getAccountType() String
+    }
+    class MoneyMarketLoanInterestCalculator {
+        #getAccountType() String
+    }
+    class InterestCalculator {
+        <<interface>>
+        +calculate(BigDecimal) BigDecimal
+        +getRate() double
+    }
+    class MonthlyInterestPostingCoordinator {
+        +postMonthlyInterest() int
+    }
+    AbstractLoanInterestCalculatorTemplate <|-- SavingsLoanInterestCalculator
+    AbstractLoanInterestCalculatorTemplate <|-- MoneyMarketLoanInterestCalculator
+    AbstractLoanInterestCalculatorTemplate --> InterestCalculator
+    MonthlyInterestPostingCoordinator --> AbstractLoanInterestCalculatorTemplate

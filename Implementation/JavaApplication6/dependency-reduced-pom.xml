@@ -21,7 +21,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>${javafx.maven.plugin.version}</version>
         <configuration>
-          <mainClass>com.bms.BankManagementSystemApp</mainClass>
+          <mainClass>com.bms.view.BankManagementSystemApp</mainClass>
         </configuration>
       </plugin>
       <plugin>
@@ -36,7 +36,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.bms.BankManagementSystemApp</mainClass>
+                  <mainClass>com.bms.view.BankManagementSystemApp</mainClass>
                 </transformer>
               </transformers>
             </configuration>

@@ -1,0 +1,50 @@
+classDiagram
+    class FundTransferWorkflow {
+        <<interface>>
+        +transferFunds(String, String, int, double) FundTransferContext
+        +registerPeer(String, Object) void
+        +unregisterPeer(String) void
+    }
+    class FundTransferWorkflowCoordinator {
+        +transferFunds(String, String, int, double) FundTransferContext
+        -validateSourceAccount(FundTransferContext) boolean
+        -validateDestinationAccount(FundTransferContext) boolean
+        -checkAccountStatus(FundTransferContext) boolean
+        -checkOverdraftImpact(FundTransferContext) boolean
+        -executeTransfer(FundTransferContext) boolean
+    }
+    class SourceAccountValidator {
+        <<interface>>
+        +validateSourceAccountExists(String, FundTransferContext) boolean
+        +validateSufficientFunds(String, double, FundTransferContext) boolean
+    }
+    class DestinationAccountValidator {
+        <<interface>>
+        +validateDestinationAccountExists(String, FundTransferContext) boolean
+        +validateDestinationCanReceiveFunds(String, FundTransferContext) boolean
+    }
+    class TransferAccountStatusChecker {
+        <<interface>>
+        +validateAccountsStatus(String, String, FundTransferContext) boolean
+    }
+    class TransferOverdraftPolicy {
+        <<interface>>
+        +isOverdraftAllowed(String) boolean
+        +willTriggerOverdraft(String, double) boolean
+    }
+    class TransferBalanceValidator {
+        <<interface>>
+        +validateTransferAmount(double, FundTransferContext) boolean
+    }
+    class TransferTransactionRecorder {
+        <<interface>>
+        +recordDebitTransaction(String, double, String, FundTransferContext) int
+        +recordCreditTransaction(String, double, String, FundTransferContext) int
+    }
+    FundTransferWorkflow <|.. FundTransferWorkflowCoordinator
+    FundTransferWorkflowCoordinator --> SourceAccountValidator
+    FundTransferWorkflowCoordinator --> DestinationAccountValidator
+    FundTransferWorkflowCoordinator --> TransferAccountStatusChecker
+    FundTransferWorkflowCoordinator --> TransferOverdraftPolicy
+    FundTransferWorkflowCoordinator --> TransferBalanceValidator
+    FundTransferWorkflowCoordinator --> TransferTransactionRecorder

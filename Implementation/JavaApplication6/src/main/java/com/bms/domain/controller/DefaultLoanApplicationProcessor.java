@@ -1,13 +1,13 @@
 package com.bms.domain.controller;
 
-import com.bms.persistence.DAOFactory;
+import com.bms.persistence.PersistenceProvider;
 
 /**
  * Refined bridge abstraction for unknown loan types.
  */
 public class DefaultLoanApplicationProcessor extends AbstractLoanApplicationProcessor {
 
-    public DefaultLoanApplicationProcessor(DAOFactory factory) {
+    public DefaultLoanApplicationProcessor(PersistenceProvider factory) {
         super(new DefaultLoanInterestCalculator(), factory);
     }
 

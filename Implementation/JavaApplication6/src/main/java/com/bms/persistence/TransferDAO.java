@@ -20,7 +20,7 @@ public class TransferDAO {
     private final DataSource dataSource;
 
     public TransferDAO() {
-        this.dataSource = DataSourceFactory.getInstance().getDataSource();
+        this.dataSource = DataSourceProvider.getInstance().getDataSource();
     }
 
     /**

@@ -8,11 +8,9 @@ import com.bms.domain.entity.Customer;
 import com.bms.domain.entity.Loan;
 import com.bms.persistence.AccountDAO;
 import com.bms.persistence.CustomerDAO;
-import com.bms.persistence.DAOFactory;
+import com.bms.persistence.PersistenceProvider;
 import com.bms.persistence.LoanDAO;
-import com.bms.strategy.loan.LoanApprovalContext;
-import com.bms.strategy.loan.LoanApprovalStrategy;
-import com.bms.strategy.loan.LoanApprovalStrategyFactory;
+import com.bms.domain.entity.LoanApprovalContext;
 
 /**
  * Bridge abstraction for submitting loan applications.
@@ -23,7 +21,7 @@ public abstract class AbstractLoanApplicationProcessor {
     protected final LoanDAO loanDAO;
     protected final CustomerDAO customerDAO;
     protected final AccountDAO accountDAO;
-    protected final LoanApprovalStrategyFactory approvalStrategyFactory;
+    protected final LoanApprovalPolicySelector approvalPolicySelector;
 
     public static class ProcessingResult {
         private final int loanId;
@@ -43,12 +41,12 @@ public abstract class AbstractLoanApplicationProcessor {
         }
     }
 
-    protected AbstractLoanApplicationProcessor(LoanInterestCalculator calculator, DAOFactory factory) {
+    protected AbstractLoanApplicationProcessor(LoanInterestCalculator calculator, PersistenceProvider factory) {
         this.calculator = calculator;
         this.loanDAO = factory.createLoanDAO();
         this.customerDAO = factory.createCustomerDAO();
         this.accountDAO = factory.createAccountDAO();
-        this.approvalStrategyFactory = new LoanApprovalStrategyFactory();
+        this.approvalPolicySelector = new LoanApprovalPolicySelector();
     }
 
     /**
@@ -86,8 +84,8 @@ public abstract class AbstractLoanApplicationProcessor {
         }
 
         String customerTier = customer.getTier();
-        LoanApprovalStrategy strategy = approvalStrategyFactory.getStrategy(customerTier);
-        LoanApprovalContext context = new LoanApprovalContext(strategy);
+        LoanApprovalPolicy policy = approvalPolicySelector.getPolicy(customerTier);
+        LoanApprovalContext context = new LoanApprovalContext(policy);
 
         boolean approved = context.approveLoan(BigDecimal.valueOf(amount), customerBalance);
         String finalStatus = approved ? "APPROVED" : "REJECTED";

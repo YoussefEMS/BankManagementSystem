@@ -3,7 +3,7 @@ package com.bms.domain.controller;
 /**
  * LoanInterestCalculator - Bridge interface for loan interest calculation
  * Abstracts the algorithm for calculating interest rates based on loan type
- * Allows different interest strategies without modifying LoanApplicationHandler
+ * Allows different interest strategies without modifying LoanApplicationService
  * Part of the Bridge design pattern implementation
  */
 public interface LoanInterestCalculator {
