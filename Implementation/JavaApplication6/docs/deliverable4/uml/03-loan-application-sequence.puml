@@ -1,0 +1,39 @@
+@startuml
+title Sequence Diagram - Apply For Loan
+
+actor Customer
+participant "ApplyForLoanForm\nPresentation" as UI
+participant "LoanApplicationService\nApplication Service" as Service
+participant "Loan Approval Policy\nDomain" as Policy
+participant "CustomerDAO / AccountDAO / LoanDAO\nPersistence" as DAO
+database "SQL Server" as DB
+participant "SynchronousEventDispatcher\nEvent Bus" as Bus
+participant "LoanApprovalNotificationHandler" as Notify
+participant "AuditLogEventHandler" as Audit
+
+Customer -> UI : Submit loan application
+UI -> Service : applyForLoan(customerId, amount, type, months, purpose)
+
+Service -> DAO : find customer and accounts
+DAO -> DB : SELECT Customer, Account
+DB --> DAO : Result sets
+DAO --> Service : Customer and account data
+
+Service -> Policy : approveLoan(amount, totalBalance, tier)
+Policy --> Service : approval decision
+
+Service -> DAO : insert(Loan)
+DAO -> DB : INSERT INTO Loan
+DB --> DAO : generated loan_id
+DAO --> Service : loan id and status
+
+Service -> Bus : dispatch(LoanApplicationSubmittedEvent)
+Bus -> Notify : handle(event)
+Notify --> Bus : done
+Bus -> Audit : handle(event)
+Audit --> Bus : done
+
+Service --> UI : LoanResult(loanId, status)
+UI --> Customer : Show result
+
+@enduml

@@ -1,6 +1,6 @@
 package com.bms.view;
 
-import com.bms.domain.controller.AuthenticationController;
+import com.bms.service.CustomerAuthenticationService;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,7 +17,7 @@ import javafx.scene.text.FontWeight;
  */
 public class AdminDashboard {
     private final VBox root;
-    private final AuthenticationController authController;
+    private final CustomerAuthenticationService authController;
 
     // Navigation callbacks
     private Runnable onCreateCustomer;
@@ -31,7 +31,7 @@ public class AdminDashboard {
     private Runnable onViewTransactionHistory;
 
     public AdminDashboard() {
-        this.authController = new AuthenticationController();
+        this.authController = new CustomerAuthenticationService();
         this.root = createLayout();
     }
 

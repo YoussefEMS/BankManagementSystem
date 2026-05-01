@@ -1,6 +1,6 @@
 package com.bms.view;
 
-import com.bms.domain.controller.CustomerProfileController;
+import com.bms.service.AccountManagementService;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,7 +16,7 @@ import javafx.scene.text.FontWeight;
  */
 public class CreateCustomerProfileForm {
     private final VBox root;
-    private final CustomerProfileController controller;
+    private final AccountManagementService controller;
 
     private TextField fullNameField;
     private TextField emailField;
@@ -28,7 +28,7 @@ public class CreateCustomerProfileForm {
     private Runnable onBack;
 
     public CreateCustomerProfileForm() {
-        this.controller = new CustomerProfileController();
+        this.controller = new AccountManagementService();
         this.root = createLayout();
     }
 

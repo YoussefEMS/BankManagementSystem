@@ -1,0 +1,28 @@
+@startuml
+title Bonus - Transaction Processing System Reference Architecture Mapping
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+actor "Customer / Admin" as User
+
+component "Input Processing\nJavaFX Forms" as Input
+component "Transaction Processing\nApplication Services" as Processing
+component "Validation and Business Rules\nDomain Policies" as Rules
+component "Transaction Manager\nDAOs, JDBC, HikariCP" as TxManager
+database "Operational Database\nSQL Server" as DB
+component "Event and Audit Trail\nDomain Events, Handlers" as Audit
+component "Output Processing\nStatus Screens, Receipts,\nDashboards" as Output
+
+User --> Input : requests banking operation
+Input --> Processing : command data
+Processing --> Rules : validate and decide
+Rules --> Processing : business result
+Processing --> TxManager : commit data changes
+TxManager --> DB : ACID database operations
+Processing --> Audit : publish business event
+Audit --> DB : optional audit persistence
+Processing --> Output : result
+Output --> User : confirmation or error
+
+@enduml

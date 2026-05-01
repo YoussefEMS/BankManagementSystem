@@ -1,0 +1,37 @@
+@startuml
+title Physical View - Deployment Diagram
+
+skinparam shadowing false
+
+actor "Customer / Admin" as User
+
+node "Branch or User Workstation" as Workstation {
+  node "Java Runtime\nJava 17+" {
+    artifact "bank-management-system.jar" as Jar
+    component "JavaFX UI" as UI
+    component "Application Services\nDomain Logic\nEvent Bus" as App
+    component "Persistence DAOs\nHikariCP Pool" as Persistence
+  }
+}
+
+node "SQL Server Host" as SqlHost {
+  database "bank_management_system" as DB
+  artifact "schema.sql" as Schema
+  artifact "seed_auth_data.sql" as Seed
+}
+
+cloud "Optional External Services" as External {
+  component "Payment Gateway Adapter" as Gateway
+  component "Future Email/SMS Service" as Notification
+}
+
+User --> Workstation : keyboard, mouse, display
+UI --> App : local method calls
+App --> Persistence : local method calls
+Persistence --> DB : JDBC over TCP 1433\nSQL Server driver
+App ..> Gateway : optional HTTPS
+App ..> Notification : future integration
+Schema ..> DB : creates schema
+Seed ..> DB : inserts demo data
+
+@enduml

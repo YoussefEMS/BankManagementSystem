@@ -2,8 +2,8 @@ package com.bms.view;
 
 import java.time.LocalDate;
 
-import com.bms.domain.controller.AuthenticationController;
 import com.bms.domain.controller.TransactionHistoryController;
+import com.bms.service.CustomerAuthenticationService;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -26,7 +26,7 @@ import javafx.scene.layout.VBox;
 public class TransactionHistoryScreen {
     private VBox root;
     private TransactionHistoryController historyController;
-    private AuthenticationController authController;
+    private CustomerAuthenticationService authController;
 
     // UI Components
     private ComboBox<String> accountNumberCombo;
@@ -39,7 +39,7 @@ public class TransactionHistoryScreen {
 
     public TransactionHistoryScreen() {
         this.historyController = new TransactionHistoryController();
-        this.authController = new AuthenticationController();
+        this.authController = new CustomerAuthenticationService();
         this.root = createUI();
         loadUserAccounts();
     }

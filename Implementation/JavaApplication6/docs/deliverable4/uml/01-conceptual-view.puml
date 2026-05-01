@@ -1,0 +1,39 @@
+@startuml
+title Conceptual View - Bank Management System
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+actor Customer
+actor Admin
+
+node "Desktop Workstation" {
+  component "Presentation Layer\nJavaFX Screens\ncom.bms.view" as UI
+  component "Application Service Layer\nUse Case Services\ncom.bms.service" as Services
+  component "Domain Layer\nEntities, Policies,\nWorkflow Logic\ncom.bms.domain" as Domain
+  component "Event Layer\nEvents, Dispatcher,\nHandlers\ncom.bms.event" as Events
+  component "Persistence Layer\nDAOs, Providers,\nHikariCP\ncom.bms.persistence" as Persistence
+}
+
+database "SQL Server Database\nbank_management_system" as DB
+
+Customer --> UI : uses
+Admin --> UI : uses
+UI --> Services : invokes use cases
+Services --> Domain : applies business rules
+Services --> Persistence : loads and saves data
+Services --> Events : publishes domain events
+Events --> Persistence : optional audit records
+Persistence --> DB : JDBC queries and updates
+
+note right of Services
+Examples:
+- LoanApplicationService
+- FundTransferService
+- AccountManagementService
+- CustomerAuthenticationService
+- InterestPostingService
+end note
+
+@enduml

@@ -2,9 +2,9 @@ package com.bms.view;
 
 import java.util.List;
 
-import com.bms.domain.controller.LoanStatusController;
 import com.bms.domain.entity.Loan;
 import com.bms.persistence.AuthContext;
+import com.bms.service.LoanApplicationService;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -26,7 +26,7 @@ import javafx.scene.text.FontWeight;
  */
 public class LoanStatusView {
     private final VBox root;
-    private final LoanStatusController controller;
+    private final LoanApplicationService controller;
 
     private TableView<Loan> loanTable;
     private ComboBox<String> filterCombo;
@@ -35,7 +35,7 @@ public class LoanStatusView {
     private Runnable onBack;
 
     public LoanStatusView() {
-        this.controller = new LoanStatusController();
+        this.controller = new LoanApplicationService();
         this.root = createLayout();
     }
 

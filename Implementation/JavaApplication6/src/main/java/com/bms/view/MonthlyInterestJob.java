@@ -1,6 +1,6 @@
 package com.bms.view;
 
-import com.bms.domain.controller.MonthlyInterestPostingCoordinator;
+import com.bms.service.InterestPostingService;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,13 +15,13 @@ import javafx.scene.text.FontWeight;
  */
 public class MonthlyInterestJob {
     private final VBox root;
-    private final MonthlyInterestPostingCoordinator controller;
+    private final InterestPostingService controller;
 
     private Label statusLabel;
     private Runnable onBack;
 
     public MonthlyInterestJob() {
-        this.controller = new MonthlyInterestPostingCoordinator();
+        this.controller = new InterestPostingService();
         this.root = createLayout();
     }
 

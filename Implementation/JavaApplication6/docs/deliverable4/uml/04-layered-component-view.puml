@@ -1,0 +1,75 @@
+@startuml
+title Development View - Layered Component Diagram
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+package "Presentation Layer" {
+  component "JavaFX Views\ncom.bms.view" as Views
+}
+
+package "Application Service Layer" {
+  interface "Service API" as ServiceApi
+  component "CustomerAuthenticationService" as AuthSvc
+  component "AccountManagementService" as AccountSvc
+  component "LoanApplicationService" as LoanSvc
+  component "FundTransferService" as TransferSvc
+  component "InterestPostingService" as InterestSvc
+}
+
+package "Domain Layer" {
+  component "Domain Entities\nAccount, Customer,\nLoan, Transaction" as Entities
+  component "Domain Policies\nLoanApprovalPolicy,\nInterestRatePolicy" as Policies
+  component "Workflow Processors\nTransfer, Loan,\nInterest Posting" as Workflows
+}
+
+package "Event Layer" {
+  interface "EventDispatcher" as EventDispatcher
+  component "SynchronousEventDispatcher" as SyncBus
+  component "Event Handlers" as EventHandlers
+}
+
+package "Persistence Layer" {
+  interface "PersistenceProvider" as PersistenceProvider
+  component "DAO Components\nCustomerDAO, AccountDAO,\nLoanDAO, TransactionDAO" as DAOs
+  component "Database Adapter\nDatabaseConnectionProvider" as DbAdapter
+  component "HikariCP DataSource" as DataSource
+}
+
+database "SQL Server" as DB
+
+Views --> ServiceApi : uses
+ServiceApi <|.. AuthSvc
+ServiceApi <|.. AccountSvc
+ServiceApi <|.. LoanSvc
+ServiceApi <|.. TransferSvc
+ServiceApi <|.. InterestSvc
+
+AuthSvc --> Entities
+AccountSvc --> Entities
+LoanSvc --> Entities
+LoanSvc --> Policies
+TransferSvc --> Workflows
+InterestSvc --> Workflows
+
+AuthSvc --> PersistenceProvider
+AccountSvc --> PersistenceProvider
+LoanSvc --> PersistenceProvider
+TransferSvc --> PersistenceProvider
+InterestSvc --> PersistenceProvider
+
+AuthSvc --> EventDispatcher
+AccountSvc --> EventDispatcher
+LoanSvc --> EventDispatcher
+TransferSvc --> EventDispatcher
+InterestSvc --> EventDispatcher
+
+EventDispatcher <|.. SyncBus
+SyncBus --> EventHandlers : invokes
+
+PersistenceProvider <|.. DAOs
+DAOs --> DbAdapter
+DAOs --> DataSource
+DataSource --> DB : JDBC
+
+@enduml

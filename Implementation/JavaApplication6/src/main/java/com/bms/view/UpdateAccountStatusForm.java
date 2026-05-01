@@ -1,7 +1,7 @@
 package com.bms.view;
 
-import com.bms.domain.controller.AccountStatusUpdater;
 import com.bms.persistence.AuthContext;
+import com.bms.service.AccountManagementService;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +18,7 @@ import javafx.scene.text.FontWeight;
  */
 public class UpdateAccountStatusForm {
     private final VBox root;
-    private final AccountStatusUpdater controller;
+    private final AccountManagementService controller;
 
     private TextField accountNoField;
     private ComboBox<String> statusCombo;
@@ -27,7 +27,7 @@ public class UpdateAccountStatusForm {
     private Runnable onBack;
 
     public UpdateAccountStatusForm() {
-        this.controller = new AccountStatusUpdater();
+        this.controller = new AccountManagementService();
         this.root = createLayout();
     }
 

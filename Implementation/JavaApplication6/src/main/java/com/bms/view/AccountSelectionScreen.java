@@ -1,6 +1,6 @@
 package com.bms.view;
 
-import com.bms.domain.controller.AuthenticationController;
+import com.bms.service.CustomerAuthenticationService;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,11 +24,11 @@ public class AccountSelectionScreen {
     private Label welcomeLabel;
     private Runnable onAccountSelected;
     private Runnable onLogout;
-    private AuthenticationController authController;
+    private CustomerAuthenticationService authController;
     private int selectedAccountIndex = -1;
 
     public AccountSelectionScreen() {
-        this.authController = new AuthenticationController();
+        this.authController = new CustomerAuthenticationService();
         initializeUI();
     }
 

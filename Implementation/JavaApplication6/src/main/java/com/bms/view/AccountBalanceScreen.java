@@ -1,9 +1,9 @@
 package com.bms.view;
 
 import com.bms.domain.controller.AccountBalanceController;
-import com.bms.domain.controller.AuthenticationController;
 import com.bms.domain.entity.AccountInfoSnapshot;
 import com.bms.domain.controller.InterestService;
+import com.bms.service.CustomerAuthenticationService;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -23,7 +23,7 @@ import javafx.scene.layout.VBox;
 public class AccountBalanceScreen {
     private VBox root;
     private AccountBalanceController balanceController;
-    private AuthenticationController authController;
+    private CustomerAuthenticationService authController;
 
     // UI Components
     private ComboBox<String> accountNumberCombo;
@@ -43,7 +43,7 @@ public class AccountBalanceScreen {
 
     public AccountBalanceScreen() {
         this.balanceController = new AccountBalanceController();
-        this.authController = new AuthenticationController();
+        this.authController = new CustomerAuthenticationService();
         this.root = createUI();
         loadUserAccounts();
     }

@@ -1,0 +1,36 @@
+@startuml
+title Activity Diagram - Apply For Loan
+
+start
+
+:Customer opens Apply For Loan form;
+:Enter amount, loan type, duration, and purpose;
+:Submit application;
+
+if (Input complete and valid?) then (yes)
+  :Get logged-in customer id;
+  :LoanApplicationService receives request;
+  :Load customer profile and accounts;
+  :Calculate total customer balance;
+  :Select loan approval policy by customer tier;
+  :Evaluate loan approval rule;
+  if (Loan approved by policy?) then (yes)
+    :Set status to APPROVED;
+  else (no)
+    :Set status to REJECTED;
+  endif
+  :Calculate interest rate;
+  :Persist loan application through LoanDAO;
+  if (Loan saved?) then (yes)
+    :Publish LoanApplicationSubmittedEvent;
+    :Audit and notification handlers process event;
+    :Display loan id and final status;
+  else (no)
+    :Display persistence error;
+  endif
+else (no)
+  :Display validation error;
+endif
+
+stop
+@enduml

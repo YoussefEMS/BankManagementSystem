@@ -1,7 +1,7 @@
 package com.bms.view;
 
-import com.bms.domain.controller.AuthenticationController;
-import com.bms.domain.controller.FundsTransferProcessor;
+import com.bms.service.CustomerAuthenticationService;
+import com.bms.service.FundTransferService;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,8 +17,8 @@ import javafx.scene.text.FontWeight;
  */
 public class TransferFundsForm {
     private final VBox root;
-    private final FundsTransferProcessor controller;
-    private final AuthenticationController authController;
+    private final FundTransferService controller;
+    private final CustomerAuthenticationService authController;
 
     private TextField sourceField;
     private TextField destinationField;
@@ -28,8 +28,8 @@ public class TransferFundsForm {
     private Runnable onBack;
 
     public TransferFundsForm() {
-        this.controller = new FundsTransferProcessor();
-        this.authController = new AuthenticationController();
+        this.controller = new FundTransferService();
+        this.authController = new CustomerAuthenticationService();
         this.root = createLayout();
     }
 

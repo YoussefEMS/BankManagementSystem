@@ -1,6 +1,6 @@
 package com.bms.view;
 
-import com.bms.domain.controller.AuthenticationController;
+import com.bms.service.CustomerAuthenticationService;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,10 +23,10 @@ public class LoginScreen {
     private PasswordField passwordField;
     private Label statusLabel;
     private Runnable onLoginSuccess;
-    private AuthenticationController authController;
+    private CustomerAuthenticationService authController;
 
     public LoginScreen() {
-        this.authController = new AuthenticationController();
+        this.authController = new CustomerAuthenticationService();
         initializeUI();
     }
 

@@ -1,7 +1,7 @@
 package com.bms.view;
 
-import com.bms.domain.controller.LoanApplicationService;
 import com.bms.persistence.AuthContext;
+import com.bms.service.LoanApplicationService;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

@@ -1,0 +1,57 @@
+@startuml
+title Development View - Event-Driven Component Diagram
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+package "Application Services" {
+  component "LoanApplicationService" as LoanSvc
+  component "FundTransferService" as TransferSvc
+  component "AccountManagementService" as AccountSvc
+  component "InterestPostingService" as InterestSvc
+}
+
+package "Domain Events" {
+  component "LoanApplicationSubmittedEvent" as LoanSubmitted
+  component "LoanApprovedEvent / LoanRejectedEvent" as LoanDecision
+  component "FundTransferCompletedEvent" as TransferDone
+  component "AccountStatusChangedEvent" as AccountChanged
+  component "InterestPostedEvent" as InterestPosted
+}
+
+package "Event Bus" {
+  interface "EventDispatcher" as EventDispatcher
+  component "SynchronousEventDispatcher" as SyncBus
+}
+
+package "Event Handlers" {
+  component "AuditLogEventHandler" as Audit
+  component "LoanApprovalNotificationHandler" as LoanNotify
+  component "TransactionConfirmationHandler" as TransferNotify
+  component "OverdraftAlertHandler" as Overdraft
+}
+
+LoanSvc --> LoanSubmitted : creates
+LoanSvc --> LoanDecision : creates
+TransferSvc --> TransferDone : creates
+AccountSvc --> AccountChanged : creates
+InterestSvc --> InterestPosted : creates
+
+LoanSubmitted --> EventDispatcher : dispatch
+LoanDecision --> EventDispatcher : dispatch
+TransferDone --> EventDispatcher : dispatch
+AccountChanged --> EventDispatcher : dispatch
+InterestPosted --> EventDispatcher : dispatch
+
+EventDispatcher <|.. SyncBus
+SyncBus --> Audit : all events
+SyncBus --> LoanNotify : loan submitted
+SyncBus --> TransferNotify : transfer completed
+SyncBus --> Overdraft : overdraft detected
+
+note right of SyncBus
+Phase 1 uses synchronous in-process dispatch.
+The interface allows a future async bus or queue.
+end note
+
+@enduml
