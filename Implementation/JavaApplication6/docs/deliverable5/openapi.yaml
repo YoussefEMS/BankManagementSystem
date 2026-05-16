@@ -1,0 +1,633 @@
+openapi: 3.0.3
+info:
+  title: Bank Management System Service Engineering API
+  version: 1.0.0
+  description: REST adapter for Deliverable 5 service-oriented banking workflows.
+servers:
+  - url: http://localhost:8080
+    description: Local Spring Boot API runtime
+tags:
+  - name: Accounts
+  - name: Customers
+  - name: Loans
+  - name: Workflows
+paths:
+  /api/accounts/{accountNumber}:
+    get:
+      tags: [Accounts]
+      summary: Get account details
+      operationId: getAccount
+      parameters:
+        - $ref: '#/components/parameters/AccountNumber'
+      responses:
+        '200':
+          description: Account found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [Accounts]
+      summary: Close an account
+      operationId: closeAccount
+      parameters:
+        - $ref: '#/components/parameters/AccountNumber'
+        - name: actorId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ADMIN, CUSTOMER]
+      responses:
+        '200':
+          description: Account closed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountStatusResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/customers/{customerId}/loans:
+    get:
+      tags: [Loans]
+      summary: Get loans for a customer
+      operationId: getCustomerLoans
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Customer loan list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LoanResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/customers:
+    post:
+      tags: [Customers]
+      summary: Create customer profile and initial account
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerRequest'
+      responses:
+        '201':
+          description: Customer and account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCustomerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/loans:
+    post:
+      tags: [Loans]
+      summary: Submit a loan application
+      operationId: submitLoanApplication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitLoanRequest'
+      responses:
+        '201':
+          description: Loan application submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitLoanResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/accounts/{accountNumber}/status:
+    put:
+      tags: [Accounts]
+      summary: Update account status
+      operationId: updateAccountStatus
+      parameters:
+        - $ref: '#/components/parameters/AccountNumber'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountStatusRequest'
+      responses:
+        '200':
+          description: Account status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountStatusResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/loans/{loanId}/decision:
+    put:
+      tags: [Loans]
+      summary: Approve or reject a pending loan
+      operationId: decideLoan
+      parameters:
+        - $ref: '#/components/parameters/LoanId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanDecisionRequest'
+      responses:
+        '200':
+          description: Loan decision saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanDecisionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/loans/{loanId}:
+    delete:
+      tags: [Loans]
+      summary: Cancel a pending loan application
+      operationId: cancelPendingLoan
+      parameters:
+        - $ref: '#/components/parameters/LoanId'
+      responses:
+        '200':
+          description: Pending loan cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanCancelResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/workflows/customer-onboarding:
+    post:
+      tags: [Workflows]
+      summary: Composite customer onboarding workflow
+      operationId: onboardCustomer
+      description: Creates a customer profile, opens an initial account, and optionally submits a starter loan application.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerOnboardingRequest'
+      responses:
+        '201':
+          description: Workflow completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOnboardingResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  parameters:
+    AccountNumber:
+      name: accountNumber
+      in: path
+      required: true
+      schema:
+        type: string
+      example: EG-001-1000001
+    LoanId:
+      name: loanId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      example: 15
+  responses:
+    BadRequest:
+      description: Request validation or business input error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Unauthorized:
+      description: Authentication is required. Current coursework implementation does not enforce token auth.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Forbidden:
+      description: Caller is not allowed to perform this operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    NotFound:
+      description: Requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Conflict:
+      description: Operation conflicts with current resource state.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    InternalServerError:
+      description: Unexpected server failure.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+  schemas:
+    Money:
+      type: number
+      format: decimal
+      example: 15000.00
+    AccountResponse:
+      type: object
+      required: [accountNumber, customerId, accountType, balance, currency, status]
+      properties:
+        accountNumber:
+          type: string
+          example: EG-001-1000001
+        customerId:
+          type: integer
+          example: 1
+        accountType:
+          type: string
+          example: SAVINGS
+        balance:
+          $ref: '#/components/schemas/Money'
+        currency:
+          type: string
+          example: EGP
+        status:
+          type: string
+          enum: [ACTIVE, FROZEN, CLOSED]
+          example: ACTIVE
+    LoanResponse:
+      type: object
+      required: [loanId, customerId, amount, loanType, status, termMonths, loanPurpose]
+      properties:
+        loanId:
+          type: integer
+          example: 10
+        customerId:
+          type: integer
+          example: 1
+        amount:
+          $ref: '#/components/schemas/Money'
+        loanType:
+          type: string
+          example: EDUCATION
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED, CANCELLED]
+          example: PENDING
+        termMonths:
+          type: integer
+          example: 24
+        loanPurpose:
+          type: string
+          example: Education
+    CreateCustomerRequest:
+      type: object
+      required: [fullName, email, nationalId, password, accountType, initialDeposit]
+      properties:
+        fullName:
+          type: string
+          example: Youssef Ihab
+        email:
+          type: string
+          format: email
+          example: youssef@example.com
+        nationalId:
+          type: string
+          example: '30001011234567'
+        password:
+          type: string
+          format: password
+          writeOnly: true
+          example: demo-password
+        phone:
+          type: string
+          example: '+201001234567'
+        address:
+          type: string
+          example: Cairo, Egypt
+        accountType:
+          type: string
+          example: SAVINGS
+        initialDeposit:
+          $ref: '#/components/schemas/Money'
+        currency:
+          type: string
+          example: EGP
+    CreateCustomerResponse:
+      type: object
+      required: [customerId, accountNumber, status]
+      properties:
+        customerId:
+          type: integer
+          example: 1
+        accountNumber:
+          type: string
+          example: EG-API-000001-AB12CD34
+        status:
+          type: string
+          example: CREATED
+    SubmitLoanRequest:
+      type: object
+      required: [customerId, amount, termMonths, loanPurpose]
+      properties:
+        customerId:
+          type: integer
+          minimum: 1
+          example: 1
+        amount:
+          $ref: '#/components/schemas/Money'
+        termMonths:
+          type: integer
+          minimum: 1
+          example: 24
+        loanPurpose:
+          type: string
+          example: Education
+        loanType:
+          type: string
+          default: PERSONAL
+          example: EDUCATION
+    SubmitLoanResponse:
+      type: object
+      required: [loanId, status, message]
+      properties:
+        loanId:
+          type: integer
+          example: 15
+        status:
+          type: string
+          example: PENDING
+        message:
+          type: string
+          example: Loan application submitted successfully
+    UpdateAccountStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ACTIVE, FROZEN, CLOSED]
+          example: FROZEN
+        reason:
+          type: string
+          example: Suspicious activity review
+        actorId:
+          type: integer
+          example: 99
+        role:
+          type: string
+          enum: [ADMIN, CUSTOMER]
+          example: ADMIN
+    AccountStatusResponse:
+      type: object
+      required: [accountNumber, status, message]
+      properties:
+        accountNumber:
+          type: string
+          example: EG-001-1000001
+        status:
+          type: string
+          example: CLOSED
+        message:
+          type: string
+          example: Account closed successfully
+    LoanDecisionRequest:
+      type: object
+      required: [decision, adminId]
+      properties:
+        decision:
+          type: string
+          enum: [APPROVED, REJECTED]
+          example: APPROVED
+        adminId:
+          type: integer
+          example: 99
+        reason:
+          type: string
+          example: Eligible customer
+    LoanDecisionResponse:
+      type: object
+      required: [loanId, status, message]
+      properties:
+        loanId:
+          type: integer
+          example: 15
+        status:
+          type: string
+          example: APPROVED
+        message:
+          type: string
+          example: Loan approved
+    LoanCancelResponse:
+      type: object
+      required: [loanId, status, message]
+      properties:
+        loanId:
+          type: integer
+          example: 15
+        status:
+          type: string
+          example: CANCELLED
+        message:
+          type: string
+          example: Pending loan application cancelled
+    CustomerOnboardingRequest:
+      type: object
+      required: [customer, account]
+      properties:
+        customer:
+          $ref: '#/components/schemas/OnboardingCustomer'
+        account:
+          $ref: '#/components/schemas/OnboardingAccount'
+        loanApplication:
+          $ref: '#/components/schemas/OnboardingLoanApplication'
+    OnboardingCustomer:
+      type: object
+      required: [fullName, email, nationalId, password]
+      properties:
+        fullName:
+          type: string
+          example: Youssef Ihab
+        email:
+          type: string
+          format: email
+          example: youssef@example.com
+        nationalId:
+          type: string
+          example: '30001011234567'
+        password:
+          type: string
+          format: password
+          writeOnly: true
+          example: demo-password
+        phone:
+          type: string
+          example: '+201001234567'
+        address:
+          type: string
+          example: Cairo, Egypt
+    OnboardingAccount:
+      type: object
+      required: [accountType, initialDeposit]
+      properties:
+        accountType:
+          type: string
+          example: SAVINGS
+        initialDeposit:
+          $ref: '#/components/schemas/Money'
+        currency:
+          type: string
+          example: EGP
+    OnboardingLoanApplication:
+      type: object
+      required: [amount, termMonths, loanPurpose]
+      properties:
+        amount:
+          $ref: '#/components/schemas/Money'
+        termMonths:
+          type: integer
+          example: 24
+        loanPurpose:
+          type: string
+          example: Education
+        loanType:
+          type: string
+          example: EDUCATION
+    CustomerOnboardingResponse:
+      type: object
+      required: [customerId, accountNumber, workflowStatus]
+      properties:
+        customerId:
+          type: integer
+          example: 1
+        accountNumber:
+          type: string
+          example: EG-API-000001-AB12CD34
+        loanId:
+          type: integer
+          nullable: true
+          example: 15
+        workflowStatus:
+          type: string
+          enum: [COMPLETED, PARTIALLY_COMPLETED, FAILED]
+          example: COMPLETED
+    ApiError:
+      type: object
+      required: [code, message, details]
+      properties:
+        code:
+          type: string
+          example: ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          example: Account was not found
+        details:
+          type: array
+          items:
+            type: string

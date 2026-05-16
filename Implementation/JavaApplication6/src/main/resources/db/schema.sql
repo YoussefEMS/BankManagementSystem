@@ -73,7 +73,7 @@ CREATE TABLE [Loan] (
     purpose NVARCHAR(500),
     interest_rate DECIMAL(5, 2),
     status NVARCHAR(20) NOT NULL DEFAULT 'PENDING'
-        CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED')),
+        CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED')),
     submission_date DATETIME2 DEFAULT SYSDATETIME(),
     decision_date DATETIME2
 );

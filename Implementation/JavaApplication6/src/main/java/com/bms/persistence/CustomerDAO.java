@@ -113,6 +113,28 @@ public class CustomerDAO {
     }
 
     /**
+     * Check if a customer exists by national ID.
+     */
+    public boolean existsByNationalId(String nationalId) {
+        String sql = "SELECT 1 FROM [Customer] WHERE national_id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nationalId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking if national ID exists: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
      * Insert a new customer
      * 
      * @param customer the customer to insert

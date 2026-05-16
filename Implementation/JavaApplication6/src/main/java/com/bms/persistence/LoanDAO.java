@@ -192,6 +192,49 @@ public class LoanDAO {
     }
 
     /**
+     * Cancel a loan only while it is still pending.
+     */
+    public boolean cancelPending(int loanId, LocalDateTime decisionDate) {
+        String sql = "UPDATE [Loan] SET status = 'CANCELLED', decision_date = ? " +
+                "WHERE loan_id = ? AND status = 'PENDING'";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setTimestamp(1, Timestamp.valueOf(decisionDate));
+            stmt.setInt(2, loanId);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error cancelling loan: " + e.getMessage());
+            e.printStackTrace();
+            return deletePending(loanId);
+        }
+    }
+
+    /**
+     * Backward-compatible fallback for databases created before CANCELLED was
+     * added to the Loan.status check constraint. This physically removes only
+     * pending applications and never affects approved or rejected loans.
+     */
+    public boolean deletePending(int loanId) {
+        String sql = "DELETE FROM [Loan] WHERE loan_id = ? AND status = 'PENDING'";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, loanId);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error deleting pending loan: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
      * Map a ResultSet row to a Loan object
      */
     private Loan mapResultSetToLoan(ResultSet rs) throws SQLException {
