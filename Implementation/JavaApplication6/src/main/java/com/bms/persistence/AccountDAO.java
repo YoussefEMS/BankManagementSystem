@@ -82,6 +82,35 @@ public class AccountDAO {
     }
 
     /**
+     * Insert a new account.
+     */
+    public boolean insert(Account account) {
+        String sql = "INSERT INTO [Account] (account_number, customer_id, account_type, balance, currency, status, date_opened) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, account.getAccountNumber());
+            stmt.setInt(2, account.getCustomerId());
+            stmt.setString(3, account.getAccountType());
+            stmt.setBigDecimal(4, account.getBalance());
+            stmt.setString(5, account.getCurrency());
+            stmt.setString(6, account.getStatus());
+            stmt.setTimestamp(7, account.getDateOpened() != null
+                    ? Timestamp.valueOf(account.getDateOpened())
+                    : Timestamp.valueOf(java.time.LocalDateTime.now()));
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error inserting account: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
      * Map a ResultSet row to an Account object
      */
     private Account mapResultSetToAccount(ResultSet rs) throws SQLException {

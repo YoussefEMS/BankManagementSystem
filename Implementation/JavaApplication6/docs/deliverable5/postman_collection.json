@@ -1,0 +1,409 @@
+{
+  "info": {
+    "name": "BMS Deliverable 5 Service Engineering API",
+    "_postman_id": "4fdc851f-ecbf-4a7a-9f37-3a102e930d5f",
+    "description": "Postman collection for the eight REST endpoints plus the customer onboarding composite workflow.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "accountNumber",
+      "value": "EG-001-1000001"
+    },
+    {
+      "key": "customerId",
+      "value": "1"
+    },
+    {
+      "key": "loanId",
+      "value": "2"
+    },
+    {
+      "key": "cancelLoanId",
+      "value": "5"
+    }
+  ],
+  "item": [
+    {
+      "name": "01_GET_account_by_number",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/accounts/{{accountNumber}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "accounts",
+            "{{accountNumber}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('accountNumber is present', function () { pm.expect(body.accountNumber).to.exist; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02_GET_customer_loans",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/customers/{{customerId}}/loans",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "customers",
+            "{{customerId}}",
+            "loans"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('response is an array', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03_POST_create_customer",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"Deliverable Five Customer\",\n  \"email\": \"deliverable5{{$timestamp}}@example.com\",\n  \"nationalId\": \"D5-NID-{{$timestamp}}\",\n  \"password\": \"demo-password\",\n  \"phone\": \"+201001234567\",\n  \"address\": \"Cairo, Egypt\",\n  \"accountType\": \"SAVINGS\",\n  \"initialDeposit\": 10000.00,\n  \"currency\": \"EGP\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/customers",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "customers"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 201', function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('customerId', body.customerId);",
+              "pm.collectionVariables.set('accountNumber', body.accountNumber);",
+              "pm.test('created status returned', function () { pm.expect(body.status).to.eql('CREATED'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04_POST_submit_loan",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": {{customerId}},\n  \"amount\": 50000.00,\n  \"termMonths\": 24,\n  \"loanPurpose\": \"Education\",\n  \"loanType\": \"EDUCATION\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/loans",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "loans"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 201', function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('loanId', body.loanId);",
+              "pm.test('loan starts as pending', function () { pm.expect(body.status).to.eql('PENDING'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05_PUT_update_account_status",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"FROZEN\",\n  \"reason\": \"Suspicious activity review\",\n  \"actorId\": 99,\n  \"role\": \"ADMIN\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/accounts/{{accountNumber}}/status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "accounts",
+            "{{accountNumber}}",
+            "status"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('account frozen', function () { pm.expect(pm.response.json().status).to.eql('FROZEN'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06_PUT_decide_loan",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"decision\": \"APPROVED\",\n  \"adminId\": 99,\n  \"reason\": \"Eligible customer\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/loans/{{loanId}}/decision",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "loans",
+            "{{loanId}}",
+            "decision"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('loan approved', function () { pm.expect(pm.response.json().status).to.eql('APPROVED'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07_DELETE_close_account",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/accounts/{{accountNumber}}?actorId=99&role=ADMIN",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "accounts",
+            "{{accountNumber}}"
+          ],
+          "query": [
+            {
+              "key": "actorId",
+              "value": "99"
+            },
+            {
+              "key": "role",
+              "value": "ADMIN"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('account closed', function () { pm.expect(pm.response.json().status).to.eql('CLOSED'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08_DELETE_cancel_loan",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/loans/{{cancelLoanId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "loans",
+            "{{cancelLoanId}}"
+          ]
+        },
+        "description": "Default cancelLoanId is 5 from seed_auth_data.sql. Reset the database or update this variable before rerunning."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('loan cancelled', function () { pm.expect(pm.response.json().status).to.eql('CANCELLED'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09_POST_customer_onboarding_workflow",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer\": {\n    \"fullName\": \"Workflow Customer\",\n    \"email\": \"workflow{{$timestamp}}@example.com\",\n    \"nationalId\": \"WF-NID-{{$timestamp}}\",\n    \"password\": \"demo-password\",\n    \"phone\": \"+201009998887\",\n    \"address\": \"Giza, Egypt\"\n  },\n  \"account\": {\n    \"accountType\": \"SAVINGS\",\n    \"initialDeposit\": 10000.00,\n    \"currency\": \"EGP\"\n  },\n  \"loanApplication\": {\n    \"amount\": 50000.00,\n    \"termMonths\": 24,\n    \"loanPurpose\": \"Education\",\n    \"loanType\": \"EDUCATION\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/workflows/customer-onboarding",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "workflows",
+            "customer-onboarding"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 201', function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('workflowCustomerId', body.customerId);",
+              "pm.collectionVariables.set('workflowAccountNumber', body.accountNumber);",
+              "if (body.loanId) { pm.collectionVariables.set('workflowLoanId', body.loanId); }",
+              "pm.test('workflow completed', function () { pm.expect(body.workflowStatus).to.eql('COMPLETED'); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
